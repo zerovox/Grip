@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8" />
+  <!-- Set the viewport width to device width for mobile -->
+  <meta name="viewport" content="width=device-width" />
+  <title>Welcome to Foundation</title>  
+  <!-- Included CSS Files (Uncompressed) -->
+  <link rel="stylesheet" href="css/foundation.css">
+  <link rel="stylesheet" href="css/extra.css">
+</head>
+<body>
+
+ <!-- <div class="row">
+    <div class="twelve columns">
+     <h2>Welcome</h2>
+      <p>Welcome to Functional Visual Programming</p>
+      <hr />
+    </div>
+  </div>-->
+  <br />
+  <div class="row">
+    <div class="two columns">
+      <ul class="nav-bar vertical scenarioMenu">
+        <li class="active"><a href="#">Nav Item 1</a></li>
+        <li class="has-flyout">
+          <a href="#">Nav Item 2</a>
+          <a href="#" class="flyout-toggle"><span> </span></a>
+          <ul class="flyout">
+            <li><a href="#">Sub Nav Item 1</a></li>
+            <li><a href="#">Sub Nav Item 2</a></li>
+            <li><a href="#">Sub Nav 3</a></li>
+            <li><a href="#">Sub Nav 4</a></li>
+            <li><a href="#">Sub Nav Item 5</a></li>
+          </ul>
+        </li>
+        <li class="has-flyout">
+          <a href="#">Nav Item 3</a>
+          <a href="#" class="flyout-toggle"><span> </span></a>
+          <div class="flyout">
+            <h5>Regular Dropdown</h5>
+            <div class="row">
+              <div class="six columns">
+                <p>This is example text. This is example text. This is example text. This is example text. This is example text. This is example text. This is example text. This is example text.</p>
+              </div>
+              <div class="six columns">
+                <p>This is example text. This is example text. This is example text. This is example text. This is example text. This is example text. This is example text. This is example text.</p>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li>
+          <a href="#">Nav Item 4</a>
+        </li>
+      </ul>
+      <div class="panel">
+        <h5>Test Table</h5>
+        <p>It has an easy to override visual style, and is appropriately subdued.</p>
+      </div>
+      <p><a href="#" data-reveal-id="exampleModal" class="button">Test Cases</a></p>
+
+    </div>
+
+    <div class="ten columns">
+      <dl class="tabs editorMenu">
+        <dd class="active"><a href="#simple1">Simple Tab 1 &nbsp &nbsp <div class="tiny secondary button radius" href="#">x</div></a> </dd>
+        <dd><a href="#simple2">Simple Tab 2</a></dd>
+        <dd><a href="#simple3">Simple Tab 3</a></dd>
+      </dl>
+
+      <p class="tabs-content editorInfo">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      </p>
+      <div class="canvasContainer">
+        <canvas id="editorMap" resize="false"></canvas>
+        <canvas id="functionList" resize="false"></canvas>
+      </div>
+    </div>
+
+
+  </div> 
+  <div id="exampleModal" class="reveal-modal expand">
+    <h2>Test Cases</h2>
+    <p>
+      2/2 tests passed
+    </p>
+
+    <!--<div class="nice alert progress"><span class="meter" style="width: 50%"></span></div>-->
+    <div class="nice progress success"><span class="meter" style="width: 100%"></span></div>
+    <table class="twelve">
+      <thead>
+        <tr>
+          <th>Inputs</th>
+          <th>Output</th>
+          <th>Run</th>
+          <th>Pass?</th>
+        </tr>
+      </thead>
+      <tbody class="testTableBody">
+        <tr>
+          <td>3</td>
+          <td>6</td>
+          <td><div href="#" class="small alert button split dropdown">
+            <a href="#">Run</a>
+            <span></span>
+            <ul>
+              <li><a href="#">Run until completion</a></li>
+              <li><a href="#">Run until recursion</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Run in Debug Mode</a></li>
+            </ul>
+          </div></td>
+          <td>Pass</td>
+        </tr>
+        <tr>
+          <td>0</td>
+          <td>1</td>
+          <td><div href="#" class="small alert button split dropdown">
+            <a href="#">Run</a>
+            <span></span>
+            <ul>
+              <li><a href="#">Run until completion</a></li>
+              <li><a href="#">Run until recursion</a></li>
+              <li class="divider"></li>
+              <li><a href="#">Run in Debug Mode</a></li>
+            </ul>
+          </div></td>
+          <td>Pass</td>
+        </tr>
+      </tbody>
+    </table>
+    <a href="#" class="button">Add Test Case</a>
+    <a class="close-reveal-modal">×</a>
+  </div>
+
+  <!-- Included JS Files (Compressed) -->
+  <!-- Initialize Foundation Plugins -->
+  <script src="js/foundation.min.js"></script>
+  <script src="js/foundation.app.js"></script>
+  <script src="js/foundation.modernizr.js"></script>
+  <!-- IE Fix for HTML5 Tags -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--<script type="text/javascript" src="js/paper.js"></script>
+    <script type="text/javascript" src="js/underscore-min.js"></script>
+    <script type="text/paperscript" src="js/func.js" canvas="canvas" ></script>-->
+    <script data-main="js/main" type="text/javascript" src="js/libs/require.min.js"></script>
+  </body>
+  </html>

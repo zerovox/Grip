@@ -1,0 +1,17 @@
+{{#tests}}
+<tr>
+  <td>{{inputs}}</td>
+  <td>{{output}}</td>
+  <td><div href="#/test/{{inputs}}/{{output}}/" class="small alert button split dropdown">
+    <a href="#/test/{{inputs}}/{{output}}/">Run</a>
+    <span></span>
+    <ul>
+      <li><a href="#/test/{{inputs}}/{{output}}/full/">Run until completion</a></li>
+      <li><a href="#/test/{{inputs}}/{{output}}/rec/">Run until recursion</a></li>
+      <li class="divider"></li>
+      <li><a href="#/test/{{inputs}}/{{output}}/debug/">Run in Debug Mode</a></li>
+    </ul>
+  </div></td>
+  <td>{{status}}</td>
+</tr>
+{{/tests}}

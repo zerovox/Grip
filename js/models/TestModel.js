@@ -1,7 +1,7 @@
 define([
-  'backbone'
-], function(Backbone) {
-  
-  return Backbone.Model.extend({});
+    'backbone'
+], function (Backbone) {
+
+    return Backbone.Model.extend({});
 
 });

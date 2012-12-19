@@ -1,3 +1,3 @@
-define(['libs/mustache/mustache'], function(){
+define(['libs/mustache/mustache'], function () {
     return Mustache;
- });
+});

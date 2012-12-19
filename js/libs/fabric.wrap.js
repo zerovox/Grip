@@ -1,3 +1,3 @@
-define(['libs/fabric.min'], function(){
+define(['libs/fabric.min'], function () {
     return fabric;
- });
+});

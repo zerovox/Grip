@@ -1,6 +1,6 @@
 [
     {
-        "name":"map",
+        "name":"Basics:Squaring",
         "editors":[
             {
                 "name":"square",
@@ -15,19 +15,27 @@
                         "output":9
                     }
                 ],
-                "info":"This function should square its argument."
-            },
+                "info":"This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+            }
+        ],
+        "functions":[
+            "mul"
+        ]
+    },
+    {
+        "name":"Basics:Power",
+        "editors":[
             {
                 "name":"double",
                 "map":{},
                 "tests":[
                     {
-                        "inputs":[2],
+                        "inputs":[2, 2],
                         "output":4
                     },
                     {
-                        "inputs":[3],
-                        "output":6
+                        "inputs":[3, 3],
+                        "output":27
                     }
                 ],
                 "info":""
@@ -38,9 +46,6 @@
             "minus",
             "mul"
         ]
-    },
-    {
-        "name":"intro"
     }
 
 ]

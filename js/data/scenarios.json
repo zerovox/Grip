@@ -1,0 +1,46 @@
+[
+    {
+        "name":"map",
+        "editors":[
+            {
+                "name":"square",
+                "map":{},
+                "tests":[
+                    {
+                        "inputs":[2],
+                        "output":4
+                    },
+                    {
+                        "inputs":[3],
+                        "output":9
+                    }
+                ],
+                "info":"This function should square its argument."
+            },
+            {
+                "name":"double",
+                "map":{},
+                "tests":[
+                    {
+                        "inputs":[2],
+                        "output":4
+                    },
+                    {
+                        "inputs":[3],
+                        "output":6
+                    }
+                ],
+                "info":""
+            }
+        ],
+        "functions":[
+            "plus",
+            "minus",
+            "mul"
+        ]
+    },
+    {
+        "name":"intro"
+    }
+
+]

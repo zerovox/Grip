@@ -1,5 +1,7 @@
 {{#editors}}
-<dd>
-<a href="#/editor/{{name}}">{{name}}</a>
+<dd {{#active}}class="active"{{/active}}>
+<a href="#/editor/{{name}}">{{name}}{{#active}}&nbsp &nbsp
+    <div class="tiny secondary button radius" href="#/close">x</div>
+    {{/active}}</a>
 </dd>
 {{/editors}}

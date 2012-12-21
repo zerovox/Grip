@@ -5,12 +5,15 @@ define([
 ], function (Backbone, Mustache, EditorListTemplate) {
 
     return Backbone.View.extend({
-        el:'.editorMenu',
-        initialize:function (editorCollection) {
-            this.editors = editorCollection;
+        el         : '.editorMenu',
+        initialize : function (editorCollection) {
         },
-        render:function () {
-            var html = Mustache.render(EditorListTemplate, {editors:this.editors.toJSON()});
+        set        : function (editorCollection) {
+            this.editors = editorCollection;
+            this.render();
+        },
+        render     : function () {
+            var html = Mustache.render(EditorListTemplate, {editors : this.editors.toJSON()});
             this.$el.html(html);
         }
     });

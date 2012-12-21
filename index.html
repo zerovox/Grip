@@ -1,81 +1,89 @@
 <!DOCTYPE html>
 
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en"> <!--<![endif]-->
 <head>
-  <meta charset="utf-8" />
-  <!-- Set the viewport width to device width for mobile -->
-  <meta name="viewport" content="width=device-width" />
-  <title>Welcome to Foundation</title>  
-  <!-- Included CSS Files (Uncompressed) -->
-  <link rel="stylesheet" href="css/foundation.css">
-  <link rel="stylesheet" href="css/extra.css">
+    <meta charset="utf-8"/>
+    <!-- Set the viewport width to device width for mobile -->
+    <meta name="viewport" content="width=device-width"/>
+    <title>Welcome to Foundation</title>
+    <!-- Included CSS Files (Uncompressed) -->
+    <link rel="stylesheet" href="css/foundation.css">
+    <link rel="stylesheet" href="css/extra.css">
+    <script src="js/foundation.modernizr.js"></script>
 </head>
 <body>
 
-   <!-- <div class="row">
-      <div class="twelve columns">
-       <h2>Welcome</h2>
-        <p>Welcome to Functional Visual Programming</p>
-        <hr />
-      </div>
-    </div>-->
-    <br />
-    <div class="row">
-      <div class="two columns">
+<!-- <div class="row">
+   <div class="twelve columns">
+    <h2>Welcome</h2>
+     <p>Welcome to Functional Visual Programming</p>
+     <hr />
+   </div>
+ </div>-->
+<br/>
+
+<div class="row">
+    <div class="two columns">
         <ul class="nav-bar vertical scenarioMenu">
         </ul>
-      </div>
+    </div>
 
-      <div class="ten columns">
-        <dl class="tabs editorMenu">
-        </dl>
-        <p class="tabs-content editorInfo"></p>
+    <div class="ten columns">
+        <ul class="tabs editorMenu">
+        </ul>
+        <p class="editorInfo"></p>
+
         <div class="canvasContainer">
-          <canvas id="editorMap" resize="false"></canvas>
-          <canvas id="functionList" resize="false"></canvas>
+            <canvas id="editorMap" resize="false"></canvas>
+            <canvas id="functionList" resize="false"></canvas>
         </div>
         <a href="#" data-reveal-id="exampleModal" class="button">Test Cases</a>
-      </div>
-    </div> 
+    </div>
+</div>
 
 
-    <div id="exampleModal" class="reveal-modal expand">
-      <h2>Test Cases</h2>
-      <p>
+<div id="exampleModal" class="reveal-modal expand">
+    <h2>Test Cases</h2>
+
+    <p>
         2/2 tests passed
-      </p>
+    </p>
 
-      <!--<div class="nice alert progress"><span class="meter" style="width: 50%"></span></div>-->
-      <div class="nice progress success"><span class="meter" style="width: 100%"></span></div>
-      <table class="twelve">
+    <!--<div class="nice alert progress"><span class="meter" style="width: 50%"></span></div>-->
+    <div class="nice progress success"><span class="meter" style="width: 100%"></span></div>
+    <table class="twelve">
         <thead>
-          <tr>
+        <tr>
             <th>Inputs</th>
             <th>Output</th>
             <th>Run</th>
             <th>Pass?</th>
-          </tr>
+        </tr>
         </thead>
         <tbody class="testTableBody">
         </tbody>
-      </table>
-      <a href="#" class="button">Add Test Case</a>
-      <a class="close-reveal-modal">×</a>
-    </div>
+    </table>
+    <a href="#" class="button">Add Test Case</a>
+    <a class="close-reveal-modal">×</a>
+</div>
 
-    <!-- Included JS Files (Compressed) -->
-    <!-- Initialize Foundation Plugins -->
-    <script src="js/foundation.min.js"></script>
-    <script src="js/foundation.app.js"></script>
-    <script src="js/foundation.modernizr.js"></script>
-    <!-- IE Fix for HTML5 Tags -->
-  <!--[if lt IE 9]>
-    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <script data-main="js/main" type="text/javascript" src="js/libs/require.min.js"></script>
-  </body>
-  </html>
+<!-- Included JS Files (Compressed) -->
+<!-- Initialize Foundation Plugins -->
+
+<script src="js/foundation.min.js"></script>
+<script src="js/foundation.app.js"></script>
+<!-- IE Fix for HTML5 Tags -->
+<!--[if lt IE 9]>
+<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script data-main="js/main" type="text/javascript" src="js/libs/require.min.js"></script>
+</body>
+</html>

@@ -4,11 +4,16 @@ define([
 ], function (Backbone, Mustache) {
 
     return Backbone.View.extend({
-        initialize:function (functionsCollection) {
-            this.funcs = functionsCollection;
+        initialize : function () {
+            this.canvas = new fabric.Canvas('functionList', {renderOnAddition : false, selection : false, hoverCursor : 'default'});
         },
-        render:function () {
-            var canvas = new fabric.Canvas('functionList', {renderOnAddition:false, selection:false, hoverCursor:'default'});
+        set        : function (functionsCollection) {
+            this.funcs = functionsCollection;
+            this.render();
+        },
+        render     : function () {
+            var canvas = this.canvas;
+            canvas.clear();
             var resize = function () {
                 var h = Math.max(200, ($(window).height() - 200) * 0.1);
                 var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
@@ -19,7 +24,7 @@ define([
             resize();
 
             var Function = fabric.util.createClass(fabric.Object, {
-                initialize:function (func, position) {
+                initialize : function (func, position) {
                     options = {}
                     this.height = 80;
                     this.width = 160;
@@ -30,7 +35,7 @@ define([
                     this.name = func.name;
                     this.inputs = func.inputs;
                 },
-                _render:function (ctx) {
+                _render    : function (ctx) {
                     //ctx :: CanvasRenderingContext2D
                     ctx.textAlight = "center"
                     ctx.strokeStyle = "#999"
@@ -55,7 +60,7 @@ define([
                 funcObject.f = func;
                 canvas.add(funcObject);
             });
-            canvas.on({'mouse:down':function (e) {
+            canvas.on({'mouse:down' : function (e) {
                 if (e.target !== undefined && e.target.f !== undefined) {
                     console.log(e.target.f);
                     //Fire event to add function to main map.

@@ -5,10 +5,17 @@ define([
 ], function (Backbone, Mustache) {
 
     return Backbone.View.extend({
-        initialize:function (editorModel, functionsCollection) {
+        initialize : function () {
+            this.canvas = new fabric.Canvas('editorMap');
         },
-        render:function () {
-            var canvas = new fabric.Canvas('editorMap');
+        set        : function (editorModel, functionsCollection) {
+            this.editor = editorModel
+            this.functions = functionsCollection
+            this.render()
+        },
+        render     : function () {
+            var canvas = this.canvas;
+            canvas.clear();
             var resize = function () {
                 var h = Math.max(400, ($(window).height() - 200) * 0.9);
                 var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
@@ -17,14 +24,19 @@ define([
             };
             $(window).resize(resize);
             resize();
+
+            _.each(this.editor.get("map"), function (map) {
+                console.log(map)
+            })
+
             function makeCircle(left, top, line1, line2, line3, line4) {
                 var c = new fabric.Circle({
-                    left:left,
-                    top:top,
-                    strokeWidth:5,
-                    radius:12,
-                    fill:'#fff',
-                    stroke:'#666'
+                    left        : left,
+                    top         : top,
+                    strokeWidth : 5,
+                    radius      : 12,
+                    fill        : '#fff',
+                    stroke      : '#666'
                 });
                 c.hasControls = c.hasBorders = false;
 
@@ -38,9 +50,9 @@ define([
 
             function makeLine(coords) {
                 return new fabric.Line(coords, {
-                    fill:'red',
-                    strokeWidth:5,
-                    selectable:false
+                    fill        : 'red',
+                    strokeWidth : 5,
+                    selectable  : false
                 });
             }
 
@@ -65,14 +77,14 @@ define([
 
             canvas.on('object:moving', function (e) {
                 var p = e.target;
-                p.line1 && p.line1.set({ 'x2':p.left, 'y2':p.top });
-                p.line2 && p.line2.set({ 'x1':p.left, 'y1':p.top });
-                p.line3 && p.line3.set({ 'x1':p.left, 'y1':p.top });
-                p.line4 && p.line4.set({ 'x1':p.left, 'y1':p.top });
+                p.line1 && p.line1.set({ 'x2' : p.left, 'y2' : p.top });
+                p.line2 && p.line2.set({ 'x1' : p.left, 'y1' : p.top });
+                p.line3 && p.line3.set({ 'x1' : p.left, 'y1' : p.top });
+                p.line4 && p.line4.set({ 'x1' : p.left, 'y1' : p.top });
                 canvas.renderAll();
             });
         },
-        dispose:function () {
+        dispose    : function () {
             if (this.canvas !== undefined) {
                 this.canvas.clear();
             }

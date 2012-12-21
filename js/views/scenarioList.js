@@ -5,12 +5,15 @@ define([
 ], function (Backbone, Mustache, ScenarioListTemplate) {
 
     return Backbone.View.extend({
-        el:'.scenarioMenu',
-        initialize:function (scenarioCollection) {
-            this.scenarios = scenarioCollection;
+        el         : '.scenarioMenu',
+        initialize : function () {
+            this.set = function (scenarioCollection) {
+                this.scenarios = scenarioCollection;
+                this.render();
+            }
         },
-        render:function () {
-            var html = Mustache.render(ScenarioListTemplate, {scenarios:this.scenarios.toJSON()});
+        render     : function () {
+            var html = Mustache.render(ScenarioListTemplate, {scenarios : this.scenarios.toJSON()});
             this.$el.html(html);
             //TODO: Highlight active scenario
         }

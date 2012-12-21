@@ -1,47 +1,76 @@
 [
     {
-        "name":"Basics:Squaring",
-        "editors":[
+        "name"      : "Basics:Squaring",
+        "editors"   : [
             {
-                "name":"square",
-                "map":{},
-                "tests":[
+                "name"  : "square",
+                "map"   : {
+                    "inputs" : ["argument"],
+                    "map"    : [
+                        {
+                            "function" : "X",
+                            "inputs"   : {
+                                "a" : "argument",
+                                "b" : "argument"
+                            },
+                            "x"        : 5,
+                            "y"        : 5
+                        }
+                    ]
+
+                },
+                "tests" : [
                     {
-                        "inputs":[2],
-                        "output":4
+                        "inputs" : [2],
+                        "output" : 4
                     },
                     {
-                        "inputs":[3],
-                        "output":9
+                        "inputs" : [3],
+                        "output" : 9
                     }
                 ],
-                "info":"This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+            },
+            {
+                "name"  : "squares",
+                "map"   : {},
+                "tests" : [
+                    {
+                        "inputs" : [2],
+                        "output" : 4
+                    },
+                    {
+                        "inputs" : [3],
+                        "output" : 9
+                    }
+                ],
+                "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
             }
         ],
-        "functions":[
+        "functions" : [
             "mul"
         ]
     },
     {
-        "name":"Basics:Power",
-        "editors":[
+        "name"      : "Basics:Power",
+        "editors"   : [
             {
-                "name":"double",
-                "map":{},
-                "tests":[
+                "name"  : "double",
+                "map"   : {},
+                "tests" : [
                     {
-                        "inputs":[2, 2],
-                        "output":4
+                        "inputs" : [2, 2],
+                        "output" : 4
                     },
                     {
-                        "inputs":[3, 3],
-                        "output":27
+                        "inputs" : [3, 3],
+                        "output" : 27
                     }
                 ],
-                "info":""
+                "info"  : ""
             }
         ],
-        "functions":[
+        "functions" : [
             "plus",
             "minus",
             "mul"

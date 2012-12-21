@@ -5,12 +5,15 @@ define([
 ], function (Backbone, Mustache, TestListTemplate) {
 
     return Backbone.View.extend({
-        el:'.testTableBody',
-        initialize:function (testCollection) {
-            this.tests = testCollection;
+        el         : '.testTableBody',
+        initialize : function (testCollection) {
         },
-        render:function () {
-            var html = Mustache.render(TestListTemplate, {tests:this.tests.toJSON()});
+        set        : function (testCollection) {
+            this.tests = testCollection;
+            this.render();
+        },
+        render     : function () {
+            var html = Mustache.render(TestListTemplate, {tests : this.tests.toJSON()});
             this.$el.html(html);
         }
     });

@@ -1,5 +1,10 @@
 define(['backbone'], function (Backbone) {
+    function newChannel() {
+        return _.extend({}, Backbone.Events);
+    }
+
     return {
-        scenarios:_.extend({}, Backbone.Events)
+        scenarios : newChannel(),
+        editors   : newChannel()
     }
 });

@@ -27,7 +27,7 @@ window.Modernizr = function (a, b, c) {
         return!1
     }
 
-    var d = "2.6.2", e = {}, f = !0, g = b.documentElement, h = "modernizr", i = b.createElement(h), j = i.style, k, l = {}.toString, m = " -webkit- -moz- -o- -ms- ".split(" "), n = {svg:"http://www.w3.org/2000/svg"}, o = {}, p = {}, q = {}, r = [], s = r.slice, t, u = function (a, c, d, e) {
+    var d = "2.6.2", e = {}, f = !0, g = b.documentElement, h = "modernizr", i = b.createElement(h), j = i.style, k, l = {}.toString, m = " -webkit- -moz- -o- -ms- ".split(" "), n = {svg : "http://www.w3.org/2000/svg"}, o = {}, p = {}, q = {}, r = [], s = r.slice, t, u = function (a, c, d, e) {
         var f, i, j, k, l = b.createElement("div"), m = b.body, n = m || b.createElement("body");
         if (parseInt(d, 10))while (d--)j = b.createElement("div"), j.id = e ? e[d] : h + (d + 1), l.appendChild(j);
         return f = ["&#173;", '<style id="s', h, '">', a, "</style>"].join(""), l.id = h, (m ? l : n).innerHTML += f, n.appendChild(l), m || (n.style.background = "", n.style.overflow = "hidden", k = g.style.overflow, g.style.overflow = "hidden", g.appendChild(n)), i = c(l, a), m ? l.parentNode.removeChild(l) : (n.parentNode.removeChild(n), g.style.overflow = k), !!i
@@ -140,7 +140,7 @@ window.Modernizr = function (a, b, c) {
                 f = !0, j = !0
             }
         })();
-        var r = {elements:c.elements || "abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video", shivCSS:c.shivCSS !== !1, supportsUnknownElements:j, shivMethods:c.shivMethods !== !1, type:"default", shivDocument:q, createElement:n, createDocumentFragment:o};
+        var r = {elements : c.elements || "abbr article aside audio bdi canvas data datalist details figcaption figure footer header hgroup mark meter nav output progress section summary time video", shivCSS : c.shivCSS !== !1, supportsUnknownElements : j, shivMethods : c.shivMethods !== !1, type : "default", shivDocument : q, createElement : n, createDocumentFragment : o};
         a.html5 = r, q(b)
     }(this, b), e._version = d, e._prefixes = m, e.mq = v, e.testStyles = u, g.className = g.className.replace(/(^|\s)no-js(\s|$)/, "$1$2") + (f ? " js " + r.join(" ") : ""), e
 }(this, this.document), function (a, b, c) {
@@ -176,7 +176,7 @@ window.Modernizr = function (a, b, c) {
             }
         }
 
-        var j = j || B.errorTimeout, l = b.createElement(a), o = 0, r = 0, u = {t:d, s:c, e:f, a:i, x:j};
+        var j = j || B.errorTimeout, l = b.createElement(a), o = 0, r = 0, u = {t : d, s : c, e : f, a : i, x : j};
         1 === y[c] && (r = 1, y[c] = []), "object" == a ? l.data = c : (l.src = c, l.type = a), l.width = l.height = "0", l.onerror = l.onload = l.onreadystatechange = function () {
             k.call(this, r)
         }, p.splice(e, 0, u), "img" != a && (r || 2 === y[c] ? (t.insertBefore(l, s ? null : n), m(k, j)) : y[c].push(l))
@@ -188,17 +188,17 @@ window.Modernizr = function (a, b, c) {
 
     function k() {
         var a = B;
-        return a.loader = {load:j, i:0}, a
+        return a.loader = {load : j, i : 0}, a
     }
 
     var l = b.documentElement, m = a.setTimeout, n = b.getElementsByTagName("script")[0], o = {}.toString, p = [], q = 0, r = "MozAppearance"in l.style, s = r && !!b.createRange().compareNode, t = s ? l : n.parentNode, l = a.opera && "[object Opera]" == o.call(a.opera), l = !!b.attachEvent && !l, u = r ? "object" : l ? "script" : "img", v = l ? "script" : u, w = Array.isArray || function (a) {
         return"[object Array]" == o.call(a)
-    }, x = [], y = {}, z = {timeout:function (a, b) {
+    }, x = [], y = {}, z = {timeout : function (a, b) {
         return b.length && (a.timeout = b[0]), a
     }}, A, B;
     B = function (a) {
         function b(a) {
-            var a = a.split("!"), b = x.length, c = a.pop(), d = a.length, c = {url:c, origUrl:c, prefixes:a}, e, f, g;
+            var a = a.split("!"), b = x.length, c = a.pop(), d = a.length, c = {url : c, origUrl : c, prefixes : a}, e, f, g;
             for (f = 0; f < d; f++)g = a[f].split("="), (e = z[g.shift()]) && (c = e(c, g));
             for (f = 0; f < b; f++)c = x[f](c);
             return c

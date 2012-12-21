@@ -20,10 +20,10 @@ define([], function () {
             }
 
             return {
-                name:"+",
-                output:output,
-                input:input,
-                inputs:["a", "b"]
+                name   : "+",
+                output : output,
+                input  : input,
+                inputs : ["a", "b"]
             }
         });
         var minus = (function () {
@@ -44,10 +44,10 @@ define([], function () {
             }
 
             return {
-                name:"-",
-                output:output,
-                input:input,
-                inputs:["a", "b"]
+                name   : "-",
+                output : output,
+                input  : input,
+                inputs : ["a", "b"]
             }
         });
         var mul = (function () {
@@ -68,10 +68,10 @@ define([], function () {
             }
 
             return {
-                name:"X",
-                output:output,
-                input:input,
-                inputs:["a", "b"]
+                name   : "X",
+                output : output,
+                input  : input,
+                inputs : ["a", "b"]
             }
         });
         var equals = (function () {
@@ -92,10 +92,10 @@ define([], function () {
             }
 
             return {
-                name:"=",
-                output:output,
-                input:input,
-                inputs:["a", "b"]
+                name   : "=",
+                output : output,
+                input  : input,
+                inputs : ["a", "b"]
             }
         });
 
@@ -121,10 +121,10 @@ define([], function () {
             }
 
             return {
-                name:"if",
-                output:output,
-                input:input,
-                inputs:["test", "then", "else"]
+                name   : "if",
+                output : output,
+                input  : input,
+                inputs : ["test", "then", "else"]
             }
         });
 
@@ -138,19 +138,19 @@ define([], function () {
             }
 
             return {
-                name:"" + a,
-                output:output,
-                input:input,
-                inputs:[]
+                name   : "" + a,
+                output : output,
+                input  : input,
+                inputs : []
             }
         })
         return {
-            plus:plus,
-            mul:mul,
-            constant:constant,
-            equals:equals,
-            minus:minus,
-            ifc:ifc
+            plus     : plus,
+            mul      : mul,
+            constant : constant,
+            equals   : equals,
+            minus    : minus,
+            ifc      : ifc
         }
     })();
     ;

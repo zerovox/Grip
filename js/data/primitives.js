@@ -1,158 +1,66 @@
 define([], function () {
+    var mul = {
+        name   : "multiply",
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a * b}}}
+            }}
+        },
+        inputs : ["a", "b"]
+    }
 
-    return (function () {
-
-        var plus = (function () {
-            var a;
-            var b;
-
-            function output() {
-                return a.output() + b.output();
-            }
-
-            function input(input, val) {
-                if (input === "a") {
-                    a = val;
-                }
-                if (input === "b") {
-                    b = val;
-                }
-            }
-
-            return {
-                name   : "+",
-                output : output,
-                input  : input,
-                inputs : ["a", "b"]
-            }
-        });
-        var minus = (function () {
-            var a;
-            var b;
-
-            function output() {
-                return a.output() - b.output();
-            }
-
-            function input(input, val) {
-                if (input === "a") {
-                    a = val;
-                }
-                if (input === "b") {
-                    b = val;
-                }
-            }
-
-            return {
-                name   : "-",
-                output : output,
-                input  : input,
-                inputs : ["a", "b"]
-            }
-        });
-        var mul = (function () {
-            var a;
-            var b;
-
-            function output() {
-                return a.output() * b.output();
-            }
-
-            function input(input, val) {
-                if (input === "a") {
-                    a = val;
-                }
-                if (input === "b") {
-                    b = val;
-                }
-            }
-
-            return {
-                name   : "X",
-                output : output,
-                input  : input,
-                inputs : ["a", "b"]
-            }
-        });
-        var equals = (function () {
-            var a;
-            var b;
-
-            function output() {
-                return a.output() === b.output();
-            }
-
-            function input(input, val) {
-                if (input === "a") {
-                    a = val;
-                }
-                if (input === "b") {
-                    b = val;
-                }
-            }
-
-            return {
-                name   : "=",
-                output : output,
-                input  : input,
-                inputs : ["a", "b"]
-            }
-        });
-
-        var ifc = (function () {
-            var a;
-            var b;
-            var c;
-
-            function output() {
-                return a.output() ? b.output() : c.output();
-            }
-
-            function input(input, val) {
-                if (input === "test") {
-                    a = val;
-                }
-                if (input === "then") {
-                    b = val;
-                }
-                if (input === "else") {
-                    c = val;
-                }
-            }
-
-            return {
-                name   : "if",
-                output : output,
-                input  : input,
-                inputs : ["test", "then", "else"]
-            }
-        });
-
-        var constant = (function (a) {
-            function output() {
-                return a;
-            }
-
-            function input() {
-                return;
-            }
-
-            return {
-                name   : "" + a,
-                output : output,
-                input  : input,
-                inputs : []
-            }
-        })
-        return {
-            plus     : plus,
-            mul      : mul,
-            constant : constant,
-            equals   : equals,
-            minus    : minus,
-            ifc      : ifc
+    var plus = {
+        name   : "plus",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a + b}}}
+            }}
         }
-    })();
-    ;
+    }
+
+    var minus = {
+        name   : "minus",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a - b}}}
+            }}
+        }
+    }
+
+    var equals = {
+        name   : "equals",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a === b}}}
+            }}
+        }
+    }
+
+    var ifc = {
+        inputs : ["test", "then", "els"],
+        name   : "if",
+        apply  : function () {
+            return {need : "test", cont : function (test) {
+                if (test)
+                    return {need : "then", cont : function (then) {return then}}
+                else
+                    return {need : "els", cont : function (els) {return els}}
+            }}
+        }
+    }
+
+    var constant = (function (arg) {
+        return {
+            name   : "const",
+            inputs : [],
+            apply  : function () {
+                return arg;
+            }}
+    })
+
+    return [mul, plus, constant, equals, minus, ifc]
 
 });

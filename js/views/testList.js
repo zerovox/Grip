@@ -13,7 +13,11 @@ define([
             this.render();
         },
         render     : function () {
-            var html = Mustache.render(TestListTemplate, {tests : this.tests.toJSON()});
+            var tests = this.tests.toJSON()
+            _.each(tests, function(test, index){
+                test.index = index;
+            })
+            var html = Mustache.render(TestListTemplate, {tests : tests});
             this.$el.html(html);
         }
     });

@@ -9,6 +9,7 @@ define([
             // Default
             'editor/:name'   : "switchEditor",
             'scenario/:name' : "switchScenario",
+            'test/run/:number'   : "runTest",
             '*actions'       : 'defaultAction'
         }
     });
@@ -21,6 +22,9 @@ define([
         var app_router = new AppRouter;
         app_router.on('route:switchEditor', function (name) {
             channels.editors.trigger("switch", name);
+        });
+        app_router.on('route:runTest', function (number) {
+            channels.tests.trigger("run", number);
         });
         app_router.on('route:switchScenario', function (name) {
             channels.scenarios.trigger("switch", name);

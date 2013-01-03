@@ -5,6 +5,8 @@ define(['backbone'], function (Backbone) {
 
     return {
         scenarios : newChannel(),
-        editors   : newChannel()
+        editors   : newChannel(),
+        tests     : newChannel(),
+        map : newChannel()
     }
 });

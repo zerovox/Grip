@@ -1,17 +1,14 @@
 {{#tests}}
 <tr>
-  <td>{{inputs}}</td>
-  <td>{{output}}</td>
-  <td><div href="#/test/{{inputs}}/{{output}}/" class="small alert button split dropdown">
-    <a href="#/test/{{inputs}}/{{output}}/">Run</a>
-    <span></span>
-    <ul>
-      <li><a href="#/test/{{inputs}}/{{output}}/full/">Run until completion</a></li>
-      <li><a href="#/test/{{inputs}}/{{output}}/rec/">Run until recursion</a></li>
-      <li class="divider"></li>
-      <li><a href="#/test/{{inputs}}/{{output}}/debug/">Run in Debug Mode</a></li>
-    </ul>
-  </div></td>
-  <td>{{status}}</td>
+    <td>{{inputs}}</td>
+    <td>{{output}}</td>
+    <td>
+        <ul class="button-group">
+            <li><a href="#/test/run/{{index}}" class="button small alert">Run</a></li>
+            <li><a href="#" class="button small alert">Run until first recursion</a></li>
+            <li><a href="#" class="button small alert">Debug</a></li>
+        </ul>
+    </td>
+    <td>{{status}}</td>
 </tr>
 {{/tests}}

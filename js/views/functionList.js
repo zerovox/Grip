@@ -1,11 +1,13 @@
 define([
     'backbone',
-    'mustache'
-], function (Backbone, Mustache) {
+    'fabric',
+    'channels'
+], function (Backbone, fabric, channels) {
 
     return Backbone.View.extend({
         initialize : function () {
             this.canvas = new fabric.Canvas('functionList', {renderOnAddition : false, selection : false, hoverCursor : 'default'});
+            this.firstRender = true;
         },
         set        : function (functionsCollection) {
             this.funcs = functionsCollection;
@@ -24,13 +26,14 @@ define([
             resize();
 
             var Function = fabric.util.createClass(fabric.Object, {
-                initialize : function (func, position) {
+                initialize : function (func, x, y) {
+                    if (typeof(y) === 'undefined') y = 0;
                     options = {}
                     this.height = 80;
                     this.width = 160;
                     padding = 20;
-                    options.top = this.height / 2 + padding
-                    options.left = position * this.width + (this.width / 2) + padding * (position + 1);
+                    options.top = y * this.height + (this.height / 2) + padding * (y + 1);
+                    options.left = x * this.width + (this.width / 2) + padding * (x + 1);
                     this.callSuper('initialize', options)
                     this.name = func.name;
                     this.inputs = func.inputs;
@@ -50,9 +53,8 @@ define([
                 }
 
             });
-            console.log("created function class");
             this.funcs.forEach(function (func, index) {
-                var funcObject = new Function(func.get("func")(), index)
+                var funcObject = new Function(func.get("func"), index)
                 //Disabling selection prevents canvas.on firing with this function object as a target, so instead we disable controls, borders and movement
                 funcObject.hasControls = funcObject.hasBorders = false;
                 funcObject.lockMovementY = true;
@@ -60,13 +62,18 @@ define([
                 funcObject.f = func;
                 canvas.add(funcObject);
             });
-            canvas.on({'mouse:down' : function (e) {
-                if (e.target !== undefined && e.target.f !== undefined) {
-                    console.log(e.target.f);
-                    //Fire event to add function to main map.
-                    //Or pass in the current map, and add it ourselves, then let the view for the map listen to changes and redraw apropriately
-                }
-            }});
+
+            if (this.firstRender) {
+                this.firstRender = false;
+                canvas.on({'mouse:down' : function (e) {
+                    if (e.target !== undefined && e.target.f !== undefined) {
+                        channels.map.trigger("add", e.target.f)
+
+                        //Fire event to add function to main map.
+                        //Or pass in the current map, and add it ourselves, then let the view for the map listen to changes and redraw apropriately
+                    }
+                }});
+            }
 
             canvas.renderAll();
 

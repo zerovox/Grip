@@ -8,7 +8,7 @@
 <!--[if IE 8]>
 <html class="no-js lt-ie9" lang="en"> <![endif]-->
 <!--[if gt IE 8]><!-->
-<html class="no-js" lang="en"> <!--<![endif]-->
+<html class="no-js" lang="en" xmlns="http://www.w3.org/1999/html"> <!--<![endif]-->
 <head>
     <meta charset="utf-8"/>
     <!-- Set the viewport width to device width for mobile -->
@@ -34,6 +34,10 @@
     <div class="two columns">
         <ul class="nav-bar vertical scenarioMenu">
         </ul>
+        <ul class="button-group even two-up">
+        <li><a href="#" data-reveal-id="testModal" class="button">Test Cases</a></li>
+        <li><a href="#" data-reveal-id="taskModal" class="button">Task Manager</a></li>
+            </ul>
     </div>
 
     <div class="ten columns">
@@ -45,17 +49,14 @@
             <canvas id="editorMap" resize="false"></canvas>
             <canvas id="functionList" resize="false"></canvas>
         </div>
-        <a href="#" data-reveal-id="exampleModal" class="button">Test Cases</a>
+
     </div>
 </div>
 
 
-<div id="exampleModal" class="reveal-modal expand">
+<div id="testModal" class="reveal-modal expand">
     <h2>Test Cases</h2>
-
-    <p>
-        2/2 tests passed
-    </p>
+    <p>2/2 tests passed</p>
 
     <!--<div class="nice alert progress"><span class="meter" style="width: 50%"></span></div>-->
     <div class="nice progress success"><span class="meter" style="width: 100%"></span></div>
@@ -74,6 +75,11 @@
     <a href="#" class="button">Add Test Case</a>
     <a class="close-reveal-modal">×</a>
 </div>
+
+<div id="taskModal" class="reveal-modal expand">
+
+</div>
+
 
 <!-- Included JS Files (Compressed) -->
 <!-- Initialize Foundation Plugins -->

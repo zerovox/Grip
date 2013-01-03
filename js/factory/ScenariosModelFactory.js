@@ -13,12 +13,12 @@ define([
 ], function (Backbone, ScenariosModel, ScenarioModel, EditorsModel, EditorModel, TestModel, FunctionModel, ScenarioCollection, EditorCollection, TestCollection, FunctionCollection) {
 
     return function (scenariosJSON, primatives) {
-        var slist = new ScenarioCollection()
-        var scenarios = new ScenariosModel({list:slist})
+        var sList = new ScenarioCollection()
+        var scenarios = new ScenariosModel({list:sList})
         var fs = true
         _.each(scenariosJSON, function (scenario) {
-            var elist = new EditorCollection()
-            var editors = new EditorsModel({list:elist})
+            var eList = new EditorCollection()
+            var editors = new EditorsModel({list:eList})
             var s = new ScenarioModel({name:scenario.name, editors:editors})
             var es = true
             _.each(scenario.editors, function (editor) {
@@ -29,7 +29,7 @@ define([
                     t.set({status:"Not yet run"});
                     tests.add(t);
                 })
-                elist.add(e)
+                eList.add(e)
                 if (es) {
                     editors.set({active:e})
                     e.set({active:true})
@@ -37,20 +37,19 @@ define([
                 }
             });
 
-            var flist = new FunctionCollection();
-            s.set({functions:flist})
-            _.each(scenario.functions, function (fname) {
+            var fList = new FunctionCollection();
+            s.set({functions:fList})
+            _.each(scenario.functions, function (fName) {
                 var f = new FunctionModel();
-                f.set({func:primatives[fname]})
-                console.log(f);
-                flist.add(f);
+                f.set({func: _.find(primatives, function(prim){return prim.name === fName})})
+                fList.add(f);
             });
             if (fs) {
                 fs = false
                 scenarios.set({active:s})
                 s.set({active:true})
             }
-            slist.add(s)
+            sList.add(s)
         });
         return scenarios;
     }

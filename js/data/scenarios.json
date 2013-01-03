@@ -6,15 +6,17 @@
                 "name"  : "square",
                 "map"   : {
                     "inputs" : ["argument"],
-                    "map"    : [
+                    "output" : 0,
+                    "functions"    : [
                         {
-                            "function" : "X",
-                            "inputs"   : {
-                                "a" : "argument",
-                                "b" : "argument"
-                            },
-                            "x"        : 5,
-                            "y"        : 5
+                            "function" : "multiply",
+                            "x"        : 200,
+                            "y"        : 200
+                        },
+                        {
+                            "function" : "multiply",
+                            "x"        : 300,
+                            "y"        : 300
                         }
                     ]
 
@@ -33,7 +35,22 @@
             },
             {
                 "name"  : "squares",
-                "map"   : {},
+                "map"   : {
+                    "inputs" : ["argument"],
+                    "output" : 0,
+                    "functions"    : [
+                        {
+                            "function" : "multiply",
+                            "inputs"   : {
+                                "a" : "argument",
+                                "b" : "argument"
+                            },
+                            "x"        : 200,
+                            "y"        : 200
+                        }
+                    ]
+
+                },
                 "tests" : [
                     {
                         "inputs" : [2],
@@ -48,7 +65,7 @@
             }
         ],
         "functions" : [
-            "mul"
+            "multiply"
         ]
     },
     {
@@ -73,7 +90,7 @@
         "functions" : [
             "plus",
             "minus",
-            "mul"
+            "multiply"
         ]
     }
 

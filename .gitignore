@@ -1,0 +1,4 @@
+# JetBrains WebStorm (and IntelliJ IDEA) use .idea/ to store project config files
+.idea/
+# I use mongoose as a local HTTP server, loading javascript from "file://..." doesn't always work as expected
+mongoose-3.3.exe

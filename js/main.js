@@ -5,7 +5,9 @@ require.config({
         backbone:'libs/backbone.min',
         templates:'../templates',
         mustache:"libs/mustache",
-        fabric:"libs/fabric.wrap"
+        fabric:"libs/fabric.wrap",
+        primitives : "data/prim.wrap"
+
     },
     shim:{
         'backbone':{

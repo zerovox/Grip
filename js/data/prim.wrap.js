@@ -1,3 +1,3 @@
 define(["data/primitives"], function () {
-    return primatives;
+    return primitives;
 });

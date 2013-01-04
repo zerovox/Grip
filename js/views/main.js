@@ -10,7 +10,7 @@ define([
     'views/TaskList',
     'factory/ScenariosModelFactory',
     'libs/text!data/scenarios.json',
-    'data/primitives',
+    'primitives',
     'channels'
 ], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 

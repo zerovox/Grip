@@ -5,12 +5,12 @@ define([
 ], function (Backbone, fabric, channels) {
 
     return Backbone.View.extend({
-        initialize  : function () {
+        initialize    : function () {
             var that = this;
             var canvas = this.canvas = new fabric.Canvas('editorMap', {selection : false});
             $(window).resize(function () {that.resize()});
 
-            canvas.findTarget = (function (originalFn) {
+           canvas.findTarget = (function (originalFn) {
                 return function () {
                     var target = originalFn.apply(this, arguments);
                     if (target) {
@@ -31,10 +31,10 @@ define([
             })(canvas.findTarget);
 
             canvas.on('object:over', function (e) {
-                    e.target.oldfill = e.target.getFill();
+                e.target.oldfill = e.target.getFill();
 
                 //If hover over wires or functions, show remove target, in center, on click remove object
-                if(e.target.type !== undefined && e.target.type === "wire")
+                if (e.target.type !== undefined && e.target.type === "wire")
                     e.target.setFill('red');
                 else
                     e.target.setFill('#2BA6CB');
@@ -50,15 +50,22 @@ define([
             var fromOutput = false;
             var fromInput = false;
             var wire = null;
-            var toWire = null;
+            var source = null;
 
             canvas.on({'mouse:down' : function (e) {
-                if (e.target !== undefined && e.target.type === "functionOutput") {
+                var target = e.target
+                if (target !== undefined && target.type === "functionOutput") {
                     canvas.remove(wire);
                     if (fromInput) {
-                        if (e.target.func !== toWire.func) {
-                            canvas.remove(toWire.wire);
-                            that.wireUp(toWire.func, e.target.func, toWire, e.target);
+                        if (target.func !== source.func) {
+                            that.wireUp(source.func, target.func, source, target)
+                            if (source.type === "output")
+                                that.editor.get("map").output = target.func.functionModel.name
+                            else if (target.func.functionModel !== undefined)
+                                source.func.functionModel.inputs[source.name] = target.func.functionModel.name
+                            else
+                                source.func.functionModel.inputs[source.name] = target.func.inputName
+
                         }
                     } else {
                         fromOutput = true;
@@ -69,15 +76,21 @@ define([
                         })
                         canvas.add(wire);
                         wire.sendToBack();
-                        toWire = e.target;
+                        source = target;
                     }
                     fromInput = false;
-                } else if (e.target !== undefined && (e.target.type === "input" || e.target.type === "output")) {
+                } else if (target !== undefined && (target.type === "input" || target.type === "output")) {
                     canvas.remove(wire);
                     if (fromOutput) {
-                        if (e.target.func !== toWire.func) {
-                            canvas.remove(e.target.wire);
-                            that.wireUp(e.target.func, toWire.func, e.target, toWire);
+                        if (target.func !== source.func) {
+                            that.wireUp(target.func, source.func, target, source);
+
+                            if (target.type === "output")
+                                that.editor.get("map").output = source.func.functionModel.name
+                            else if (source.func.functionModel !== undefined)
+                                target.func.functionModel.inputs[target.name] = source.func.functionModel.name
+                            else
+                                target.func.functionModel.inputs[target.name] = source.func.inputName
                         }
                     } else {
                         fromInput = true;
@@ -88,10 +101,10 @@ define([
                         })
                         canvas.add(wire);
                         wire.sendToBack();
-                        toWire = e.target;
+                        source = target;
                     }
                     fromOutput = false;
-                } else if (e.target !== undefined && e.target.type === "wire"){
+                } else if (target !== undefined && target.type === "wire") {
                     console.log("remove wire")
                 } else {
                     fromOutput = fromInput = false;
@@ -106,65 +119,62 @@ define([
                 }
             }})
 
-            channels.map.on("add", function(func){
-                var funcModel = {function: func.get("func").name,y:0,x:0};
+            channels.map.on("add", function (func) {
+                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}};
                 this.newFunction(func.get("func"), funcModel)
-                this.editor.get("map").functions.push(funcModel);
+                this.editor.get("map").functions[funcModel.name] = funcModel;
             }, this);
         },
-        set         : function (editorModel, functionsCollection) {
+        set           : function (editorModel, functionsCollection) {
             this.editor = editorModel
+            if(editorModel.get("map").functions === undefined)
+                editorModel.get("map").functions = {}
+            if(editorModel.get("map").inputs === undefined)
+                editorModel.get("map").inputs = []
             this.functions = functionsCollection
             this.resize()
         },
-        render      : function () {
+        render        : function () {
             var canvas = this.canvas
             var map = this.editor.get("map")
             canvas.clear()
 
             //Store an ordered list of functions. Ordering is the same as the original model. Used to wire up the view.
-            var functions = []
+            var functions = {}
             //For each function, add to canvas then add to list above.
-            _.each(map.functions, function (func, index) {
+            _.each(map.functions, function (func, name) {
                 var fullFunction = this.functions.find(function (funcp) {
                     return funcp.get("func").name === func.function;
                 })
                 //Find the 'real' function that corresponds to this functionModel
-                functions.push(this.newFunction(fullFunction.get("func"), func));
+                func.name = name;
+                functions[name] = this.newFunction(fullFunction.get("func"), func);
             }, this)
 
             //Store a mapping of arguments based on name. Used to wire up the view
-            var inputs = {}
             //For each input, add to canvas and then add to the mapping above
             _.each(map.inputs, function (inputName, index) {
-                inputs[inputName] = this.newInput(inputName, index, this.editor.get("map").inputs.length);
+                functions[inputName] = this.newInput(inputName, index, this.editor.get("map").inputs.length);
             }, this);
 
             //For each function, add a wire from any inputs to their targets
             _.each(functions, function (func) {
                 _.each(func.inputs, function (inp) {
                     if (inp.wireTo !== undefined) {
-                        if (_.isString(inp.wireTo)) {
-                            this.wireUp(func, undefined, inp, inputs[inp.wireTo].output)
-                        } else {
-                            this.wireUp(func, functions[inp.wireTo], inp, functions[inp.wireTo].output)
-                        }
+                        this.wireUp(func, functions[inp.wireTo], inp, functions[inp.wireTo].output)
                     }
                 }, this);
             }, this)
 
             var out = this.newOutput();
             if (map.output !== undefined) {
-                if (_.isString(map.output)) {
-                    this.wireUp(undefined, undefined, out, inputs[map.output].output)
-                } else {
-                    this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
-                }
+                this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
             }
 
         },
-        wireUp      : function (func, func2, inp, out) {
+        wireUp        : function (func, func2, inp, out) {
             var canvas = this.canvas;
+            canvas.remove(inp.wire)
 
             var wire = new fabric.Line([inp.getLeft(), inp.getTop(), out.getLeft(), out.getTop()], {
                 fill        : '#2284A1',
@@ -202,7 +212,7 @@ define([
             rewire(inp);
             rewire2(out);
         },
-        newInput    : function (name, x, y) {
+        newInput      : function (name, x, y) {
             var canvas = this.canvas;
             var height = 40;
             var width = 160
@@ -220,7 +230,7 @@ define([
             canvas.add(output)
             return box;
         },
-        Function    : fabric.util.createClass(fabric.Object, {
+        Function      : fabric.util.createClass(fabric.Object, {
             initialize : function (name, x, y, options) {
                 this.height = x;
                 this.width = y;
@@ -241,11 +251,10 @@ define([
                 ctx.fillStyle = "#fff"
                 ctx.textAlign = 'center'
                 ctx.fillText(this.name, 0, 0, this.width - 20);
-                this.test = "test2"
             }
 
         }),
-        newFunction : function (funcReal, func) {
+        newFunction   : function (funcReal, func) {
             var canvas = this.canvas;
             var height = Math.max(40, 40 * funcReal.inputs.length);
             var width = 160
@@ -255,6 +264,7 @@ define([
             canvas.add(box)
             box.inputs = {}
             _.each(funcReal.inputs, function (name, index) {
+
                 var input = new fabric.Circle({radius : 10, fill : 'grey'})
                 input.hasControls = input.hasBorders = false;
                 input.lockMovementX = input.lockMovementY = true;
@@ -274,6 +284,7 @@ define([
                 if (func.inputs !== undefined)
                     input.wireTo = func.inputs[name]
                 input.func = box;
+                input.name = name;
                 box.inputs[name] = input
             })
 
@@ -307,7 +318,7 @@ define([
             box.functionModel = func;
             return box;
         },
-        newOutput   : function () {
+        newOutput     : function () {
             var canvas = this.canvas;
             var box = new fabric.Circle({radius : 30, fill : 'grey', top : (canvas.height / 2), left : canvas.width})
 
@@ -318,7 +329,7 @@ define([
             canvas.add(box)
             return box;
         },
-        resize      : function () {
+        resize        : function () {
             var canvas = this.canvas;
             var h = Math.max(400, ($(window).height() - 200) * 0.9);
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
@@ -327,6 +338,12 @@ define([
 
             //We re-render every time the window is resized. Prevents elements going off the edge of the screen
             this.render();
+        }, createGUID : function () {
+            //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a build in function
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
         }
     });
 

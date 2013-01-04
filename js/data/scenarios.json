@@ -5,20 +5,28 @@
             {
                 "name"  : "square",
                 "map"   : {
-                    "inputs" : ["argument"],
-                    "output" : 0,
-                    "functions"    : [
-                        {
+                    "inputs"    : ["argument"],
+                    "output"    : "a",
+                    "functions" : {
+                        "a" : {
                             "function" : "multiply",
                             "x"        : 200,
-                            "y"        : 200
+                            "y"        : 200,
+                            "inputs"   : {
+                                "a" : "b",
+                                "b" : "b"
+                            }
                         },
-                        {
+                        "b" : {
                             "function" : "multiply",
                             "x"        : 300,
-                            "y"        : 300
+                            "y"        : 300,
+                            "inputs"   : {
+                                "a" : "argument",
+                                "b" : "argument"
+                            }
                         }
-                    ]
+                    }
 
                 },
                 "tests" : [
@@ -36,10 +44,10 @@
             {
                 "name"  : "squares",
                 "map"   : {
-                    "inputs" : ["argument"],
-                    "output" : 0,
-                    "functions"    : [
-                        {
+                    "inputs"    : ["argument"],
+                    "output"    : "a",
+                    "functions" : {
+                        "a" : {
                             "function" : "multiply",
                             "inputs"   : {
                                 "a" : "argument",
@@ -48,7 +56,7 @@
                             "x"        : 200,
                             "y"        : 200
                         }
-                    ]
+                    }
 
                 },
                 "tests" : [

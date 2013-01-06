@@ -6,7 +6,8 @@ require.config({
         templates:'../templates',
         mustache:"libs/mustache",
         fabric:"libs/fabric.wrap",
-        primitives : "data/prim.wrap"
+        primitives : "data/prim.wrap",
+        alertify : "libs/alertify.min"
 
     },
     shim:{

@@ -1,0 +1,121 @@
+/**
+ * Default Look and Feel
+ */
+.alertify,
+.alertify-log {
+    font-family: sans-serif;
+}
+
+.alertify {
+    background: #FFF;
+    border-radius: 0px;
+    box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 10px 1 0px;
+    box-shadow: rgba(0, 0, 0, 0.40) 0px 0px 2000px 2000px;
+    -webkit-background-clip: padding; /* Safari 4? Chrome 6? */
+    -moz-background-clip: padding; /* Firefox 3.6 */
+    background-clip: padding-box; /* Firefox 4, Safari 5, Opera 10, IE 9 */
+}
+
+.alertify-text {
+    border: 1px solid #CCC;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.alertify-button {
+    width: auto;
+    background: #2ba6cb;
+    border: 1px solid #1e728c;
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    margin: 0;
+    outline: none;
+    padding: 10px 20px 11px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    -webkit-transition: background-color 0.15s ease-in-out;
+    -moz-transition: background-color 0.15s ease-in-out;
+    -o-transition: background-color 0.15s ease-in-out;
+    transition: background-color 0.15s ease-in-out; /* Hovers */
+    /* Sizes */
+    /* Colors */
+    /* Radii */
+    /* Layout */
+    /* Disabled ---------- */
+}
+
+.alertify-button:hover {
+    color: white;
+    background-color: #2284a1;
+}
+
+.alertify-button:active {
+    -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
+    -moz-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2) inset;
+}
+
+.alertify-button:focus {
+    -webkit-box-shadow: 0 0 4px #2ba6cb, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 0 4px #2ba6cb, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 0 4px #2ba6cb, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    color: white;
+}
+
+.alertify-button-cancel {
+    background-color: #c60f13;
+    border: 1px solid #7f0a0c;
+}
+
+.alertify-button-cancel:hover {
+    background-color: #970b0e;
+}
+
+.alertify-button-cancel:focus {
+    -webkit-box-shadow: 0 0 4px #c60f13, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 0 4px #c60f13, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 0 4px #c60f13, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+.alertify-button-ok {
+    background-color: #5da423;
+    border: 1px solid #396516;
+}
+
+.alertify-button-ok:hover {
+    background-color: #457a1a;
+}
+
+.alertify-button-ok:focus {
+    -webkit-box-shadow: 0 0 5px #5da423, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    -moz-box-shadow: 0 0 5px #5da423, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+    box-shadow: 0 0 5px #5da423, 0 1px 0 rgba(255, 255, 255, 0.5) inset;
+}
+
+.alertify-log {
+    background: #1F1F1F;
+    background: rgba(0, 0, 0, .9);
+    padding: 15px;
+    border-radius: 4px;
+    color: #FFF;
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, .5);
+}
+
+.alertify-log-error {
+    background: #FE1A00;
+    background: rgba(254, 26, 0, .9);
+}
+
+.alertify-log-success {
+    background: #5CB811;
+    background: rgba(92, 184, 17, .9);
+}

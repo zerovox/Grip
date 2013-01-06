@@ -17,6 +17,8 @@
     <!-- Included CSS Files (Uncompressed) -->
     <link rel="stylesheet" href="css/foundation.css">
     <link rel="stylesheet" href="css/extra.css">
+    <link rel="stylesheet" href="css/alertify.core.css">
+    <link rel="stylesheet" href="css/alertify.default.css">
     <script src="js/foundation.modernizr.js"></script>
 </head>
 <body>
@@ -38,6 +40,11 @@
         <li><a href="#" data-reveal-id="testModal" class="button">Test Cases</a></li>
         <li><a href="#" data-reveal-id="taskModal" class="button">Task Manager</a></li>
             </ul>
+        <ul class="button-group even three-up alert small" id="controlBar">
+            <li><a href="#" class="button alert tiny" id="addInput">Add input</a></li>
+            <li><a href="#" class="button alert tiny" id="autoArrange">Auto arrange</a></li>
+            <li><a href="#" class="button alert tiny" id="save">Save</a></li>
+        </ul>
     </div>
 
     <div class="ten columns">
@@ -72,7 +79,7 @@
         <tbody class="testTableBody">
         </tbody>
     </table>
-    <a href="#" class="button">Add Test Case</a>
+    <a href="#" class="button" id="addTestCase">Add Test Case</a>
     <a class="close-reveal-modal">×</a>
 </div>
 

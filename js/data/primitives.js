@@ -52,14 +52,20 @@ var primitives = (function () {
         }
     }
 
-    var constant = (function (arg) {
-        return {
-            name   : "const",
-            inputs : [],
-            apply  : function () {
-                return arg;
-            }}
-    })
+    var constant = {
+        name   : "constant",
+        arg    : true,
+        'new'  : function (arg) {
+            return {
+                name   : "constant",
+                inputs : [],
+                arg    : arg,
+                apply  : function () {
+                    return arg;
+                }
+            }
+        }
+    }
 
     return [mul, plus, constant, equals, minus, ifc];
 })();

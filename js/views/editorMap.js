@@ -10,7 +10,7 @@ define([
             var canvas = this.canvas = new fabric.Canvas('editorMap', {selection : false});
             $(window).resize(function () {that.resize()});
 
-           canvas.findTarget = (function (originalFn) {
+            canvas.findTarget = (function (originalFn) {
                 return function () {
                     var target = originalFn.apply(this, arguments);
                     if (target) {
@@ -120,16 +120,23 @@ define([
             }})
 
             channels.map.on("add", function (func) {
-                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}};
+                //TODO: maybe we should only send func.get("func"). Is func used anywhere without this?
+                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg:func.get("func").arg};
                 this.newFunction(func.get("func"), funcModel)
                 this.editor.get("map").functions[funcModel.name] = funcModel;
+            }, this);
+
+            channels.map.on("addInput", function (name) {
+                console.log("addInput fired");
+                this.editor.get("map").inputs.push(name);
+                this.render();
             }, this);
         },
         set           : function (editorModel, functionsCollection) {
             this.editor = editorModel
-            if(editorModel.get("map").functions === undefined)
+            if (editorModel.get("map").functions === undefined)
                 editorModel.get("map").functions = {}
-            if(editorModel.get("map").inputs === undefined)
+            if (editorModel.get("map").inputs === undefined)
                 editorModel.get("map").inputs = []
             this.functions = functionsCollection
             this.resize()
@@ -231,11 +238,12 @@ define([
             return box;
         },
         Function      : fabric.util.createClass(fabric.Object, {
-            initialize : function (name, x, y, options) {
+            initialize : function (name, x, y, options, arg) {
                 this.height = x;
                 this.width = y;
                 this.callSuper('initialize', options)
                 this.name = name;
+                this.name = arg;
             },
             _render    : function (ctx) {
                 //ctx :: CanvasRenderingContext2D
@@ -250,7 +258,10 @@ define([
                 ctx.fill();
                 ctx.fillStyle = "#fff"
                 ctx.textAlign = 'center'
-                ctx.fillText(this.name, 0, 0, this.width - 20);
+                if(this.arg !== undefined)
+                    ctx.fillText(this.arg, 0, 0, this.width - 20);
+                else
+                    ctx.fillText(this.name, 0, 0, this.width - 20);
             }
 
         }),
@@ -259,7 +270,7 @@ define([
             var height = Math.max(40, 40 * funcReal.inputs.length);
             var width = 160
             var options = {top : func.y, left : func.x};
-            var box = new this.Function(funcReal.name, height, width, options);
+            var box = new this.Function(funcReal.name, height, width, options, func.arg);
             box.hasControls = box.hasBorders = false;
             canvas.add(box)
             box.inputs = {}

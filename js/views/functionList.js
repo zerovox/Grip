@@ -1,8 +1,9 @@
 define([
     'backbone',
     'fabric',
-    'channels'
-], function (Backbone, fabric, channels) {
+    'channels',
+    'alertify'
+], function (Backbone, fabric, channels, alertify) {
 
     return Backbone.View.extend({
         initialize : function () {
@@ -67,7 +68,17 @@ define([
                 this.firstRender = false;
                 canvas.on({'mouse:down' : function (e) {
                     if (e.target !== undefined && e.target.f !== undefined) {
-                        channels.map.trigger("add", e.target.f)
+                        if (e.target.f.get("func").arg === true) {
+                            alertify.prompt("Choose a value for the constant:", function(b, str){
+                                if(b){
+                                    var newFunc = new e.target.f.collection.model()
+                                    newFunc.set({func : e.target.f.get("func")['new'](str)})
+                                    channels.map.trigger("add", newFunc);
+                                }
+                            })
+                        } else {
+                            channels.map.trigger("add", e.target.f)
+                        }
 
                         //Fire event to add function to main map.
                         //Or pass in the current map, and add it ourselves, then let the view for the map listen to changes and redraw apropriately

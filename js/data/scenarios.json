@@ -98,7 +98,8 @@
         "functions" : [
             "plus",
             "minus",
-            "multiply"
+            "multiply",
+            "constant"
         ]
     }
 

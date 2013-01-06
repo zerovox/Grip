@@ -6,10 +6,10 @@ define([
 
     return Backbone.View.extend({
         el         : '#taskModal',
-        initialize : function (testCollection) {
+        initialize : function () {
             this.tasks = []
         },
-        runTest    : function (test, editor, functions) {
+        runTest    : function (test, editor) {
             var arguments = test.get("inputs")
             var output = test.get("output")
             var test = { name : editor.get("name"), inputs : arguments, output : output, status : "running"}

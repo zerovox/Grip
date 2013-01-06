@@ -120,9 +120,8 @@ define([
             }})
 
             channels.map.on("add", function (func) {
-                //TODO: maybe we should only send func.get("func"). Is func used anywhere without this?
-                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.get("func").arg};
-                this.newFunction(func.get("func"), funcModel)
+                var funcModel = {function : func.name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.arg};
+                this.newFunction(func, funcModel)
                 this.editor.get("map").functions[funcModel.name] = funcModel;
             }, this);
 

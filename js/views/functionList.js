@@ -71,13 +71,12 @@ define([
                         if (e.target.f.get("func").arg === true) {
                             alertify.prompt("Choose a value for the constant:", function(b, str){
                                 if(b){
-                                    var newFunc = new e.target.f.collection.model()
-                                    newFunc.set({func : e.target.f.get("func")['new'](str)})
-                                    channels.map.trigger("add", newFunc);
+                                    var func = e.target.f.get("func")['new'](str);
+                                    channels.map.trigger("add", func);
                                 }
                             })
                         } else {
-                            channels.map.trigger("add", e.target.f)
+                            channels.map.trigger("add", e.target.f.get("func"))
                         }
 
                         //Fire event to add function to main map.

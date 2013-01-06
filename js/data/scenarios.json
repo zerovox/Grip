@@ -55,6 +55,13 @@
                             },
                             "x"        : 200,
                             "y"        : 200
+                        },
+                        "b" : {
+                            "function" : "constant",
+                            "inputs"   : {},
+                            "arg"      : 10,
+                            "x"        : 200,
+                            "y"        : 200
                         }
                     }
 
@@ -73,7 +80,8 @@
             }
         ],
         "functions" : [
-            "multiply"
+            "multiply",
+            "constant"
         ]
     },
     {

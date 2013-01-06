@@ -5,7 +5,7 @@ define([
 ], function (Backbone, fabric, channels) {
 
     return Backbone.View.extend({
-        initialize    : function () {
+        initialize  : function () {
             var that = this;
             var canvas = this.canvas = new fabric.Canvas('editorMap', {selection : false});
             $(window).resize(function () {that.resize()});
@@ -121,7 +121,7 @@ define([
 
             channels.map.on("add", function (func) {
                 //TODO: maybe we should only send func.get("func"). Is func used anywhere without this?
-                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg:func.get("func").arg};
+                var funcModel = {function : func.get("func").name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.get("func").arg};
                 this.newFunction(func.get("func"), funcModel)
                 this.editor.get("map").functions[funcModel.name] = funcModel;
             }, this);
@@ -132,7 +132,7 @@ define([
                 this.render();
             }, this);
         },
-        set           : function (editorModel, functionsCollection) {
+        set         : function (editorModel, functionsCollection) {
             this.editor = editorModel
             if (editorModel.get("map").functions === undefined)
                 editorModel.get("map").functions = {}
@@ -141,7 +141,7 @@ define([
             this.functions = functionsCollection
             this.resize()
         },
-        render        : function () {
+        render      : function () {
             var canvas = this.canvas
             var map = this.editor.get("map")
             canvas.clear()
@@ -155,7 +155,14 @@ define([
                 })
                 //Find the 'real' function that corresponds to this functionModel
                 func.name = name;
-                functions[name] = this.newFunction(fullFunction.get("func"), func);
+                var ff;
+                if (func.arg !== undefined) {
+                    ff = fullFunction.get("func")['new'](func.arg);
+                } else {
+                    ff = fullFunction.get("func");
+                }
+                functions[name] = this.newFunction(ff, func);
+
             }, this)
 
             //Store a mapping of arguments based on name. Used to wire up the view
@@ -179,7 +186,7 @@ define([
             }
 
         },
-        wireUp        : function (func, func2, inp, out) {
+        wireUp      : function (func, func2, inp, out) {
             var canvas = this.canvas;
             canvas.remove(inp.wire)
 
@@ -219,7 +226,7 @@ define([
             rewire(inp);
             rewire2(out);
         },
-        newInput      : function (name, x, y) {
+        newInput    : function (name, x, y) {
             var canvas = this.canvas;
             var height = 40;
             var width = 160
@@ -237,13 +244,13 @@ define([
             canvas.add(output)
             return box;
         },
-        Function      : fabric.util.createClass(fabric.Object, {
+        Function    : fabric.util.createClass(fabric.Object, {
             initialize : function (name, x, y, options, arg) {
                 this.height = x;
                 this.width = y;
                 this.callSuper('initialize', options)
                 this.name = name;
-                this.name = arg;
+                this.arg = arg;
             },
             _render    : function (ctx) {
                 //ctx :: CanvasRenderingContext2D
@@ -258,14 +265,14 @@ define([
                 ctx.fill();
                 ctx.fillStyle = "#fff"
                 ctx.textAlign = 'center'
-                if(this.arg !== undefined)
+                if (this.arg !== undefined)
                     ctx.fillText(this.arg, 0, 0, this.width - 20);
                 else
                     ctx.fillText(this.name, 0, 0, this.width - 20);
             }
 
         }),
-        newFunction   : function (funcReal, func) {
+        newFunction : function (funcReal, func) {
             var canvas = this.canvas;
             var height = Math.max(40, 40 * funcReal.inputs.length);
             var width = 160
@@ -329,7 +336,7 @@ define([
             box.functionModel = func;
             return box;
         },
-        newOutput     : function () {
+        newOutput   : function () {
             var canvas = this.canvas;
             var box = new fabric.Circle({radius : 30, fill : 'grey', top : (canvas.height / 2), left : canvas.width})
 
@@ -340,7 +347,7 @@ define([
             canvas.add(box)
             return box;
         },
-        resize        : function () {
+        resize      : function () {
             var canvas = this.canvas;
             var h = Math.max(400, ($(window).height() - 200) * 0.9);
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
@@ -349,14 +356,16 @@ define([
 
             //We re-render every time the window is resized. Prevents elements going off the edge of the screen
             this.render();
-        }, createGUID : function () {
+        },
+        createGUID  : function () {
             //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a build in function
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         }
-    });
+    })
+        ;
 
 })
 ;

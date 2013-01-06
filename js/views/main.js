@@ -8,11 +8,12 @@ define([
     'views/EditorMap',
     'views/FunctionList',
     'views/TaskList',
+    'views/ControlBar',
     'factory/ScenariosModelFactory',
     'libs/text!data/scenarios.json',
     'primitives',
     'channels'
-], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
+], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
     function updateEditor(context) {
         context.editorList.set(context.scenarios.get("active").get("editors").get("list"))
@@ -41,6 +42,7 @@ define([
             this.functionList = new FunctionList();
 
             this.taskList = new TaskList();
+            this.controlBar = new ControlBar();
 
             //Load the initial UI
             updateScenario(this);
@@ -85,6 +87,7 @@ define([
 
                 //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
+
 
         },
         render     : function () {

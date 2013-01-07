@@ -31,11 +31,11 @@
                 },
                 "tests" : [
                     {
-                        "inputs" : [2],
+                        "inputs" : {"argument" : 2},
                         "output" : 4
                     },
                     {
-                        "inputs" : [3],
+                        "inputs" : {"argument" : 3},
                         "output" : 9
                     }
                 ],
@@ -68,11 +68,11 @@
                 },
                 "tests" : [
                     {
-                        "inputs" : [2],
+                        "inputs" : {"argument" : 2},
                         "output" : 4
                     },
                     {
-                        "inputs" : [3],
+                        "inputs" : {"argument" : 3},
                         "output" : 9
                     }
                 ],

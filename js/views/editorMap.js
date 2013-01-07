@@ -126,9 +126,12 @@ define([
             }, this);
 
             channels.map.on("addInput", function (name) {
-                console.log("addInput fired");
-                this.editor.get("map").inputs.push(name);
-                this.render();
+                if (_.contains(this.editor.get("map").inputs, name)) {
+                    console.log("log the fail reason here once we have logging included")
+                } else {
+                    this.editor.get("map").inputs.push(name);
+                    this.render();
+                }
             }, this);
         },
         set         : function (editorModel, functionsCollection) {

@@ -7,6 +7,7 @@ define(['backbone'], function (Backbone) {
         scenarios : newChannel(),
         editors   : newChannel(),
         tests     : newChannel(),
-        map : newChannel()
+        map       : newChannel(),
+        tasks     : newChannel()
     }
 });

@@ -1,8 +1,9 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/taskList.html'
-], function (Backbone, Mustache, TestListTemplate) {
+    'libs/text!templates/taskList.html',
+    'channels'
+], function (Backbone, Mustache, TaskListTemplate, channels) {
 
     return Backbone.View.extend({
         el         : '#taskModal',
@@ -10,25 +11,38 @@ define([
             this.tasks = []
         },
         runTest    : function (test, editor) {
+            var that = this;
             var arguments = test.get("inputs")
             var output = test.get("output")
-            var test = { name : editor.get("name"), inputs : arguments, output : output, status : "running"}
-            this.tasks.push(test)
+            var task = { name : editor.get("name"), inputs : arguments, output : output, running : true}
+            this.tasks.push(task)
             // TODO: spawn worker to run the test, set it to only send back success or fail events, nothing inbetween.
             var worker = new Worker('js/worker.js');
             worker.onmessage = function (result) {
                 if(result.data.log !== undefined){
                     console.log(result.data.log)
+                }else if(result.data.result !== undefined){
+                    worker.terminate();
+                    task.result = result.data.result
+                    task.running = false;
+                    channels.tasks.trigger("succeeded", task)
+                    that.render();
+                }else if(result.data.fail !== undefined){
+                    worker.terminate();
+                    task.running = false;
+                    task.failMsg = result.data.fail
+                    channels.tasks.trigger("failed", task)
+                    that.render();
                 }else{
-
+                    console.log("task debugging here")
                 }
             }
-            worker.postMessage({inputs:arguments, editor:editor.get("map")});
+            worker.postMessage({inputs:arguments, editor:editor.get("map"), debugLevel:0});
             this.render();
         },
         render     : function () {
             //TODO: Rerender on display
-            var html = Mustache.render(TestListTemplate, {tasks : this.tasks});
+            var html = Mustache.render(TaskListTemplate, {tasks : this.tasks, "toJSON": function() {return JSON.stringify(this);}});
             this.$el.html(html);
         }
     });

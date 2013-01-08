@@ -9,14 +9,17 @@ define([
         initialize : function () {
 
         },
-        set        : function (editor) {
+        set        : function (editor, debug) {
             this.editor = editor;
+            this.debug = debug;
             this.render();
         },
         render     : function () {
             var html = Mustache.render(EditorInfo, this.editor.toJSON());
-            this.$el.html(html);
-            //TODO: Highlight active scenario
+            if (this.debug)
+                this.$el.html("");
+            else
+                this.$el.html(html);
         }
     });
 

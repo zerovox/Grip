@@ -1,8 +1,7 @@
 define([
     'backbone',
-    'fabric',
-    'channels'
-], function (Backbone, fabric, channels) {
+    'fabric'
+], function (Backbone, fabric) {
 
     return Backbone.View.extend({
         el          : "#editorMap",
@@ -122,36 +121,34 @@ define([
                     canvas.renderAll()
                 }
             }})
-
-            channels.map.on("add", function (func) {
-                var funcModel = {function : func.name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.arg};
-                this.newFunction(func, funcModel)
-                this.editor.get("map").functions[funcModel.name] = funcModel;
-            }, this);
-
-            channels.map.on("addInput", function (name) {
-                if (_.contains(this.editor.get("map").inputs, name)) {
-                    console.log("log the fail reason here once we have logging included")
-                } else {
-                    this.editor.get("map").inputs.push(name);
-                    this.render();
-                    //TODO: avoid rendering everything, see if we can just re-render inputs and wires
-                }
-            }, this);
+        },
+        addFunction : function(func) {
+            var funcModel = {function : func.name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.arg};
+            this.newFunction(func, funcModel)
+            this.editorMap.functions[funcModel.name] = funcModel;
+        },
+        addInput    : function (name) {
+            if (_.contains(this.editorMap.inputs, name)) {
+                console.log("log the fail reason here once we have logging included")
+            } else {
+                this.editorMap.inputs.push(name);
+                this.render();
+                //TODO: avoid rendering everything, see if we can just re-render inputs and wires
+            }
         },
         set         : function (editorModel, functionsCollection) {
-            this.editor = editorModel
-            if (editorModel.get("map").functions === undefined)
-                editorModel.get("map").functions = {}
-            if (editorModel.get("map").inputs === undefined)
-                editorModel.get("map").inputs = []
+            this.editorMap = editorModel
+            if (this.editorMap.functions === undefined)
+                this.editorMap.functions = {}
+            if (this.editorMap.inputs === undefined)
+                this.editorMap.inputs = []
             if (this.functions === undefined || functionsCollection !== undefined)
                 this.functions = functionsCollection
             this.resize()
         },
         render      : function () {
             var canvas = this.canvas
-            var map = this.editor.get("map")
+            var map = this.editorMap
             canvas.clear()
 
             //Store an ordered list of functions. Ordering is the same as the original model. Used to wire up the view.
@@ -176,7 +173,7 @@ define([
             //Store a mapping of arguments based on name. Used to wire up the view
             //For each input, add to canvas and then add to the mapping above
             _.each(map.inputs, function (inputName, index) {
-                functions[inputName] = this.newInput(inputName, index, this.editor.get("map").inputs.length);
+                functions[inputName] = this.newInput(inputName, index, this.editorMap.inputs.length);
             }, this);
 
             //For each function, add a wire from any inputs to their targets

@@ -16,11 +16,11 @@ define([
 ], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
     function updateEditor(context) {
-        context.editorList.set(context.scenarios.get("active").get("editors"), this.debug)
-        context.testList.set(context.scenarios.get("active").get("editors").get("active").get("tests"), this.debug)
-        context.editorInfo.set(context.scenarios.get("active").get("editors").get("active"), this.debug)
-        context.editorMap.set(context.scenarios.get("active").get("editors").get("active"), context.scenarios.get("active").get("functions"), this.debug);
-        context.functionList.set(context.scenarios.get("active").get("functions"), this.debug);
+        context.editorList.set(context.scenarios.get("active").get("editors"), context.debug)
+        context.testList.set(context.scenarios.get("active").get("editors").get("active").get("tests"))
+        context.editorInfo.set(context.scenarios.get("active").get("editors").get("active"), context.debug)
+        context.editorMap.set(context.scenarios.get("active").get("editors").get("active").get("map"), context.scenarios.get("active").get("functions"), context.debug);
+        context.functionList.set(context.scenarios.get("active").get("functions"), context.debug);
     }
 
     function updateScenario(context) {
@@ -52,11 +52,15 @@ define([
 
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
-                this.scenarios.swap(name) && updateScenario(this);
+                this.debug = false
+                this.scenarios.swap(name)
+                updateScenario(this);
             }, this);
 
             channels.editors.on("switch", function (name) {
-                this.scenarios.get("active").get("editors").swap(name) && updateEditor(this);
+                this.debug = false
+                this.scenarios.get("active").get("editors").swap(name)
+                updateEditor(this);
             }, this);
 
             channels.tests.on("run", function (number) {
@@ -68,20 +72,45 @@ define([
                 //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
 
+            channels.tests.on("debug", function (number) {
+                var editor = this.scenarios.get("active").get("editors").get("active");
+                var test = editor.get("tests").at(number)
+                var functions = this.scenarios.get("active").get("functions")
+                this.taskList.runTest(test, editor, functions);
+                this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
 
-            //TODO: Only update editor if we change to/from debug view
-            channels.debug.on("enable", function(){
-                this.debug = true
-                updateEditor(this)
+                //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
 
-            channels.debug.on("disable", function(){
+            channels.map.on("add", function (func) {
+                if (!this.debug)
+                    this.editorMap.addFunction(func)
+            }, this);
+
+            channels.map.on("addInput", function (name) {
+                if (!this.debug)
+                    this.editorMap.addInput(name);
+            }, this);
+
+            //TODO: Set hasDebugData true when debug data is passed in.
+            //this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
+
+            //TODO: Only update editor if we change to/from debug view
+            channels.debug.on("enable", function () {
+                if (this.scenarios.get("active").get("editors").get("hasDebugData")) {
+                    this.debug = true
+                    updateEditor(this)
+                }
+            }, this)
+
+            channels.debug.on("disable", function () {
                 this.debug = false
                 updateEditor(this)
             }, this)
 
             channels.debug.on("update", function (editorMap) {
                 this.scenarios.get("active").get("editors").debugUpdate(editorMap) && updateEditor()
+
             }, this)
 
             channels.debug.on("stepIn", function (editorMap) {

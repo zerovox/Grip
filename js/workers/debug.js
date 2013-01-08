@@ -22,43 +22,50 @@ function fail(reason) {
 }
 
 function debug(editor) {
-    if(debugging)
+    if (debugging)
         self.postMessage({debug : editor})
 }
 
 function execute(func, editor, inputs) {
-    //Look for the function named f in our editor
-    var f = editor.functions[func]
-    //If the function isn't found, it must be an input, so return the inputs value
-    if (f === undefined)
-        return inputs[func]
-    //Set the function as active
-    f.active = true
-    //If debugging is enabled, send the current editor status to the task controller
-    debug(editor)
-    //Check the function cache for a result
-    if (resultCaching && f.result !== undefined) {
-        //cache hit, we don't need to repeat the calculations here
-    } else {
-        //cache not hit, must be the first time this function has been requested, so we must apply it
-        f.result = undefined;
-        var response = prims[f.function].apply()
-        while(f.result === undefined){
-            if (response.result === undefined) {
-                log("Requesting output from: " + f.inputs[response.need])
-                var evalArg = execute(f.inputs[response.need], editor, inputs)
-                var response = response.cont(evalArg)
+    var returnVal;
+    var stack = [];
+    stack.push({fName : func, action : "e"});
+
+    while (stack.length !== 0) {
+        var ft = stack.pop();
+        var f = editor.functions[ft.fName];
+        if (ft.action === "e") {
+            if (f === undefined) {
+                returnVal = inputs[ft.fName];
+            } else if (resultCaching && f.result !== undefined) {
+                returnVal = f.result
             } else {
+                f.active = true
+                f.result = undefined;
+                var response = prims[f.function].apply()
+                if (response.result !== undefined) {
+                    f.result = response.result;
+                    f.active = false
+                    returnVal = f.result
+                } else {
+                    stack.push({fName : ft.fName, action : "r", cont : response.cont})
+                    stack.push({fName : f.inputs[response.need], action : "e"})
+                }
+            }
+        } else if (ft.action === "r") {
+           var response = ft.cont(returnVal)
+            if (response.result !== undefined) {
                 f.result = response.result;
+                f.active = false
+                returnVal = f.result
+            } else {
+                stack.push({fName : ft.fName, action : "r", cont : response.cont})
+                stack.push({fName : f.inputs[response.need], action : "e"})
             }
         }
+
     }
-    //Since we have a result, deactivate the function
-    f.active = false
-    //If debugging is enabled, send the current editor status to the task controller
-    debug(editor)
-    //Return the result
-    return f.result
+    return returnVal;
 }
 
 self.onmessage = function (event) {

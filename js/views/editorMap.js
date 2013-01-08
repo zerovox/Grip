@@ -5,9 +5,11 @@ define([
 ], function (Backbone, fabric, channels) {
 
     return Backbone.View.extend({
+        el          : "#editorMap",
         initialize  : function () {
+            var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
+
             var that = this;
-            var canvas = this.canvas = new fabric.Canvas('editorMap', {selection : false});
             $(window).resize(function () {that.resize()});
 
             canvas.findTarget = (function (originalFn) {
@@ -143,7 +145,7 @@ define([
                 editorModel.get("map").functions = {}
             if (editorModel.get("map").inputs === undefined)
                 editorModel.get("map").inputs = []
-            if(this.functions === undefined || functionsCollection !== undefined)
+            if (this.functions === undefined || functionsCollection !== undefined)
                 this.functions = functionsCollection
             this.resize()
         },

@@ -5,7 +5,7 @@ define([
 ], function (Backbone, Mustache, EditorInfo) {
 
     return Backbone.View.extend({
-        el         : '.editorInfo',
+        el         : '#editorInfo',
         initialize : function () {
 
         },

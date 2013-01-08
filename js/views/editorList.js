@@ -5,7 +5,7 @@ define([
 ], function (Backbone, Mustache, EditorListTemplate) {
 
     return Backbone.View.extend({
-        el         : '.editorMenu',
+        el         : '#editorMenu',
         initialize : function () {
         },
         set        : function (editorCollection, debug) {

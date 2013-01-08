@@ -16,11 +16,11 @@ define([
 ], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
     function updateEditor(context) {
-        context.editorList.set(context.scenarios.get("active").get("editors").get("list"))
-        context.testList.set(context.scenarios.get("active").get("editors").get("active").get("tests"))
-        context.editorInfo.set(context.scenarios.get("active").get("editors").get("active"))
-        context.editorMap.set(context.scenarios.get("active").get("editors").get("active"), context.scenarios.get("active").get("functions"));
-        context.functionList.set(context.scenarios.get("active").get("functions"));
+        context.editorList.set(context.scenarios.get("active").get("editors"), this.debug)
+        context.testList.set(context.scenarios.get("active").get("editors").get("active").get("tests"), this.debug)
+        context.editorInfo.set(context.scenarios.get("active").get("editors").get("active"), this.debug)
+        context.editorMap.set(context.scenarios.get("active").get("editors").get("active"), context.scenarios.get("active").get("functions"), this.debug);
+        context.functionList.set(context.scenarios.get("active").get("functions"), this.debug);
     }
 
     function updateScenario(context) {
@@ -44,6 +44,9 @@ define([
             this.taskList = new TaskList();
             this.controlBar = new ControlBar();
 
+            //Don't start in debug mode
+            this.debug = false
+
             //Load the initial UI
             updateScenario(this);
 
@@ -63,6 +66,18 @@ define([
                 this.taskList.runTest(test, editor, functions);
 
                 //TODO: test.set("status") = "Running". then re-render the test case list
+            }, this)
+
+
+            //TODO: Only update editor if we change to/from debug view
+            channels.debug.on("enable", function(){
+                this.debug = true
+                updateEditor(this)
+            }, this)
+
+            channels.debug.on("disable", function(){
+                this.debug = false
+                updateEditor(this)
             }, this)
 
             channels.debug.on("update", function (editorMap) {

@@ -4,8 +4,7 @@ define([
 
     return Backbone.Model.extend({
         initialize: function(){
-          this.set({"debug" : false, "stackTrace" : []});
-
+          this.set({"hasDebugData" : false, "stackTrace" : []});
         },
         swap     : function (to) {
             var matchingEditors = this.get("list").where({name : to});

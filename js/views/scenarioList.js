@@ -1,7 +1,7 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/scenarioList.html'
+    'libs/text!templates/scenarioList.m'
 ], function (Backbone, Mustache, ScenarioListTemplate) {
 
     return Backbone.View.extend({

@@ -1,7 +1,7 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/testList.html',
+    'libs/text!templates/testList.m',
     'alertify'
 ], function (Backbone, Mustache, TestListTemplate, alertify) {
 

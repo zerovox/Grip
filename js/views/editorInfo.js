@@ -1,7 +1,7 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/editorInfo.html'
+    'libs/text!templates/editorInfo.m'
 ], function (Backbone, Mustache, EditorInfo) {
 
     return Backbone.View.extend({

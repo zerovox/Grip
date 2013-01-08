@@ -1,7 +1,7 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/taskList.html',
+    'libs/text!templates/taskList.m',
     'channels'
 ], function (Backbone, Mustache, TaskListTemplate, channels) {
 

@@ -116,8 +116,8 @@ define([
 
             canvas.on({'mouse:move' : function (e) {
                 if (fromOutput || fromInput) {
-                    wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY });
-                    wire.render(canvas.getContext())
+                    wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY })
+                    canvas.renderAll()
                 }
             }})
 

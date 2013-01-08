@@ -17,7 +17,7 @@ define([
             var task = { name : editor.get("name"), inputs : arguments, output : output, running : true}
             this.tasks.push(task)
             // TODO: spawn worker to run the test, set it to only send back success or fail events, nothing inbetween.
-            var worker = new Worker('js/worker.js');
+            var worker = new Worker('js/workers/debug.js');
             worker.onmessage = function (result) {
                 if(result.data.log !== undefined){
                     console.log(result.data.log)

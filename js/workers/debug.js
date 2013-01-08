@@ -41,9 +41,17 @@ function execute(func, editor, inputs) {
         //cache hit, we don't need to repeat the calculations here
     } else {
         //cache not hit, must be the first time this function has been requested, so we must apply it
+        f.result = undefined;
         var response = prims[f.function].apply()
-        //cont() takes the response from the function application, and returns the result after satisfying any arguments it depends on
-        f.result = cont(response, f, editor, inputs)
+        while(f.result === undefined){
+            if (response.result === undefined) {
+                log("Requesting output from: " + f.inputs[response.need])
+                var evalArg = execute(f.inputs[response.need], editor, inputs)
+                var response = response.cont(evalArg)
+            } else {
+                f.result = response.result;
+            }
+        }
     }
     //Since we have a result, deactivate the function
     f.active = false
@@ -51,17 +59,6 @@ function execute(func, editor, inputs) {
     debug(editor)
     //Return the result
     return f.result
-}
-
-function cont(response, f, editor, inputs) {
-    if (response.result === undefined) {
-        log("Requesting output from: " + f.inputs[response.need])
-        var evalArg = execute(f.inputs[response.need], editor, inputs)
-        var continuationResponse = response.cont(evalArg)
-        return cont(continuationResponse, f, editor, inputs)
-    } else {
-        return response.result;
-    }
 }
 
 self.onmessage = function (event) {

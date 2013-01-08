@@ -6,8 +6,9 @@ define([
 ], function (Backbone, fabric, channels, alertify) {
 
     return Backbone.View.extend({
+        el : "#functionList",
         initialize : function () {
-            this.canvas = new fabric.Canvas('functionList', {renderOnAddition : false, selection : false, hoverCursor : 'default'});
+            this.canvas = new fabric.Canvas(this.el, {renderOnAddition : false, selection : false, hoverCursor : 'default'});
             this.firstRender = true;
         },
         set        : function (functionsCollection) {

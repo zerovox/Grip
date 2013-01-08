@@ -5,7 +5,7 @@ define([
 ], function (Backbone, Mustache, ScenarioListTemplate) {
 
     return Backbone.View.extend({
-        el         : '.scenarioMenu',
+        el         : '#scenarioMenu',
         initialize : function () {
             this.set = function (scenarioCollection) {
                 this.scenarios = scenarioCollection;

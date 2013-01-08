@@ -39,6 +39,8 @@ define([
                 else
                     e.target.setFill('#2BA6CB');
                 canvas.renderAll();
+
+                //TODO: don't render all, see if we can just render the object and send it to correct height. might not be possible
             });
 
             canvas.on('object:out', function (e) {
@@ -115,7 +117,7 @@ define([
             canvas.on({'mouse:move' : function (e) {
                 if (fromOutput || fromInput) {
                     wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY });
-                    canvas.renderAll()
+                    wire.render(canvas.getContext())
                 }
             }})
 
@@ -131,6 +133,7 @@ define([
                 } else {
                     this.editor.get("map").inputs.push(name);
                     this.render();
+                    //TODO: avoid rendering everything, see if we can just re-render inputs and wires
                 }
             }, this);
         },
@@ -140,7 +143,8 @@ define([
                 editorModel.get("map").functions = {}
             if (editorModel.get("map").inputs === undefined)
                 editorModel.get("map").inputs = []
-            this.functions = functionsCollection
+            if(this.functions === undefined || functionsCollection !== undefined)
+                this.functions = functionsCollection
             this.resize()
         },
         render      : function () {
@@ -203,30 +207,20 @@ define([
             inp.wire = wire
             wire.sendToBack();
 
-            function rewire(inp) {
-                wire.set({ 'x1' : inp.getLeft(), 'y1' : inp.getTop() });
-                canvas.renderAll();
-            }
-
-            function rewire2(inp) {
-                wire.set({ 'x2' : inp.getLeft(), 'y2' : inp.getTop() });
-                canvas.renderAll();
+            function rewire() {
+                var context = canvas.getContext();
+                wire.set({ 'x1' : inp.getLeft(), 'y1' : inp.getTop() })
+                wire.set({ 'x2' : out.getLeft(), 'y2' : out.getTop() })
+                wire.render(context);
             }
 
             if (func !== undefined) {
-                func.on('moving', function () {
-                    rewire(inp)
-                    rewire2(out)
-                })
+                func.on('moving', rewire)
             }
             if (func2 !== undefined) {
-                func2.on('moving', function () {
-                    rewire(inp)
-                    rewire2(out)
-                })
+                func2.on('moving', rewire)
             }
-            rewire(inp);
-            rewire2(out);
+            rewire();
         },
         newInput    : function (name, x, y) {
             var canvas = this.canvas;
@@ -294,7 +288,7 @@ define([
                 function positionInput(box) {
                     input.setTop(box.getTop() - height / 2 + ((index + 1) / (funcReal.inputs.length + 1)) * height).setCoords();
                     input.setLeft(box.getLeft() - width / 2).setCoords();
-                    canvas.renderAll();
+                    input.render(canvas.getContext())
                 }
 
                 box.on('moving', function () {
@@ -319,7 +313,7 @@ define([
             function positionOutput(box) {
                 output.setTop(box.getTop()).setCoords();
                 output.setLeft(box.getLeft() + width / 2).setCoords();
-                canvas.renderAll();
+                output.render(canvas.getContext())
             }
 
             positionOutput(box);

@@ -49,37 +49,14 @@ define([
 
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
-                var matchingScenarios = this.scenarios.get("list").where({name : name});
-                if (matchingScenarios.length === 1) {
-                    //Avoid repeated re-rendering
-                    if (matchingScenarios[0] !== this.scenarios.get("active")) {
-                        matchingScenarios[0].set({active : true})
-                        this.scenarios.get("active").set({active : false});
-                        this.scenarios.set({active : matchingScenarios[0]});
-                        updateScenario(this);
-                    }
-                } else {
-                    console.log("No matching scenario, or duplicate scenario names", matchingScenarios);
-                }
+                this.scenarios.swap(name) && updateScenario(this);
             }, this);
 
             channels.editors.on("switch", function (name) {
-                var editorsModel = this.scenarios.get("active").get("editors")
-                var matchingEditors = editorsModel.get("list").where({name : name});
-                if (matchingEditors.length === 1) {
-                    //Avoid repeated re-rendering
-                    if (matchingEditors[0] !== editorsModel.get("active")) {
-                        matchingEditors[0].set({active : true})
-                        editorsModel.get("active").set({active : false});
-                        editorsModel.set({active : matchingEditors[0]});
-                        updateEditor(this);
-                    }
-                } else {
-                    console.log("No matching editor, or duplicate scenario names", matchingEditors);
-                }
+                this.scenarios.get("active").get("editors").swap(name) && updateEditor(this);
             }, this);
 
-            channels.tests.on("run", function(number){
+            channels.tests.on("run", function (number) {
                 var editor = this.scenarios.get("active").get("editors").get("active");
                 var test = editor.get("tests").at(number)
                 var functions = this.scenarios.get("active").get("functions")
@@ -88,6 +65,17 @@ define([
                 //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
 
+            channels.debug.on("update", function (editorMap) {
+                this.scenarios.get("active").get("editors").debugUpdate(editorMap) && updateEditor()
+            }, this)
+
+            channels.debug.on("stepIn", function (editorMap) {
+                this.scenarios.get("active").get("editors").debugStepIn(editorMap) && updateEditor()
+            }, this)
+
+            channels.debug.on("stepOut", function (editorMap) {
+                this.scenarios.get("active").get("editors").debugStepOut(editorMap) && updateEditor()
+            }, this)
 
         },
         render     : function () {
@@ -96,6 +84,6 @@ define([
 
 
 
-});
+    });
 
 });

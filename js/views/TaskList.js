@@ -34,7 +34,8 @@ define([
                     channels.tasks.trigger("failed", task)
                     that.render();
                 }else{
-                    console.log("task debugging here")
+                    //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
+                    channels.debug.trigger("update", result.data.debug);
                 }
             }
             worker.postMessage({inputs:arguments, editor:editor.get("map"), debugLevel:0});

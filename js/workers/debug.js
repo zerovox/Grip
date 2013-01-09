@@ -9,13 +9,11 @@ _.each(primitives, function (prim) {
 })
 
 self.onmessage = function (event) {
-
     if (event.data.editor !== undefined) {
-        if (editor.output === undefined)
+        if (event.data.editor.output === undefined)
             fail("No function wired to output")
-        else {
-            env = newEnv(editor.output, event.data.editor, event.data.inputs);
-        }
+        else
+            env = newEnv(event.data.editor.output, event.data.editor, event.data.inputs);
     } else if (event.data.step) {
         if (env === undefined) {
             fail("Worker not initialized")

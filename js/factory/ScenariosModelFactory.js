@@ -16,7 +16,6 @@ define([
         var scenarios = new ScenariosModel({all:sList})
         var fs = true
         _.each(scenariosJSON, function (scenario) {
-            //TODO: categories, not all or active
             var eList = new EditorCollection()
             var s = new ScenarioModel({name:scenario.name, list:eList})
             var es = true
@@ -25,7 +24,7 @@ define([
                 var e = new EditorModel({name:editor.name, map:editor.map, info:editor.info, tests:tests})
                 _.each(editor.tests, function (test) {
                     var t = new TestModel(test);
-                    t.set({status:"Not yet run"});
+                    t.set({finished:false, passed:false});
                     tests.add(t);
                 })
                 eList.add(e)

@@ -24,7 +24,7 @@
                     <li><a href="#/test/debug/{{index}}" class="button small alert">Debug</a></li>
                 </ul>
             </td>
-            <td>{{status}}</td>
+            <td>{{#finished}}{{#passed}}Test Passed{{/passed}}{{^passed}}Test Failed{{/passed}}{{/finished}}{{^finished}}{{#passed}}Test currently running{{/passed}}{{^passed}}Test not yet run{{/passed}}{{/finished}}</td>
         </tr>
         {{/tests}}
     </tbody>

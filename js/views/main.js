@@ -84,8 +84,8 @@ define([
                 var test = editor.get("tests").at(number)
                 var functions = this.scenarios.get("activeScenario").get("functions")
                 this.taskList.runTest(test, editor, functions);
-
-                //TODO: test.set("status") = "Running". then re-render the test case list
+                test.set({passed : true, finished : false})
+                this.testList.render()
             }, this)
 
             //Listen for test debug command, and start appropriate test in debug environment
@@ -95,10 +95,15 @@ define([
                 var functions = this.scenarios.get("activeScenario").get("functions")
                 this.taskList.runTest(test, editor, functions);
                 this.scenarios.get("activeScenario").set({"hasDebugData" : true})
-
-                //TODO: test.set("status") = "Running". then re-render the test case list
+                test.set({passed : true, finished : false})
+                this.testList.render()
+                //TODO: can we do this without calling render? We can listen for changes on tests, but that seems crappy to me, seing as we dont use that pattern anywhere else
                 //TODO: open debug environment as soon as possible. maybe use ".once()" to add a single handler for this
             }, this)
+
+            channels.tasks.on("succeeded", function(task){
+                //TODO: check for tests that match task, mark as pass or fail accordingly
+            });
 
             //Listen for the step command, then move the active task forward one step
             channels.tasks.on("step", function () {
@@ -118,9 +123,6 @@ define([
                     this.editorMap.addInput(name);
             }, this);
 
-            //TODO: Set hasDebugData true when debug data is passed in.
-            //this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
-
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
                 if (this.scenarios.get("activeScenario").get("hasDebugData") && !this.debug ) {
@@ -129,7 +131,6 @@ define([
                 }
             }, this)
 
-            //TODO: Change editors model to scenario model or similar
             //Listen for the update debug map command from the task list, and update the editors/scenario model with the latest stack frame
             channels.debug.on("update", function (editorMap) {
                 this.scenarios.get("activeScenario").debugUpdate(editorMap)

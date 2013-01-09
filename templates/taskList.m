@@ -1,5 +1,5 @@
 <h2>Tasks</h2>
-<p>{{tasks.length}} current task</p>
+<p>{{tasks.length}} current task(s)</p>
 <table class="twelve">
     <thead>
     <tr>

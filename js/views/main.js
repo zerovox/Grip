@@ -9,11 +9,13 @@ define([
     'views/FunctionList',
     'views/TaskList',
     'views/ControlBar',
+    'views/DebugBar',
+    'views/StackTrace',
     'factory/ScenariosModelFactory',
     'libs/text!data/scenarios.json',
     'primitives',
     'channels'
-], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
+], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
     function updateEditor(context) {
         context.editorList.set(context.scenarios.get("active").get("editors"), context.debug)
@@ -29,7 +31,7 @@ define([
     }
 
     return Backbone.View.extend({
-        initialize : function () {
+        initialize                : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
             this.scenarios = ScenariosModelFactory(JSON.parse(ScenariosJSON), primitives);
 
@@ -42,23 +44,29 @@ define([
             this.functionList = new FunctionList();
 
             this.taskList = new TaskList();
-            this.controlBar = new ControlBar();
 
-            //Don't start in debug mode
-            this.debug = false
+            this.controlBar = new ControlBar();
+            this.debugBar = new DebugBar();
+            this.stackTrace = new StackTrace();
 
             //Load the initial UI
-            updateScenario(this);
+            updateScenario(this)
+
+            //Don't start in debug mode
+            this.disableDebug()
+
+            this.attachChannelListeners()
+        }, attachChannelListeners : function () {
 
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
-                this.debug = false
+                this.disableDebug()
                 this.scenarios.swap(name)
                 updateScenario(this);
             }, this);
 
             channels.editors.on("switch", function (name) {
-                this.debug = false
+                this.disableDebug()
                 this.scenarios.get("active").get("editors").swap(name)
                 updateEditor(this);
             }, this);
@@ -82,6 +90,10 @@ define([
                 //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
 
+            channels.tasks.on("step", function () {
+                this.taskList.step();
+            }, this)
+
             channels.map.on("add", function (func) {
                 if (!this.debug)
                     this.editorMap.addFunction(func)
@@ -98,19 +110,13 @@ define([
             //TODO: Only update editor if we change to/from debug view
             channels.debug.on("enable", function () {
                 if (this.scenarios.get("active").get("editors").get("hasDebugData")) {
-                    this.debug = true
+                    this.enableDebug()
                     updateEditor(this)
                 }
             }, this)
 
-            channels.debug.on("disable", function () {
-                this.debug = false
-                updateEditor(this)
-            }, this)
-
             channels.debug.on("update", function (editorMap) {
                 this.scenarios.get("active").get("editors").debugUpdate(editorMap) && updateEditor()
-
             }, this)
 
             channels.debug.on("stepIn", function (editorMap) {
@@ -122,8 +128,24 @@ define([
             }, this)
 
         },
-        render     : function () {
+        render                    : function () {
             //All the views are self rendering.
+        },
+        disableDebug              : function () {
+            this.debug = false
+            this.controlBar.show()
+            this.functionList.show()
+            this.debugBar.hide()
+            this.stackTrace.hide()
+            this.editorMap.editorView()
+        },
+        enableDebug               : function () {
+            this.debug = true
+            this.controlBar.hide()
+            this.functionList.hide()
+            this.debugBar.show()
+            this.stackTrace.show()
+            this.editorMap.debugView()
         }
 
 

@@ -14,9 +14,10 @@ define([
 
     return function (scenariosJSON, primatives) {
         var sList = new ScenarioCollection()
-        var scenarios = new ScenariosModel({list:sList})
+        var scenarios = new ScenariosModel({all:sList})
         var fs = true
         _.each(scenariosJSON, function (scenario) {
+            //TODO: categories, not all or active
             var eList = new EditorCollection()
             var editors = new EditorsModel({list:eList})
             var s = new ScenarioModel({name:scenario.name, editors:editors})
@@ -50,6 +51,19 @@ define([
                 s.set({active:true})
             }
             sList.add(s)
+
+            var category = scenario.category
+            if(category !== "active" && category !== "all"){
+                if(scenarios.has(category)){
+                    scenarios.get(category).add(s)
+                } else {
+                    var c = new ScenarioCollection;
+                    c.add(s)
+                    scenarios.set(category, c)
+                }
+            } else {
+                console.log("Reserved category")
+            }
         });
         return scenarios;
     }

@@ -1,6 +1,7 @@
 [
     {
-        "name"      : "Basics:Squaring",
+        "name"      : "Squaring",
+        "category" : "Basics",
         "editors"   : [
             {
                 "name"  : "square",
@@ -85,7 +86,8 @@
         ]
     },
     {
-        "name"      : "Basics:Power",
+        "name"      : "Power",
+        "category" : "Basics",
         "editors"   : [
             {
                 "name"  : "double",

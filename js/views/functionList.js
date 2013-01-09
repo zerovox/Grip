@@ -19,7 +19,6 @@ define([
             var canvas = this.canvas;
             canvas.clear();
             var resize = function () {
-                console.log($(window).height());
                 var h = Math.max(120, ($(window).height() - 100) * 0.20);
                 var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
                 canvas.setHeight(h);

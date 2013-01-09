@@ -26,7 +26,7 @@ define([
     }
 
     function updateScenario(context) {
-        context.scenarioList.set(context.scenarios.get("list"))
+        context.scenarioList.set(context.scenarios)
         updateEditor(context)
     }
 
@@ -61,13 +61,13 @@ define([
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
                 this.disableDebug()
-                this.scenarios.swap(name)
+                this.scenarios.swap(name, this.scenarios)
                 updateScenario(this);
             }, this);
 
             channels.editors.on("switch", function (name) {
                 this.disableDebug()
-                this.scenarios.get("active").get("editors").swap(name)
+                this.scenarios.get("active").get("editors").swap(name, this.scenarios)
                 updateEditor(this);
             }, this);
 

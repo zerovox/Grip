@@ -7,12 +7,13 @@ require.config({
         mustache:"libs/mustache",
         fabric:"libs/fabric.wrap",
         primitives : "data/prim.wrap",
-        alertify : "libs/alertify.min"
-
+        alertify : "libs/alertify.min",
+        foundation : "libs/foundation.min",
+        'foundation.app' : "libs/foundation.app"
     },
     shim:{
         'backbone':{
-            deps:['underscore', 'jquery'],
+            deps:['underscore', 'jquery', 'foundation', 'foundation.app'],
             exports:'Backbone'
         }
     }});

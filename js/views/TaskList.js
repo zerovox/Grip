@@ -9,6 +9,7 @@ define([
         el         : '#taskModal',
         initialize : function () {
             this.tasks = []
+            this.render()
         },
         step : function(){
             //TODO: test for undefined here

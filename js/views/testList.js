@@ -7,31 +7,37 @@ define([
 
     return Backbone.View.extend({
         //TODO: render whole modal, not just table body. more info in there such as progress bars
-        el         : '#testTableBody',
+        el         : '#testModal',
         initialize : function () {
-            this.bind();
+            this.bind()
+            this.render()
         },
         set        : function (testCollection) {
             this.tests = testCollection;
             this.render();
         },
         render     : function () {
-            var tests = this.tests.toJSON()
+            var tests = this.tests === undefined ? undefined : this.tests.toJSON()
+            var total = 0;
+            var passing = 0;
             _.each(tests, function (test, index) {
                 test.index = index;
+               if(test.pass)
+                    passing++
+                total++
             })
-            var html = Mustache.render(TestListTemplate, {tests : tests});
+            var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : passing/total,  "toJSON": function() {return JSON.stringify(this);}});
             this.$el.html(html);
 
         },
-        bind     : function () {
+        bind       : function () {
             var that = this;
             $('#addTestCase').on("click", function () {
                 alertify.prompt("Please enter the inputs as a comma separated list with strings enclosed by quotation marks.", function (e, inputs) {
                     if (e) {
                         alertify.prompt("Please enter the desired output for this test with strings enclosed by quotation marks.", function (e, output) {
                             if (e) {
-                                that.tests.add({inputs:JSON.parse('['+inputs+']'), output:JSON.parse(output), status:"Not yet run"})
+                                that.tests.add({inputs : JSON.parse('[' + inputs + ']'), output : JSON.parse(output), status : "Not yet run"})
                                 that.render();
 
                                 //TODO: Handle JSON parse fails with log messages

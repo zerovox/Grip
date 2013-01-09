@@ -98,6 +98,7 @@ define([
                 test.set({passed : true, finished : false})
                 this.testList.render()
                 //TODO: can we do this without calling render? We can listen for changes on tests, but that seems crappy to me, seing as we dont use that pattern anywhere else
+                //TODO: instead of marking this test as running, perhaps we should listen to new tasks created, match these against tests, if they match then set the task as running? overkill? do we ever run anyway but through the test interface? if we have two tests of the same inputs, should they both be marked as running when eitehr is run
                 //TODO: open debug environment as soon as possible. maybe use ".once()" to add a single handler for this
             }, this)
 
@@ -109,7 +110,9 @@ define([
             channels.tasks.on("step", function () {
                 this.taskList.step();
             }, this)
-            //TODO: Expand this to step over/step in
+            channels.tasks.on("stepOver", function () {
+                //TODO: this.taskList.stepOver();
+            }, this)
 
             //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {
@@ -138,7 +141,7 @@ define([
             }, this)
 
             //TODO: Remove these. Move stack into task list.
-            //TODO: Should we have a task model instead of keeping all in the task view
+            //TODO: Should we have a task model instead of keeping all in the task view. Almost certainly yes
 
             channels.debug.on("stepIn", function (editorMap) {
                 this.scenarios.get("activeScenario").debugStepIn(editorMap) && updateEditor()

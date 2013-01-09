@@ -6,7 +6,6 @@ define([
 ], function (Backbone, Mustache, TestListTemplate, alertify) {
 
     return Backbone.View.extend({
-        //TODO: render whole modal, not just table body. more info in there such as progress bars
         el         : '#testModal',
         initialize : function () {
             this.bind()

@@ -23,8 +23,6 @@ define([
             });
             var html = Mustache.render(ScenarioListTemplate, {categories : categoryList});
             this.$el.html(html);
-            $.fn.foundationNavigation ? $(document).foundationNavigation() : null;
-            //TODO: Highlight active scenario
         }
     });
 

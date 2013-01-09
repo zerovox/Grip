@@ -9,6 +9,9 @@ define([
             $('#step').click(function () {
                 channels.tasks.trigger("step");
             })
+            $('#stepOver').click(function () {
+                channels.tasks.trigger("stepOver")
+            })
         }
     });
 

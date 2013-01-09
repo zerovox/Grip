@@ -13,7 +13,7 @@ self.onmessage = function (event) {
         if (event.data.editor.output === undefined)
             fail("No function wired to output")
         else
-            env = newEnv(event.data.editor.output, event.data.editor, event.data.inputs);
+            env = newEnv(event.data.editor, event.data.inputs);
     } else if (event.data.step) {
         if (env === undefined) {
             fail("Worker not initialized")
@@ -46,13 +46,12 @@ function debug(editor) {
     self.postMessage({debug : editor})
 }
 
-function newEnv(func, editor, inputs) {
+function newEnv(editor, inputs) {
     return {
-        func   : func,
         editor : editor,
         inputs : inputs,
         stack  : [
-            {fName : func, action : "e"}
+            {fName : editor.output, action : "e"}
         ]
     }
 }

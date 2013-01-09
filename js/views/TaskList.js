@@ -10,14 +10,18 @@ define([
         initialize : function () {
             this.tasks = []
         },
+        step : function(){
+            //TODO: test for undefined here
+          this.active.worker.postMessage({step : true});
+        },
         runTest    : function (test, editor) {
             var that = this;
             var arguments = test.get("inputs")
             var output = test.get("output")
-            var task = { name : editor.get("name"), inputs : arguments, output : output, running : true}
-            this.tasks.push(task)
-            // TODO: spawn worker to run the test, set it to only send back success or fail events, nothing inbetween.
             var worker = new Worker('js/workers/debug.js');
+            var task = { name : editor.get("name"), inputs : arguments, output : output, running : true, worker : worker}
+            this.tasks.push(task)
+            this.active = task;
             worker.onmessage = function (result) {
                 if(result.data.log !== undefined){
                     console.log(result.data.log)

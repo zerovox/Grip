@@ -4,7 +4,7 @@
         <a class="flyout-toggle"><span> </span></a>
         <ul class="flyout">
             {{#scenarios}}
-                <li {{#active}}class="active"{{/active}}>
+                <li {{#activeScenario}}class="active"{{/activeScenario}}>
                     <a href="#/scenario/{{name}}">{{name}}</a>
                 </li>
             {{/scenarios}}

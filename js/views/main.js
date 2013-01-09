@@ -18,11 +18,11 @@ define([
 ], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
     function updateEditor(context) {
-        context.editorList.set(context.scenarios.get("active").get("editors"), context.debug)
-        context.testList.set(context.scenarios.get("active").get("editors").get("active").get("tests"))
-        context.editorInfo.set(context.scenarios.get("active").get("editors").get("active"), context.debug)
-        context.editorMap.set(context.scenarios.get("active").get("editors").get("active").get("map"), context.scenarios.get("active").get("functions"), context.debug);
-        context.functionList.set(context.scenarios.get("active").get("functions"), context.debug);
+        context.editorList.set(context.scenarios.get("activeScenario"), context.debug)
+        context.testList.set(context.scenarios.get("activeScenario").get("activeEditor").get("tests"))
+        context.editorInfo.set(context.scenarios.get("activeScenario").get("activeEditor"), context.debug)
+        context.editorMap.set(context.scenarios.get("activeScenario").get("activeEditor").get("map"), context.scenarios.get("activeScenario").get("functions"), context.debug);
+        context.functionList.set(context.scenarios.get("activeScenario").get("functions"), context.debug);
     }
 
     function updateScenario(context) {
@@ -31,7 +31,8 @@ define([
     }
 
     function updateDebug(context) {
-        context.stackTrace.set(context.scenarios.get("active").get("editors"))
+        context.editorList.set(context.scenarios.get("activeScenario"), context.debug)
+        context.stackTrace.set(context.scenarios.get("active"), context.debug)
     }
 
     return Backbone.View.extend({
@@ -73,15 +74,15 @@ define([
             //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
                 this.disableDebug()
-                this.scenarios.get("active").get("editors").swap(name, this.scenarios)
+                this.scenarios.get("activeScenario").swap(name, this.scenarios)
                 updateEditor(this);
             }, this);
 
             //Listen for test run command, and run appropriate test
             channels.tests.on("run", function (number) {
-                var editor = this.scenarios.get("active").get("editors").get("active");
+                var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                var functions = this.scenarios.get("active").get("functions")
+                var functions = this.scenarios.get("activeScenario").get("functions")
                 this.taskList.runTest(test, editor, functions);
 
                 //TODO: test.set("status") = "Running". then re-render the test case list
@@ -89,11 +90,11 @@ define([
 
             //Listen for test debug command, and start appropriate test in debug environment
             channels.tests.on("debug", function (number) {
-                var editor = this.scenarios.get("active").get("editors").get("active");
+                var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                var functions = this.scenarios.get("active").get("functions")
+                var functions = this.scenarios.get("activeScenario").get("functions")
                 this.taskList.runTest(test, editor, functions);
-                this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
+                this.scenarios.get("activeScenario").set({"hasDebugData" : true})
 
                 //TODO: test.set("status") = "Running". then re-render the test case list
                 //TODO: open debug environment as soon as possible. maybe use ".once()" to add a single handler for this
@@ -122,7 +123,7 @@ define([
 
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
-                if (this.scenarios.get("active").get("editors").get("hasDebugData") && this.debug === false) {
+                if (this.scenarios.get("activeScenario").get("hasDebugData") && !this.debug ) {
                     this.enableDebug()
                     updateDebug(this)
                 }
@@ -131,7 +132,7 @@ define([
             //TODO: Change editors model to scenario model or similar
             //Listen for the update debug map command from the task list, and update the editors/scenario model with the latest stack frame
             channels.debug.on("update", function (editorMap) {
-                this.scenarios.get("active").get("editors").debugUpdate(editorMap)
+                this.scenarios.get("activeScenario").debugUpdate(editorMap)
                 updateDebug(this)
             }, this)
 
@@ -139,11 +140,11 @@ define([
             //TODO: Should we have a task model instead of keeping all in the task view
 
             channels.debug.on("stepIn", function (editorMap) {
-                this.scenarios.get("active").get("editors").debugStepIn(editorMap) && updateEditor()
+                this.scenarios.get("activeScenario").debugStepIn(editorMap) && updateEditor()
             }, this)
 
             channels.debug.on("stepOut", function (editorMap) {
-                this.scenarios.get("active").get("editors").debugStepOut(editorMap) && updateEditor()
+                this.scenarios.get("activeScenario").debugStepOut(editorMap) && updateEditor()
             }, this)
 
         },
@@ -152,6 +153,7 @@ define([
         },
         disableDebug              : function () {
             this.debug = false
+            this.editorInfo.show()
             this.controlBar.show()
             this.functionList.show()
             this.debugBar.hide()
@@ -160,6 +162,7 @@ define([
         },
         enableDebug               : function () {
             this.debug = true
+            this.editorInfo.hide()
             this.controlBar.hide()
             this.functionList.hide()
             this.debugBar.show()

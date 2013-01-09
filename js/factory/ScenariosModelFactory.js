@@ -2,7 +2,6 @@ define([
     'backbone',
     'models/ScenariosModel',
     'models/ScenarioModel',
-    'models/EditorsModel',
     'models/EditorModel',
     'models/TestModel',
     'models/FunctionModel',
@@ -10,7 +9,7 @@ define([
     'collections/editors',
     'collections/tests',
     'collections/functions'
-], function (Backbone, ScenariosModel, ScenarioModel, EditorsModel, EditorModel, TestModel, FunctionModel, ScenarioCollection, EditorCollection, TestCollection, FunctionCollection) {
+], function (Backbone, ScenariosModel, ScenarioModel, EditorModel, TestModel, FunctionModel, ScenarioCollection, EditorCollection, TestCollection, FunctionCollection) {
 
     return function (scenariosJSON, primatives) {
         var sList = new ScenarioCollection()
@@ -19,8 +18,7 @@ define([
         _.each(scenariosJSON, function (scenario) {
             //TODO: categories, not all or active
             var eList = new EditorCollection()
-            var editors = new EditorsModel({list:eList})
-            var s = new ScenarioModel({name:scenario.name, editors:editors})
+            var s = new ScenarioModel({name:scenario.name, list:eList})
             var es = true
             _.each(scenario.editors, function (editor) {
                 var tests = new TestCollection()
@@ -32,8 +30,8 @@ define([
                 })
                 eList.add(e)
                 if (es) {
-                    editors.set({active:e})
-                    e.set({active:true})
+                    s.set({activeEditor:e})
+                    e.set({activeEditor:true})
                     es = false
                 }
             });
@@ -47,8 +45,8 @@ define([
             });
             if (fs) {
                 fs = false
-                scenarios.set({active:s})
-                s.set({active:true})
+                scenarios.set({activeScenario:s})
+                s.set({activeScenario:true})
             }
             sList.add(s)
 

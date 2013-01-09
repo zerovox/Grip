@@ -7,10 +7,10 @@ define([
         var matchingScenarios = scenariosModel.get("all").where({name : to});
         if (matchingScenarios.length === 1) {
             //Avoid repeated re-rendering
-            if (matchingScenarios[0] !== scenariosModel.get("active")) {
-                matchingScenarios[0].set({active : true})
-                this.get("active").set({active : false});
-                this.set({active : matchingScenarios[0]});
+            if (matchingScenarios[0] !== scenariosModel.get("activeScenario")) {
+                matchingScenarios[0].set({activeScenario : true})
+                this.get("activeScenario").set({activeScenario : false});
+                this.set({activeScenario : matchingScenarios[0]});
                 return true;
             }
         } else {

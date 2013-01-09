@@ -6,6 +6,8 @@ define([
     return Backbone.View.extend({
         el         : '#debugTrace',
         initialize : function () {
+        }, set : function(){
+
         }
     });
 

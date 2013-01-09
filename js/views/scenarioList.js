@@ -14,7 +14,7 @@ define([
         },
         render     : function () {
             var toRender = this.scenarios.toJSON()
-            delete toRender.active
+            delete toRender.activeScenario
             delete toRender.all
 
             var categoryList = []
@@ -23,7 +23,7 @@ define([
             });
             var html = Mustache.render(ScenarioListTemplate, {categories : categoryList});
             this.$el.html(html);
-            //$.fn.foundationNavigation ? $(document).foundationNavigation() : null;
+            $.fn.foundationNavigation ? $(document).foundationNavigation() : null;
             //TODO: Highlight active scenario
         }
     });

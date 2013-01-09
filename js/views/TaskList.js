@@ -35,6 +35,7 @@ define([
                     that.render();
                 }else{
                     //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
+                    console.log(result.data.debug)
                     channels.debug.trigger("update", result.data.debug);
                 }
             }

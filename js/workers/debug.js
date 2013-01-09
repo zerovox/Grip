@@ -2,12 +2,35 @@
 importScripts('/js/data/primitives.js', '/js/libs/lodash.min.js')
 
 var resultCaching = true
-var debugging = true
-
+var env;
 var prims = {}
 _.each(primitives, function (prim) {
     prims[prim.name] = prim
 })
+
+self.onmessage = function (event) {
+
+    if (event.data.editor !== undefined) {
+        if (editor.output === undefined)
+            fail("No function wired to output")
+        else {
+            env = newEnv(editor.output, event.data.editor, event.data.inputs);
+        }
+    } else if (event.data.step) {
+        if (env === undefined) {
+            fail("Worker not initialized")
+        } else {
+            if (env.stack.length !== 0) {
+                step(env)
+                debug(env.editor)
+            } else {
+                success(env.returnVal);
+            }
+        }
+    } else {
+        fail("No instruction given to worker")
+    }
+}
 
 function log(data) {
     self.postMessage({log : data})
@@ -22,8 +45,7 @@ function fail(reason) {
 }
 
 function debug(editor) {
-    if (debugging)
-        self.postMessage({debug : editor})
+    self.postMessage({debug : editor})
 }
 
 function newEnv(func, editor, inputs) {
@@ -37,7 +59,7 @@ function newEnv(func, editor, inputs) {
     }
 }
 
-function execute(env) {
+function step(env) {
     var ft = env.stack.pop();
     var f = env.editor.functions[ft.fName];
     if (ft.action === "e") {
@@ -71,33 +93,5 @@ function execute(env) {
     }
 }
 
-var env;
 
-self.onmessage = function (event) {
-    if (event.data.editor !== undefined) {
-
-        var editor = event.data.editor;
-        var inputs = event.data.inputs
-
-        if (editor.output === undefined)
-            fail("No function wired to output")
-        else {
-            env = newEnv(editor.output, editor, inputs);
-        }
-    } else if (event.data.step) {
-        if (env === undefined) {
-            fail("Worker not initialized")
-        } else {
-            if (env.stack.length !== 0) {
-                execute(env)
-                debug(env.editor)
-            } else {
-                success(env.returnVal);
-            }
-        }
-    } else {
-        fail("No instruction given to worker")
-    }
-
-}
 

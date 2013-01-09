@@ -8,11 +8,12 @@ define([
         },
         swap            : function (to) {
             var matchingEditors = this.get("list").where({name : to});
-            if (matchingEditors.length === 1) {
-                if (matchingEditors[0] !== this.get("activeEditor")) {
-                    matchingEditors[0].set({activeEditor : true})
+            if (_.size(matchingEditors) === 1) {
+                var match = _.first(matchingEditors)
+                if (match !== this.get("activeEditor")) {
+                    match.set({activeEditor : true})
                     this.get("activeEditor").set({activeEditor : false});
-                    this.set({activeEditor : matchingEditors[0]});
+                    this.set({activeEditor : match});
                     return true;
                 }
             } else {

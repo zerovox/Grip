@@ -7,7 +7,6 @@ define([
         el          : "#editorMap",
         initialize  : function () {
             var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
-
             var that = this;
             $(window).resize(function () {that.resize()});
 
@@ -344,7 +343,7 @@ define([
         },
         resize      : function () {
             var canvas = this.canvas;
-            var h = Math.max(400, ($(window).height() - 200) * 0.80);
+            var h = Math.max(400, ($(window).height() - 80) * this.maxHeightPercentage);
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
             canvas.setHeight(h);
             canvas.setWidth(w);
@@ -358,7 +357,17 @@ define([
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
-        }
+        }, hide : function(){
+            this.$el.parent().hide();
+        }, show : function(){
+            this.$el.parent().show();
+        }, debugView : function(){
+            this.maxHeightPercentage = 1
+            this.resize()
+        }, editorView : function(){
+            this.maxHeightPercentage = 0.8
+            this.resize()
+        }, maxHeightPercentage : 0.8
     })
         ;
 

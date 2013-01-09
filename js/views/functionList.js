@@ -91,6 +91,10 @@ define([
             //we want to listen for new functions added to the global function collection passed in above.
             //also functions that get removed
             //redraw on anychange?
+        }, hide : function(){
+            this.$el.parent().hide();
+        }, show : function(){
+            this.$el.parent().show();
         }
     });
 

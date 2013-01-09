@@ -343,7 +343,7 @@ define([
         },
         resize      : function () {
             var canvas = this.canvas;
-            var h = Math.max(400, ($(window).height() - 80) * this.maxHeightPercentage);
+            var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
             canvas.setHeight(h);
             canvas.setWidth(w);

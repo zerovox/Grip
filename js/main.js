@@ -9,11 +9,12 @@ require.config({
         primitives : "data/prim.wrap",
         alertify : "libs/alertify.min",
         foundation : "libs/foundation.min",
-        'foundation.app' : "libs/foundation.app"
+        'foundation.app' : "libs/foundation.app",
+        modernizr : "libs/foundation.modernizr"
     },
     shim:{
         'backbone':{
-            deps:['underscore', 'jquery', 'foundation', 'foundation.app'],
+            deps:['underscore', 'jquery', 'modernizr','foundation', 'foundation.app'],
             exports:'Backbone'
         }
     }});

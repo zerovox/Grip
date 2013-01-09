@@ -4,8 +4,8 @@ define([
 ], function (Backbone, fabric) {
 
     return Backbone.View.extend({
-        el          : "#editorMap",
-        initialize  : function () {
+        el                     : "#editorMap",
+        initialize             : function () {
             var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
             var that = this;
             $(window).resize(function () {that.resize()});
@@ -121,12 +121,12 @@ define([
                 }
             }})
         },
-        addFunction : function(func) {
+        addFunction            : function (func) {
             var funcModel = {function : func.name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
             this.editorMap.functions[funcModel.name] = funcModel;
         },
-        addInput    : function (name) {
+        addInput               : function (name) {
             if (_.contains(this.editorMap.inputs, name)) {
                 console.log("log the fail reason here once we have logging included")
             } else {
@@ -135,7 +135,7 @@ define([
                 //TODO: avoid rendering everything, see if we can just re-render inputs and wires
             }
         },
-        set         : function (editorModel, functionsCollection) {
+        set                    : function (editorModel, functionsCollection) {
             this.editorMap = editorModel
             if (this.editorMap.functions === undefined)
                 this.editorMap.functions = {}
@@ -145,7 +145,7 @@ define([
                 this.functions = functionsCollection
             this.resize()
         },
-        render      : function () {
+        render                 : function () {
             var canvas = this.canvas
             var map = this.editorMap
             canvas.clear()
@@ -190,7 +190,7 @@ define([
             }
 
         },
-        wireUp      : function (func, func2, inp, out) {
+        wireUp                 : function (func, func2, inp, out) {
             var canvas = this.canvas;
             canvas.remove(inp.wire)
 
@@ -220,7 +220,7 @@ define([
             }
             rewire();
         },
-        newInput    : function (name, x, y) {
+        newInput               : function (name, x, y) {
             var canvas = this.canvas;
             var height = 40;
             var width = 160
@@ -238,7 +238,7 @@ define([
             canvas.add(output)
             return box;
         },
-        Function    : fabric.util.createClass(fabric.Object, {
+        Function               : fabric.util.createClass(fabric.Object, {
             initialize : function (name, x, y, options, arg) {
                 this.height = x;
                 this.width = y;
@@ -266,7 +266,7 @@ define([
             }
 
         }),
-        newFunction : function (funcReal, func) {
+        newFunction            : function (funcReal, func) {
             var canvas = this.canvas;
             var height = Math.max(40, 40 * funcReal.inputs.length);
             var width = 160
@@ -330,7 +330,7 @@ define([
             box.functionModel = func;
             return box;
         },
-        newOutput   : function () {
+        newOutput              : function () {
             var canvas = this.canvas;
             var box = new fabric.Circle({radius : 30, fill : 'grey', top : (canvas.height / 2), left : canvas.width})
 
@@ -341,7 +341,7 @@ define([
             canvas.add(box)
             return box;
         },
-        resize      : function () {
+        resize                 : function () {
             var canvas = this.canvas;
             var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
@@ -351,22 +351,26 @@ define([
             //We re-render every time the window is resized. Prevents elements going off the edge of the screen
             this.render();
         },
-        createGUID  : function () {
+        createGUID             : function () {
             //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a build in function
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
-        }, hide : function(){
+        }, hide                : function () {
             this.$el.parent().hide();
-        }, show : function(){
+        }, show                : function () {
             this.$el.parent().show();
-        }, debugView : function(){
-            this.maxHeightPercentage = 1
-            this.resize()
-        }, editorView : function(){
-            this.maxHeightPercentage = 0.8
-            this.resize()
+        }, debugView           : function () {
+            if (this.maxHeightPercentage !== 1) {
+                this.maxHeightPercentage = 1
+                this.resize()
+            }
+        }, editorView          : function () {
+            if (this.maxHeightPercentage !== 0.8) {
+                this.maxHeightPercentage = 0.8
+                this.resize()
+            }
         }, maxHeightPercentage : 0.8
     })
         ;

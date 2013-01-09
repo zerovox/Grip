@@ -53,7 +53,6 @@ define([
             this.debugBar = new DebugBar();
             this.stackTrace = new StackTrace();
 
-
             //Load the initial UI
             updateScenario(this)
 
@@ -71,12 +70,14 @@ define([
                 updateScenario(this);
             }, this);
 
+            //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
                 this.disableDebug()
                 this.scenarios.get("active").get("editors").swap(name, this.scenarios)
                 updateEditor(this);
             }, this);
 
+            //Listen for test run command, and run appropriate test
             channels.tests.on("run", function (number) {
                 var editor = this.scenarios.get("active").get("editors").get("active");
                 var test = editor.get("tests").at(number)
@@ -86,6 +87,7 @@ define([
                 //TODO: test.set("status") = "Running". then re-render the test case list
             }, this)
 
+            //Listen for test debug command, and start appropriate test in debug environment
             channels.tests.on("debug", function (number) {
                 var editor = this.scenarios.get("active").get("editors").get("active");
                 var test = editor.get("tests").at(number)
@@ -94,17 +96,22 @@ define([
                 this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
 
                 //TODO: test.set("status") = "Running". then re-render the test case list
+                //TODO: open debug environment as soon as possible. maybe use ".once()" to add a single handler for this
             }, this)
 
+            //Listen for the step command, then move the active task forward one step
             channels.tasks.on("step", function () {
                 this.taskList.step();
             }, this)
+            //TODO: Expand this to step over/step in
 
+            //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {
                 if (!this.debug)
                     this.editorMap.addFunction(func)
             }, this);
 
+            //Listen for the add input command, and if we are in editing mode, add the input
             channels.map.on("addInput", function (name) {
                 if (!this.debug)
                     this.editorMap.addInput(name);
@@ -113,18 +120,23 @@ define([
             //TODO: Set hasDebugData true when debug data is passed in.
             //this.scenarios.get("active").get("editors").set({"hasDebugData" : true})
 
-            //TODO: Only update editor if we change to/from debug view
+            //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
-                if (this.scenarios.get("active").get("editors").get("hasDebugData")) {
+                if (this.scenarios.get("active").get("editors").get("hasDebugData") && this.debug === false) {
                     this.enableDebug()
-                    updateEditor(this)
+                    updateDebug(this)
                 }
             }, this)
 
+            //TODO: Change editors model to scenario model or similar
+            //Listen for the update debug map command from the task list, and update the editors/scenario model with the latest stack frame
             channels.debug.on("update", function (editorMap) {
                 this.scenarios.get("active").get("editors").debugUpdate(editorMap)
                 updateDebug(this)
             }, this)
+
+            //TODO: Remove these. Move stack into task list.
+            //TODO: Should we have a task model instead of keeping all in the task view
 
             channels.debug.on("stepIn", function (editorMap) {
                 this.scenarios.get("active").get("editors").debugStepIn(editorMap) && updateEditor()
@@ -154,8 +166,6 @@ define([
             this.stackTrace.show()
             this.editorMap.debugView()
         }
-
-
 
     });
 

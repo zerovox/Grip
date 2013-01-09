@@ -1,9 +1,8 @@
 define([
     'backbone',
     'mustache',
-    'views/main',
     'channels'
-], function (Backbone, Mustache, MainView, channels) {
+], function (Backbone, Mustache, channels) {
     var AppRouter = Backbone.Router.extend({
         routes : {
             // Default
@@ -17,9 +16,6 @@ define([
     });
 
     var initialize = function () {
-
-        var mainView = new MainView()
-        mainView.render()
 
         var app_router = new AppRouter
         app_router.on('route:switchEditor', function (name) {

@@ -30,6 +30,10 @@ define([
         updateEditor(context)
     }
 
+    function updateDebug(context) {
+        context.stackTrace.set(context.scenarios.get("active").get("editors"))
+    }
+
     return Backbone.View.extend({
         initialize                : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
@@ -49,6 +53,7 @@ define([
             this.debugBar = new DebugBar();
             this.stackTrace = new StackTrace();
 
+
             //Load the initial UI
             updateScenario(this)
 
@@ -56,7 +61,8 @@ define([
             this.disableDebug()
 
             this.attachChannelListeners()
-        }, attachChannelListeners : function () {
+        },
+        attachChannelListeners : function () {
 
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
@@ -116,7 +122,8 @@ define([
             }, this)
 
             channels.debug.on("update", function (editorMap) {
-                this.scenarios.get("active").get("editors").debugUpdate(editorMap) && updateEditor()
+                this.scenarios.get("active").get("editors").debugUpdate(editorMap)
+                updateDebug(this)
             }, this)
 
             channels.debug.on("stepIn", function (editorMap) {

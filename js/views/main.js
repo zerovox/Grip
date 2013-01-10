@@ -17,26 +17,8 @@ define([
     'channels'
 ], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
 
-    function updateEditor(context) {
-        context.editorList.set(context.scenarios.get("activeScenario"), context.debug)
-        context.testList.set(context.scenarios.get("activeScenario").get("activeEditor").get("tests"))
-        context.editorInfo.set(context.scenarios.get("activeScenario").get("activeEditor"), context.debug)
-        context.editorMap.set(context.scenarios.get("activeScenario").get("activeEditor").get("map"), context.scenarios.get("activeScenario").get("functions"), context.debug);
-        context.functionList.set(context.scenarios.get("activeScenario").get("functions"), context.debug);
-    }
-
-    function updateScenario(context) {
-        context.scenarioList.set(context.scenarios)
-        updateEditor(context)
-    }
-
-    function updateDebug(context) {
-        context.editorList.set(context.scenarios.get("activeScenario"), context.debug)
-        context.stackTrace.set(context.scenarios.get("active"), context.debug)
-    }
-
     return Backbone.View.extend({
-        initialize                : function () {
+        initialize             : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
             this.scenarios = ScenariosModelFactory(JSON.parse(ScenariosJSON), primitives);
 
@@ -47,7 +29,6 @@ define([
             this.editorInfo = new EditorInfo();
             this.editorMap = new EditorMap();
             this.functionList = new FunctionList();
-
             this.taskList = new TaskList();
 
             this.controlBar = new ControlBar();
@@ -55,7 +36,7 @@ define([
             this.stackTrace = new StackTrace();
 
             //Load the initial UI
-            updateScenario(this)
+            this.updateScenario()
 
             //Don't start in debug mode
             this.disableDebug()
@@ -68,47 +49,47 @@ define([
             channels.scenarios.on("switch", function (name) {
                 this.disableDebug()
                 this.scenarios.swap(name, this.scenarios)
-                updateScenario(this);
+                this.updateScenario();
             }, this);
 
             //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
                 this.disableDebug()
                 this.scenarios.get("activeScenario").swap(name, this.scenarios)
-                updateEditor(this);
+                this.updateEditor();
             }, this);
 
             //Listen for test run command, and run appropriate test
             channels.tests.on("run", function (number) {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                var functions = this.scenarios.get("activeScenario").get("functions")
-                this.taskList.runTest(test, editor, functions);
+                this.scenarios.get("activeScenario").runTest(test, editor, false);
                 test.set({passed : true, finished : false})
                 this.testList.render()
+                this.updateTasks();
             }, this)
 
             //Listen for test debug command, and start appropriate test in debug environment
             channels.tests.on("debug", function (number) {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                var functions = this.scenarios.get("activeScenario").get("functions")
-                this.taskList.runTest(test, editor, functions);
-                this.scenarios.get("activeScenario").set({"hasDebugData" : true})
+                this.scenarios.get("activeScenario").runTest(test, editor, true)
                 test.set({passed : true, finished : false})
-                this.testList.render()
+                this.updateTests()
+                this.updateTasks()
+                this.updateDebug()
                 //TODO: can we do this without calling render? We can listen for changes on tests, but that seems crappy to me, seing as we dont use that pattern anywhere else
                 //TODO: instead of marking this test as running, perhaps we should listen to new tasks created, match these against tests, if they match then set the task as running? overkill? do we ever run anyway but through the test interface? if we have two tests of the same inputs, should they both be marked as running when eitehr is run
-                //TODO: open debug environment as soon as possible. maybe use ".once()" to add a single handler for this
             }, this)
 
-            channels.tasks.on("succeeded", function(task){
-                //TODO: check for tests that match task, mark as pass or fail accordingly
-            });
+            channels.tasks.on("succeeded", function (task) {
+                this.updateTasks()
+                this.updateTests()
+            }, this);
 
             //Listen for the step command, then move the active task forward one step
             channels.tasks.on("step", function () {
-                this.taskList.step();
+                this.scenarios.get("activeScenario").get("activeTask").step()
             }, this)
             channels.tasks.on("stepOver", function () {
                 //TODO: this.taskList.stepOver();
@@ -128,34 +109,22 @@ define([
 
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
-                if (this.scenarios.get("activeScenario").get("hasDebugData") && !this.debug ) {
+                if (this.scenarios.get("activeScenario").has("activeTask") && !this.debug) {
                     this.enableDebug()
-                    updateDebug(this)
+                    this.updateDebug()
                 }
             }, this)
 
-            //Listen for the update debug map command from the task list, and update the editors/scenario model with the latest stack frame
-            channels.debug.on("update", function (editorMap) {
-                this.scenarios.get("activeScenario").debugUpdate(editorMap)
-                updateDebug(this)
-            }, this)
-
-            //TODO: Remove these. Move stack into task list.
-            //TODO: Should we have a task model instead of keeping all in the task view. Almost certainly yes
-
-            channels.debug.on("stepIn", function (editorMap) {
-                this.scenarios.get("activeScenario").debugStepIn(editorMap) && updateEditor()
-            }, this)
-
-            channels.debug.on("stepOut", function (editorMap) {
-                this.scenarios.get("activeScenario").debugStepOut(editorMap) && updateEditor()
+            channels.tasks.on("update", function(){
+                this.updateDebug()
+                this.updateEditor()
             }, this)
 
         },
-        render                    : function () {
+        render                 : function () {
             //All the views are self rendering.
         },
-        disableDebug              : function () {
+        disableDebug           : function () {
             this.debug = false
             this.editorInfo.show()
             this.controlBar.show()
@@ -164,7 +133,7 @@ define([
             this.stackTrace.hide()
             this.editorMap.editorView()
         },
-        enableDebug               : function () {
+        enableDebug            : function () {
             this.debug = true
             this.editorInfo.hide()
             this.controlBar.hide()
@@ -172,6 +141,27 @@ define([
             this.debugBar.show()
             this.stackTrace.show()
             this.editorMap.debugView()
+            this.updateEditor()
+        }, updateEditor        : function () {
+            this.updateTests(this)
+            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
+            this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
+            if (this.debug)
+                this.editorMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.debug)
+            else
+                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor").get("map"), this.scenarios.get("activeScenario").get("functions"), this.debug);
+            this.functionList.set(this.scenarios.get("activeScenario").get("functions"), this.debug);
+        }, updateScenario      : function () {
+            this.updateTasks(this)
+            this.updateEditor(this)
+            this.scenarioList.set(this.scenarios)
+        }, updateDebug         : function () {
+            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
+            this.stackTrace.set(this.scenarios.get("active"), this.debug)
+        }, updateTasks         : function () {
+            this.taskList.set(this.scenarios.get("activeScenario").get("tasks"))
+        }, updateTests         : function () {
+            this.testList.set(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
         }
 
     });

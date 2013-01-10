@@ -88,7 +88,7 @@ define([
                             that.wireUp(target.func, source.func, target, source);
 
                             if (target.type === "output")
-                                that.editor.get("map").output = source.func.functionModel.name
+                                that.editorMap.output = source.func.functionModel.name
                             else if (source.func.functionModel !== undefined)
                                 target.func.functionModel.inputs[target.name] = source.func.functionModel.name
                             else
@@ -193,9 +193,23 @@ define([
         wireUp                 : function (func, func2, inp, out) {
             var canvas = this.canvas;
             canvas.remove(inp.wire)
+            var fill = '#2284A1';
+            if (func !== undefined && func.functionModel !== undefined) {
+                if (func2 !== undefined && func2.functionModel !== undefined) {
+                    if (func.functionModel.active && func2.functionModel.active) {
+                        fill = "red"
+                    }
+                }
+            } else {
+                if (func2 !== undefined && func2.functionModel !== undefined) {
+                    if (func2.functionModel.active) {
+                        fill = "red"
+                    }
+                }
+            }
 
             var wire = new fabric.Line([inp.getLeft(), inp.getTop(), out.getLeft(), out.getTop()], {
-                fill        : '#2284A1',
+                fill        : fill,
                 strokeWidth : 2
             })
             wire.lockMovementX = wire.lockMovementY = true;

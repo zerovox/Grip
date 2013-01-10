@@ -16,6 +16,7 @@ define([
             this.render();
         },
         render     : function () {
+            //TODO: Move this logic inside the test model
             var tests = this.tests === undefined ? undefined : this.tests.toJSON()
             var total = 0;
             var passing = 0;
@@ -31,7 +32,7 @@ define([
         },
         bind       : function () {
             var that = this;
-            $('#addTestCase').on("click", function () {
+            $('#addTestCase').live("click", function () {
                 alertify.prompt("Please enter the inputs as a comma separated list with strings enclosed by quotation marks.", function (e, inputs) {
                     if (e) {
                         alertify.prompt("Please enter the desired output for this test with strings enclosed by quotation marks.", function (e, output) {

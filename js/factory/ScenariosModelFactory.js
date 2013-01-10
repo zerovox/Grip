@@ -12,6 +12,7 @@ define([
 ], function (Backbone, ScenariosModel, ScenarioModel, EditorModel, TestModel, FunctionModel, ScenarioCollection, EditorCollection, TestCollection, FunctionCollection) {
 
     return function (scenariosJSON, primatives) {
+        //TODO: Move as much of this logic as possible inside the models themselves
         var sList = new ScenarioCollection()
         var scenarios = new ScenariosModel({all:sList})
         var fs = true

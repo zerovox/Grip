@@ -1,10 +1,12 @@
 define([
-    'backbone'
-], function (Backbone) {
+    'backbone',
+    'models/TaskModel',
+    'collections/Tests'
+], function (Backbone, TaskModel, TestCollection) {
 
     return Backbone.Model.extend({
         initialize      : function () {
-            this.set({"hasDebugData" : false, "stackTrace" : []});
+            this.set("tasks", new TestCollection())
         },
         swap            : function (to) {
             var matchingEditors = this.get("list").where({name : to});
@@ -20,15 +22,26 @@ define([
                 console.log("No matching editor, or duplicate scenario names", matchingEditors);
             }
             return false;
-        }, debugUpdate  : function (map) {
-            _.last(this.get("stackTrace")).map = map;
-        }, debugStepIn  : function (map) {
-            this.get("stackTrace").push({map : map});
-        }, debugStepOut : function (map) {
-            var old = this.get("stackTrace").pop()
-            _.last(this.get("stackTrace")).map = map;
-            if (old.active)
-                _.last(this.get("stackTrace")).active = true;
-        }});
+        }, activateTask : function(index){
+            var task = this.get("tasks").at(index)
+            if(task !== undefined && task !== this.get("activeTask")){
+                task.set({activeTask : true})
+                this.get("activeTask").set({activeTask : false})
+                this.set({activeTask : task})
+                return true
+            }
+            return false
+        }, runTest : function(test, editor, debug){
+            var task = new TaskModel(test, editor, debug);
+            this.get("tasks").add(task)
+            if(!this.has("activeTask")){
+                this.set({activeTask : task})
+                task.set({activeTask : true})
+                return true
+            }
+            return false
+
+        }
+    });
 
 });

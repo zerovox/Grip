@@ -8,8 +8,8 @@
     <tr>
         <th>Inputs</th>
         <th>Output</th>
-        <th>Run</th>
         <th>Pass?</th>
+        <th>Run</th>
     </tr>
     </thead>
     <tbody id="testTableBody">
@@ -17,6 +17,7 @@
         <tr>
             <td>{{#inputs}}{{toJSON}}{{/inputs}}</td>
             <td>{{output}}</td>
+            <td>{{#finished}}{{#passed}}Test Passed{{/passed}}{{^passed}}Test Failed with output {{lastResult}}{{/passed}}{{/finished}}{{^finished}}{{#passed}}Test currently running{{/passed}}{{^passed}}Test not yet run{{/passed}}{{/finished}}</td>
             <td>
                 <ul class="button-group">
                     <li><a href="#/test/run/{{index}}" class="button small alert">Run</a></li>
@@ -24,7 +25,6 @@
                     <li><a href="#/test/debug/{{index}}" class="button small alert">Debug</a></li>
                 </ul>
             </td>
-            <td>{{#finished}}{{#passed}}Test Passed{{/passed}}{{^passed}}Test Failed{{/passed}}{{/finished}}{{^finished}}{{#passed}}Test currently running{{/passed}}{{^passed}}Test not yet run{{/passed}}{{/finished}}</td>
         </tr>
         {{/tests}}
     </tbody>

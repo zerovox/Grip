@@ -5,10 +5,10 @@ define([
     'models/EditorModel',
     'models/TestModel',
     'models/FunctionModel',
-    'collections/scenarios',
-    'collections/editors',
-    'collections/tests',
-    'collections/functions'
+    'collections/Scenarios',
+    'collections/Editors',
+    'collections/Tests',
+    'collections/Functions'
 ], function (Backbone, ScenariosModel, ScenarioModel, EditorModel, TestModel, FunctionModel, ScenarioCollection, EditorCollection, TestCollection, FunctionCollection) {
 
     return function (scenariosJSON, primatives) {

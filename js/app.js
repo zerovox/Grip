@@ -2,7 +2,7 @@ define([
     'underscore',
     'backbone',
     'router',
-    'views/main'
+    'views/Main'
 ], function (_, Backbone, Router, MainView) {
     var initialize = function () {
         _.extend(Backbone.View.prototype, {

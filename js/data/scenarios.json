@@ -6,11 +6,9 @@
             {
                 "name"  : "square",
                 "map"   : {
-                    "inputs"    : [
-                        {
-                            "name" : "argument"
-                        }
-                    ],
+                    "inputs"    : {
+                        "argument" : {}
+                    },
                     "output"    : "a",
                     "functions" : {
                         "a" : {
@@ -61,7 +59,7 @@
             {
                 "name"  : "squares",
                 "map"   : {
-                    "inputs"    : ["argument"],
+                    "inputs"    : {"argument" : {}},
                     "output"    : "a",
                     "functions" : {
                         "a" : {

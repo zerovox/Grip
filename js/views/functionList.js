@@ -20,7 +20,7 @@ define([
             canvas.clear();
             var resize = function () {
                 var h = Math.max(120, ($(window).height() - 100) * 0.20);
-                var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
+                var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
                 canvas.setHeight(h);
                 canvas.setWidth(w);
             };

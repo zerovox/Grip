@@ -159,9 +159,10 @@ define([
         },
         addInput               : function (name) {
             if (_.contains(this.editorMap.inputs, name)) {
-                console.log("log the fail reason here once we have logging included")
+                //TODO: log the fail reason here once we have logging included
+                //TODO: also check to see if there is a function with the name, as thats problematic too
             } else {
-                this.editorMap.inputs.push(name);
+                this.editorMap.inputs[name] = {};
                 this.render();
                 //TODO: avoid rendering everything, see if we can just re-render inputs and wires
             }
@@ -202,8 +203,10 @@ define([
 
             //Store a mapping of arguments based on name. Used to wire up the view
             //For each input, add to canvas and then add to the mapping above
-            _.each(map.inputs, function (input, index) {
-                functions[input.name] = this.newInput(input.name, index, this.editorMap.inputs.length);
+            var index = 0;
+            _.each(map.inputs, function (input, name) {
+                functions[name] = this.newInput(name, index, _.size(map.inputs));
+                index++
             }, this);
 
             //For each function, add a wire from any inputs to their targets
@@ -393,7 +396,7 @@ define([
         resize                 : function () {
             var canvas = this.canvas;
             var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
-            var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
+            var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
             canvas.setHeight(h);
             canvas.setWidth(w);
             var left = new fabric.Rect({left:10, top:h/2, width:20, height: h});

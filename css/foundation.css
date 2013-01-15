@@ -992,16 +992,16 @@ ul[data-clearing] li.clearing-feature ~ li { display: none; }
 /* Specific overrides for elements that require something other than display: block */
 table.show-for-xlarge, table.show-for-large, table.hide-for-small, table.hide-for-medium { display: table !important; }
 
-@media only screen and (max-width: 1279px) and (min-width: 768px) { .touch table.hide-for-xlarge, .touch table.hide-for-large, .touch table.hide-for-small, .touch table.show-for-medium { display: table !important; } }
+@media only screen and (max-width: 1279px) and (min-width: 999px) { .touch table.hide-for-xlarge, .touch table.hide-for-large, .touch table.hide-for-small, .touch table.show-for-medium { display: table !important; } }
 @media only screen and (max-width: 767px) { table.hide-for-xlarge, table.hide-for-large, table.hide-for-medium, table.show-for-small { display: table !important; } }
 /* 1280 tablet ------------ */
 @media only screen and (max-device-width: 1280px) { /* NavBar --- */
   /*            */
   .touch .nav-bar li.has-flyout > a { padding-right: 36px !important; } }
 /* Covering almost all ----- */
-@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 767px) { .flex-video { padding-top: 0; } }
+@media only screen and (max-device-width: 800px), only screen and (device-width: 1024px) and (device-height: 600px), only screen and (width: 1280px) and (orientation: landscape), only screen and (device-width: 800px), only screen and (max-width: 999px) { .flex-video { padding-top: 0; } }
 /* Between Medium and Small */
-@media only screen and (max-width: 1279px) and (min-width: 768px) { /* NavBar --- */
+@media only screen and (max-width: 1279px) and (min-width: 1000px) { /* NavBar --- */
   /*            */
   .touch .nav-bar li a { font-size: 13px; }
   .touch .nav-bar li.has-flyout > a.flyout-toggle { padding: 20px !important; }
@@ -1015,7 +1015,7 @@ table.show-for-xlarge, table.show-for-large, table.hide-for-small, table.hide-fo
   .clearing-main-right { height: 100%; right: 0; }
   .clearing-main-right:before { content: ""; display: block; width: 0; height: 0; border: solid 16px; border-color: transparent transparent transparent white; } }
 /* Small Devices ------------ */
-@media only screen and (max-width: 767px) { /* Global Misc --- */
+@media only screen and (max-width: 999px) { /* Global Misc --- */
   /*                 */
   .left, .right { float: none; }
   body { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; width: 100%; min-width: 0; margin-left: 0; margin-right: 0; padding-left: 0; padding-right: 0; }

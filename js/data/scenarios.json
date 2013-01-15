@@ -1,12 +1,16 @@
 [
     {
         "name"      : "Squaring",
-        "category" : "Basics",
+        "category"  : "Basics",
         "editors"   : [
             {
                 "name"  : "square",
                 "map"   : {
-                    "inputs"    : ["argument"],
+                    "inputs"    : [
+                        {
+                            "name" : "argument"
+                        }
+                    ],
                     "output"    : "a",
                     "functions" : {
                         "a" : {
@@ -14,8 +18,12 @@
                             "x"        : 200,
                             "y"        : 200,
                             "inputs"   : {
-                                "a" : "b",
-                                "b" : "b"
+                                "a" : {
+                                    "wired" : "b"
+                                },
+                                "b" : {
+                                    "wired" : "b"
+                                }
                             }
                         },
                         "b" : {
@@ -23,8 +31,12 @@
                             "x"        : 300,
                             "y"        : 300,
                             "inputs"   : {
-                                "a" : "argument",
-                                "b" : "argument"
+                                "a" : {
+                                    "wired" : "argument"
+                                },
+                                "b" : {
+                                    "wired" : "argument"
+                                }
                             }
                         }
                     }
@@ -32,11 +44,15 @@
                 },
                 "tests" : [
                     {
-                        "inputs" : {"argument" : 2},
+                        "inputs" : {
+                            "argument" : 2
+                        },
                         "output" : 4
                     },
                     {
-                        "inputs" : {"argument" : 3},
+                        "inputs" : {
+                            "argument" : 3
+                        },
                         "output" : 9
                     }
                 ],
@@ -69,11 +85,15 @@
                 },
                 "tests" : [
                     {
-                        "inputs" : {"argument" : 2},
+                        "inputs" : {
+                            "argument" : 2
+                        },
                         "output" : 4
                     },
                     {
-                        "inputs" : {"argument" : 3},
+                        "inputs" : {
+                            "argument" : 3
+                        },
                         "output" : 9
                     }
                 ],
@@ -87,19 +107,23 @@
     },
     {
         "name"      : "Power",
-        "category" : "Basics",
+        "category"  : "Basics",
         "editors"   : [
             {
                 "name"  : "double",
                 "map"   : {},
                 "tests" : [
                     {
-                        "inputs" : [2, 2],
+                        "inputs" : {
+                            "a" : 2
+                        },
                         "output" : 4
                     },
                     {
-                        "inputs" : [3, 3],
-                        "output" : 27
+                        "inputs" : {
+                            "a" : 14
+                        },
+                        "output" : 28
                     }
                 ],
                 "info"  : ""

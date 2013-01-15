@@ -37,7 +37,7 @@ define([
                     if (e) {
                         alertify.prompt("Please enter the desired output for this test with strings enclosed by quotation marks.", function (e, output) {
                             if (e) {
-                                that.tests.add({inputs : JSON.parse('[' + inputs + ']'), output : JSON.parse(output), finished : false, passed : false})
+                                that.tests.add({inputs : JSON.parse(inputs), output : JSON.parse(output), finished : false, passed : false})
                                 that.render();
 
                                 //TODO: Handle JSON parse fails with log messages

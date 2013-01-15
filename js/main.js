@@ -14,7 +14,7 @@ require.config({
     },
     shim:{
         'backbone':{
-            deps:['underscore', 'jquery', 'modernizr','foundation', 'foundation.app'],
+            deps:['underscore', 'jquery', 'modernizr', 'foundation', 'foundation.app'],
             exports:'Backbone'
         }
     }});

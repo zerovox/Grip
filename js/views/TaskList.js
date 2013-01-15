@@ -1,9 +1,8 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/taskList.m',
-    'channels'
-], function (Backbone, Mustache, TaskListTemplate, channels) {
+    'libs/text!templates/taskList.m'
+], function (Backbone, Mustache, TaskListTemplate) {
 
     return Backbone.View.extend({
         el         : '#taskModal',

@@ -1,9 +1,9 @@
 define([
     'backbone',
     'mustache',
-    'views/editorList',
-    'views/scenarioList',
-    'views/testList',
+    'views/EditorList',
+    'views/ScenarioList',
+    'views/TestList',
     'views/EditorInfo',
     'views/EditorMap',
     'views/FunctionList',
@@ -14,8 +14,9 @@ define([
     'factory/ScenariosModelFactory',
     'libs/text!data/scenarios.json',
     'primitives',
-    'channels'
-], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels) {
+    'channels',
+    'alertify'
+], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -67,6 +68,7 @@ define([
                 test.set({passed : true, finished : false})
                 this.testList.render()
                 this.updateTasks();
+                alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
             }, this)
 
             //Listen for test debug command, and start appropriate test in debug environment
@@ -78,11 +80,16 @@ define([
                 this.updateTests()
                 this.updateTasks()
                 this.updateDebug()
-                //TODO: can we do this without calling render? We can listen for changes on tests, but that seems crappy to me, seing as we dont use that pattern anywhere else
+                alertify.log("Started debugging on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
                 //TODO: instead of marking this test as running, perhaps we should listen to new tasks created, match these against tests, if they match then set the task as running? overkill? do we ever run anyway but through the test interface? if we have two tests of the same inputs, should they both be marked as running when eitehr is run
             }, this)
 
             channels.tasks.on("succeeded", function (task) {
+                this.updateTasks()
+                this.updateTests()
+            }, this);
+
+            channels.tasks.on("failed", function (task) {
                 this.updateTasks()
                 this.updateTests()
             }, this);

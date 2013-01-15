@@ -54,6 +54,9 @@ define([
             var wire = null;
             var source = null;
 
+            var dragging = false;
+            var removeFunction = false;
+
             canvas.on({'mouse:down' : function (e) {
                 var target = e.target
                 if (target !== undefined && target.type === "functionOutput") {
@@ -61,17 +64,18 @@ define([
                     if (fromInput) {
                         if (target.func !== source.func) {
                             that.wireUp(source.func, target.func, source, target)
+                            console.log(source.func.functionModel.inputs)
                             if (source.type === "output")
-                                that.editor.get("map").output = target.func.functionModel.name
+                                that.editorMap.output = target.func.functionModel.name
                             else if (target.func.functionModel !== undefined)
-                                source.func.functionModel.inputs[source.name] = target.func.functionModel.name
+                                source.func.functionModel.inputs[source.name] = {wired : target.func.functionModel.name}
                             else
-                                source.func.functionModel.inputs[source.name] = target.func.inputName
+                                source.func.functionModel.inputs[source.name] = {wired : target.func.inputName}
 
                         }
                     } else {
                         fromOutput = true;
-                        wire = new fabric.Line([e.e.layerX, e.e.layerY], {
+                        wire = new fabric.Line([e.e.layerX, e.e.layerY, e.e.layerX, e.e.layerY], {
                             fill        : '#2BA6CB',
                             strokeWidth : 5,
                             selectable  : false
@@ -90,9 +94,9 @@ define([
                             if (target.type === "output")
                                 that.editorMap.output = source.func.functionModel.name
                             else if (source.func.functionModel !== undefined)
-                                target.func.functionModel.inputs[target.name] = source.func.functionModel.name
+                                target.func.functionModel.inputs[target.name].wired = source.func.functionModel.name
                             else
-                                target.func.functionModel.inputs[target.name] = source.func.inputName
+                                target.func.functionModel.inputs[target.name].wired = source.func.inputName
                         }
                     } else {
                         fromInput = true;
@@ -108,23 +112,50 @@ define([
                     fromOutput = false;
                 } else if (target !== undefined && target.type === "wire") {
                     console.log("remove wire")
+                } else if (target !== undefined && target.type === "function") {
+                    that.showEdges()
+                    dragging = true;
                 } else {
                     fromOutput = fromInput = false;
                     canvas.remove(wire);
                 }
             }});
 
+            canvas.on({'mouse:up' : function(e){
+                dragging = false;
+                that.hideEdges()
+                if(removeFunction && e.target !== undefined){
+                    delete that.editorMap.functions[e.target.functionModel.name]
+                    if(that.editorMap.output === e.target.functionModel.name){
+                        delete that.editorMap.output
+                    }
+                    that.render()
+                }
+
+                removeFunction = false;
+            }})
+
             canvas.on({'mouse:move' : function (e) {
                 if (fromOutput || fromInput) {
                     wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY })
                     canvas.renderAll()
                 }
+                if(dragging){
+                    if(e.e.layerX<20 || e.e.layerX > canvas.getWidth()-20 || e.e.layerY<20 || e.e.layerY > canvas.getHeight()-20){
+                        that.edges.setFill(that.edges.selectedFill)
+                        removeFunction = true;
+                    } else {
+                        that.edges.setFill(that.edges.unselectedFill)
+                        removeFunction = false;
+                    }
+                }
             }})
         },
         addFunction            : function (func) {
-            var funcModel = {function : func.name, y : 0, x : 0, name : this.createGUID(), inputs : {}, arg : func.arg};
+            var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
             this.editorMap.functions[funcModel.name] = funcModel;
+            this.canvas.renderAll()
         },
         addInput               : function (name) {
             if (_.contains(this.editorMap.inputs, name)) {
@@ -171,14 +202,14 @@ define([
 
             //Store a mapping of arguments based on name. Used to wire up the view
             //For each input, add to canvas and then add to the mapping above
-            _.each(map.inputs, function (inputName, index) {
-                functions[inputName] = this.newInput(inputName, index, this.editorMap.inputs.length);
+            _.each(map.inputs, function (input, index) {
+                functions[input.name] = this.newInput(input.name, index, this.editorMap.inputs.length);
             }, this);
 
             //For each function, add a wire from any inputs to their targets
             _.each(functions, function (func) {
                 _.each(func.inputs, function (inp) {
-                    if (inp.wireTo !== undefined) {
+                    if (inp.wireTo !== undefined && functions[inp.wireTo] !== undefined) {
                         this.wireUp(func, functions[inp.wireTo], inp, functions[inp.wireTo].output)
                     }
                 }, this);
@@ -307,8 +338,11 @@ define([
                     positionInput(box)
                 })
                 positionInput(box);
-                if (func.inputs !== undefined)
-                    input.wireTo = func.inputs[name]
+                if (func.inputs !== undefined){
+                    var inp = func.inputs[name]
+                    if(inp !== undefined)
+                        input.wireTo = inp.wired;
+                    }
                 input.func = box;
                 input.name = name;
                 box.inputs[name] = input
@@ -340,6 +374,7 @@ define([
                 updateModel(box)
             })
 
+            box.type = "function"
             box.output = output;
             box.functionModel = func;
             return box;
@@ -361,7 +396,17 @@ define([
             var w = $(window).width() > 800 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
             canvas.setHeight(h);
             canvas.setWidth(w);
+            var left = new fabric.Rect({left:10, top:h/2, width:20, height: h});
+            var right = new fabric.Rect({left:w-10, top:h/2, width:20, height: h});
+            var top = new fabric.Rect({left:w/2, top:10, width : w-40, height : 20})
+            var bottom = new fabric.Rect({left:w/2, top:h-10, width : w-40, height : 20})
+            this.edges = new fabric.Group([left, right, top, bottom])
+            this.edges.selectable = false
+            this.edges.unselectedFill = "rgba(198, 15, 19, .2)"
+            this.edges.selectedFill = "rgba(198, 15, 19, .9)"
+            this.edges.setFill(this.edges.unselectedFill)
 
+            //canvas.add(right)
             //We re-render every time the window is resized. Prevents elements going off the edge of the screen
             this.render();
         },
@@ -385,6 +430,11 @@ define([
                 this.maxHeightPercentage = 0.8
                 this.resize()
             }
+        }, showEdges : function(){
+            this.canvas.add(this.edges)
+            this.edges.setFill(this.edges.unselectedFill)
+        }, hideEdges : function(){
+            this.canvas.remove(this.edges)
         }, maxHeightPercentage : 0.8
     })
         ;

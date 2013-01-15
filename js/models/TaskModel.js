@@ -8,9 +8,8 @@ define([
             this.get("worker").postMessage({step : true})
         },
         initialize    : function (test, editor, debug) {
-            console.log(debug)
             var that = this;
-            var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
+            var worker = debug ? new Worker('js/debug.js') : new Worker('js/run.js');
             this.set({inputs : test.get("inputs"), test : test, output : test.get("output"), worker : worker, running : true, name : editor.get("name")})
             worker.onmessage = function (result) {
                 if(result.data.log !== undefined){
@@ -38,6 +37,7 @@ define([
             this.get("worker").terminate();
             this.set("failMsg",failMsg)
             this.set("running",false)
+            this.get("test").fail(failMsg)
             channels.tasks.trigger("failed", this)
         },
         update : function(editor){

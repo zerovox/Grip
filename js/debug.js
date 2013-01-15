@@ -1,5 +1,5 @@
 //This gives us access to the variable primitives, the array of primitive functions
-importScripts('/js/data/primitives.js', '/js/libs/lodash.min.js')
+importScripts('data/primitives.js', 'libs/lodash.min.js')
 
 var resultCaching = true
 var env;
@@ -74,7 +74,12 @@ function step(env) {
                 env.returnVal = f.result
             } else {
                 env.stack.push({fName : ft.fName, action : "r", cont : response.cont})
-                env.stack.push({fName : f.inputs[response.need], action : "e"})
+                var inp = f.inputs[response.need]
+                if (inp === undefined) {
+                    fail("Unwired function exception")
+                } else {
+                    env.stack.push({fName : inp.wired, action : "e"})
+                }
             }
         }
     } else if (ft.action === "r") {
@@ -85,7 +90,12 @@ function step(env) {
             env.returnVal = f.result
         } else {
             env.stack.push({fName : ft.fName, action : "r", cont : response.cont})
-            env.stack.push({fName : f.inputs[response.need], action : "e"})
+            var inp = f.inputs[response.need]
+            if (inp === undefined) {
+                fail("Unwired function exception")
+            } else {
+                env.stack.push({fName : inp.wired, action : "e"})
+            }
         }
     }
 }

@@ -1,5 +1,5 @@
 //This gives us access to the variable primitives, the array of primitive functions
-importScripts('/js/data/primitives.js', '/js/libs/lodash.min.js')
+importScripts('data/primitives.js', 'libs/lodash.min.js')
 
 var resultCaching = true
 var debugging = true
@@ -55,10 +55,15 @@ function execute(func, editor, inputs) {
 
 function cont(response, f, editor, inputs) {
     if (response.result === undefined) {
-        log("Requesting output from: " + f.inputs[response.need])
-        var evalArg = execute(f.inputs[response.need], editor, inputs)
-        var continuationResponse = response.cont(evalArg)
-        return cont(continuationResponse, f, editor, inputs)
+        var inp = f.inputs[response.need]
+        if(inp === undefined){
+            fail("Unwired function exception")
+        } else {
+            log("Requesting output from: " + inp.wired)
+            var evalArg = execute(inp.wired, editor, inputs)
+            var continuationResponse = response.cont(evalArg)
+            return cont(continuationResponse, f, editor, inputs)
+        }
     } else {
         return response.result;
     }

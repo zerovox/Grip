@@ -22,11 +22,13 @@ define([
             var passing = 0;
             _.each(tests, function (test, index) {
                 test.index = index;
-               if(test.pass)
+                console.log(test)
+               if(test.passed)
                     passing++
                 total++
             })
-            var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : passing/total,  "toJSON": function() {return JSON.stringify(this);}});
+            console.log(total, passing)
+            var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : (passing/total)*100,  "toJSON": function() {return JSON.stringify(this);}});
             this.$el.html(html);
 
         },

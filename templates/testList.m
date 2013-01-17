@@ -2,7 +2,7 @@
 <p>{{passing}}/{{total}} tests passed</p>
 
 <!--<div class="nice alert progress"><span class="meter" style="width: 50%"></span></div>-->
-<div class="nice progress success"><span class="meter" style="width: {{percent}}}%"></span></div>
+<div class="nice progress success"><span class="meter" style="width:{{percent}}%"></span></div>
 <table class="twelve">
     <thead>
     <tr>

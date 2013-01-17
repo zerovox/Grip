@@ -57,6 +57,7 @@ function cont(response, f, editor, inputs) {
     if (response.result === undefined) {
         var inp = f.inputs[response.need]
         if(inp === undefined){
+            log(f.inputs)
             fail("Unwired function exception")
         } else {
             log("Requesting output from: " + inp.wired)

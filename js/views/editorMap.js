@@ -64,7 +64,6 @@ define([
                     if (fromInput) {
                         if (target.func !== source.func) {
                             that.wireUp(source.func, target.func, source, target)
-                            console.log(source.func.functionModel.inputs)
                             if (source.type === "output")
                                 that.editorMap.output = target.func.functionModel.name
                             else if (target.func.functionModel !== undefined)
@@ -90,13 +89,13 @@ define([
                     if (fromOutput) {
                         if (target.func !== source.func) {
                             that.wireUp(target.func, source.func, target, source);
-
+                            console.log(target, source)
                             if (target.type === "output")
                                 that.editorMap.output = source.func.functionModel.name
                             else if (source.func.functionModel !== undefined)
-                                target.func.functionModel.inputs[target.name].wired = source.func.functionModel.name
+                                target.func.functionModel.inputs[target.name] = {wired : source.func.functionModel.name}
                             else
-                                target.func.functionModel.inputs[target.name].wired = source.func.inputName
+                                target.func.functionModel.inputs[target.name]  = {wired : source.func.inputName}
                         }
                     } else {
                         fromInput = true;
@@ -204,9 +203,7 @@ define([
             //Store a mapping of arguments based on name. Used to wire up the view
             //For each input, add to canvas and then add to the mapping above
             var index = 0;
-            console.log(map)
             _.each(map.inputs, function (input, name) {
-                console.log(name)
                 functions[name] = this.newInput(name, index, _.size(map.inputs));
                 index++
             }, this);

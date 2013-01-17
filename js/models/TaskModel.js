@@ -44,7 +44,6 @@ define([
         update : function(editor){
             this.activeMap = editor;
             channels.tasks.trigger("update", this)
-            console.log("updated fired")
         }, getActiveMap : function(){
             return this.activeMap;
         }

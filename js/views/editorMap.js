@@ -89,7 +89,6 @@ define([
                     if (fromOutput) {
                         if (target.func !== source.func) {
                             that.wireUp(target.func, source.func, target, source);
-                            console.log(target, source)
                             if (target.type === "output")
                                 that.editorMap.output = source.func.functionModel.name
                             else if (source.func.functionModel !== undefined)

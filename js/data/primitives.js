@@ -45,9 +45,9 @@ var primitives = (function () {
         apply  : function () {
             return {need : "test", cont : function (test) {
                 if (test)
-                    return {need : "then", cont : function (then) {return then}}
+                    return {need : "then", cont : function (then) {return {result : then}}}
                 else
-                    return {need : "els", cont : function (els) {return els}}
+                    return {need : "els", cont : function (els) {return {result : els}}}
             }}
         }
     }
@@ -61,7 +61,7 @@ var primitives = (function () {
                 inputs : [],
                 arg    : arg,
                 apply  : function () {
-                    return arg;
+                    return {result : arg};
                 }
             }
         }

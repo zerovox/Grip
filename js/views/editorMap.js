@@ -158,9 +158,9 @@ define([
             this.canvas.renderAll()
         },
         addInput               : function (name) {
-            if (_.contains(this.editorMap.inputs, name)) {
+            if (this.editorMap.inputs[name] !== undefined || this.editorMap.functions[name] !== undefined) {
+                console.log(name)
                 //TODO: log the fail reason here once we have logging included
-                //TODO: also check to see if there is a function with the name, as thats problematic too
             } else {
                 this.editorMap.inputs[name] = {};
                 this.render();
@@ -172,7 +172,7 @@ define([
             if (this.editorMap.functions === undefined)
                 this.editorMap.functions = {}
             if (this.editorMap.inputs === undefined)
-                this.editorMap.inputs = []
+                this.editorMap.inputs = {}
             if (this.functions === undefined || functionsCollection !== undefined)
                 this.functions = functionsCollection
             this.resize()
@@ -204,7 +204,9 @@ define([
             //Store a mapping of arguments based on name. Used to wire up the view
             //For each input, add to canvas and then add to the mapping above
             var index = 0;
+            console.log(map)
             _.each(map.inputs, function (input, name) {
+                console.log(name)
                 functions[name] = this.newInput(name, index, _.size(map.inputs));
                 index++
             }, this);

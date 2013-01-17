@@ -38,6 +38,11 @@ define([
                 this.set({activeTask : task})
                 task.set({activeTask : true})
                 return true
+            } else if (debug){
+                task.set({activeTask : true})
+                this.get("activeTask").set({activeTask : false})
+                this.set({activeTask : task})
+                return true
             }
             return false
 

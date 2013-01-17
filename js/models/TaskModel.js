@@ -20,7 +20,8 @@ define([
                     that.failed(result.data.fail)
                 }else{
                     //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
-                    that.update(result.data.debug)
+                    if(debug)
+                        that.update(result.data.debug)
                 }
             }
             worker.postMessage({inputs:test.get("inputs"), editor:editor.get("map")});
@@ -43,6 +44,7 @@ define([
         update : function(editor){
             this.activeMap = editor;
             channels.tasks.trigger("update", this)
+            console.log("updated fired")
         }, getActiveMap : function(){
             return this.activeMap;
         }

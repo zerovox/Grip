@@ -67,20 +67,14 @@ function step(env) {
         } else {
             f.active = true
             f.result = undefined;
-            var response = prims[f.function].apply()
-            if (response.result !== undefined) {
-                f.result = response.result;
-                f.active = false
-                env.returnVal = f.result
+            var functionToApply;
+            if(f.arg !== undefined){
+                functionToApply = prims[f.function].new(f.arg)
             } else {
-                env.stack.push({fName : ft.fName, action : "r", cont : response.cont})
-                var inp = f.inputs[response.need]
-                if (inp === undefined) {
-                    fail("Unwired function exception")
-                } else {
-                    env.stack.push({fName : inp.wired, action : "e"})
-                }
+                functionToApply = prims[f.function]
             }
+            var response = functionToApply.apply
+            env.stack.push({fName : ft.fName, action : "r", cont : function (){return response.apply()}})
         }
     } else if (ft.action === "r") {
         var response = ft.cont(env.returnVal)

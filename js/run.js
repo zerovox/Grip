@@ -42,6 +42,7 @@ function execute(func, editor, inputs) {
     } else {
         //cache not hit, must be the first time this function has been requested, so we must apply it
         var functionToApply;
+        //If f has an argument, we must create a new instance of the function, e.g if the function is constant and we have an argument of 10, we want to create a new function that when applied, gives us the result 10
         if(f.arg !== undefined){
             functionToApply = prims[f.function].new(f.arg)
         } else {

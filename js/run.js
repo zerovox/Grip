@@ -41,7 +41,14 @@ function execute(func, editor, inputs) {
         //cache hit, we don't need to repeat the calculations here
     } else {
         //cache not hit, must be the first time this function has been requested, so we must apply it
-        var response = prims[f.function].apply()
+        var functionToApply;
+        if(f.arg !== undefined){
+            functionToApply = prims[f.function].new(f.arg)
+        } else {
+            functionToApply = prims[f.function]
+        }
+        var response = functionToApply.apply()
+        log("this " + response)
         //cont() takes the response from the function application, and returns the result after satisfying any arguments it depends on
         f.result = cont(response, f, editor, inputs)
     }
@@ -57,7 +64,6 @@ function cont(response, f, editor, inputs) {
     if (response.result === undefined) {
         var inp = f.inputs[response.need]
         if(inp === undefined){
-            log(f.inputs)
             fail("Unwired function exception")
         } else {
             log("Requesting output from: " + inp.wired)

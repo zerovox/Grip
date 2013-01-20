@@ -40,7 +40,9 @@ define([
             s.set({functions:fList})
             _.each(scenario.functions, function (fName) {
                 var f = new FunctionModel();
-                f.set({func: _.find(primatives, function(prim){return prim.name === fName})})
+                var func = _.find(primatives, function(prim){return prim.name === fName})
+                f.set({func: func, group:func.group})
+
                 fList.add(f);
             });
             if (fs) {

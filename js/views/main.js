@@ -5,7 +5,7 @@ define([
     'views/ScenarioList',
     'views/TestList',
     'views/EditorInfo',
-    'views/EditorMap',
+    'views/FabricEditorMap',
     'views/FunctionList',
     'views/TaskList',
     'views/ControlBar',
@@ -58,6 +58,10 @@ define([
                 this.disableDebug()
                 this.scenarios.get("activeScenario").swap(name, this.scenarios)
                 this.updateEditor();
+            }, this);
+            channels.editors.on("switchFunctionGroup", function (name) {
+                console.log("test")
+                this.functionList.makeActive(name)
             }, this);
 
             //Listen for test run command, and run appropriate test

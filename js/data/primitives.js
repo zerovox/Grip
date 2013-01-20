@@ -1,9 +1,10 @@
 var primitives = (function () {
     var mul = {
         name   : "multiply",
+        group: "Mathematical",
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : a * b}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) * parseInt(b)}}}
             }}
         },
         inputs : ["a", "b"]
@@ -11,26 +12,29 @@ var primitives = (function () {
 
     var plus = {
         name   : "plus",
+        group: "Mathematical",
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : a + b}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) + parseInt(b)}}}
             }}
         }
     }
 
     var minus = {
         name   : "minus",
+        group: "Mathematical",
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : a - b}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) - parseInt(b)}}}
             }}
         }
     }
 
     var equals = {
         name   : "equals",
+        group: "Expressions",
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
@@ -41,10 +45,11 @@ var primitives = (function () {
 
     var ifc = {
         inputs : ["test", "then", "els"],
-        name   : "if",
+        group: "Expressions",
+        name   : "ifc",
         apply  : function () {
             return {need : "test", cont : function (test) {
-                if (test)
+                if (/true/i.test(test))
                     return {need : "then", cont : function (then) {return {result : then}}}
                 else
                     return {need : "els", cont : function (els) {return {result : els}}}
@@ -53,9 +58,10 @@ var primitives = (function () {
     }
 
     var constant = {
-        name   : "constant",
-        arg    : true,
-        'new'  : function (arg) {
+        name  : "constant",
+        group : "Expressions",
+        arg   : true,
+        'new' : function (arg) {
             return {
                 name   : "constant",
                 inputs : [],

@@ -25,12 +25,22 @@ self.onmessage = function (event) {
                 success(env.returnVal);
             }
         }
-    } else if(event.data.input){
+    } else if (event.data.input) {
         if (env === undefined) {
             fail("Worker not initialized")
         } else {
             env.returnVal = event.data.value
         }
+    } else if (event.data.need) {
+        //TODO: Our currently active child wants an input provided by us.
+    } else if (result.data.log !== undefined) {
+        log(result.data.log)
+    } else if (result.data.result !== undefined) {
+        success(result.data.result)
+    } else if (result.data.fail !== undefined) {
+        fail(result.data.fail)
+    } else if (result.data.debug !== undefined) {
+        debug(result.data.debug)
     } else {
         fail("No instruction given to worker")
     }
@@ -78,13 +88,13 @@ function step(env) {
             f.active = true
             f.result = undefined;
             var functionToApply;
-            if(f.arg !== undefined){
+            if (f.arg !== undefined) {
                 functionToApply = prims[f.function].new(f.arg)
             } else {
                 functionToApply = prims[f.function]
             }
             var response = functionToApply.apply
-            env.stack.push({fName : ft.fName, action : "r", cont : function (){return response.apply()}})
+            env.stack.push({fName : ft.fName, action : "r", cont : function () {return response.apply()}})
         }
     } else if (ft.action === "r") {
         var response = ft.cont(env.returnVal)

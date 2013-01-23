@@ -18,6 +18,8 @@ define([
                     that.finished(result.data.result)
                 }else if(result.data.fail !== undefined){
                     that.failed(result.data.fail)
+                } else if(result.data.need !== undefined){
+                    worker.postMessage({input : result.data.need, value : test.get("inputs")[result.data.need]})
                 }else{
                     //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
                     if(debug)

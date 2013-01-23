@@ -9,7 +9,7 @@ _.each(primitives, function (prim) {
 })
 
 self.onmessage = function (event) {
-    if (event.data.editor !== undefined) {
+    if (event.data.editor) {
         if (event.data.editor.output === undefined)
             fail("No function wired to output")
         else
@@ -24,6 +24,12 @@ self.onmessage = function (event) {
             } else {
                 success(env.returnVal);
             }
+        }
+    } else if(event.data.input){
+        if (env === undefined) {
+            fail("Worker not initialized")
+        } else {
+            env.returnVal = event.data.value
         }
     } else {
         fail("No instruction given to worker")
@@ -46,6 +52,10 @@ function debug(editor) {
     self.postMessage({debug : editor})
 }
 
+function requestInput(name) {
+    self.postMessage({need : name})
+}
+
 function newEnv(editor, inputs) {
     return {
         editor : editor,
@@ -61,7 +71,7 @@ function step(env) {
     var f = env.editor.functions[ft.fName];
     if (ft.action === "e") {
         if (f === undefined) {
-            env.returnVal = env.inputs[ft.fName];
+            requestInput(ft.fName)
         } else if (resultCaching && f.result !== undefined) {
             env.returnVal = f.result
         } else {

@@ -22,12 +22,10 @@ define([
             var passing = 0;
             _.each(tests, function (test, index) {
                 test.index = index;
-                console.log(test)
                if(test.passed)
                     passing++
                 total++
             })
-            console.log(total, passing)
             var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : (passing/total)*100,  "toJSON": function() {return JSON.stringify(this);}});
             this.$el.html(html);
 
@@ -42,7 +40,7 @@ define([
                                 that.tests.add({inputs : JSON.parse(inputs), output : JSON.parse(output), finished : false, passed : false})
                                 that.render();
 
-                                //TODO: Handle JSON parse fails with log messages
+                                //TODO: Don't parse JSON here, show possible inputs in a table/form instead
                             }
                         })
                     }

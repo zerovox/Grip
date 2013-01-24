@@ -1,7 +1,8 @@
 define([
     'backbone',
-    'fabric'
-], function (Backbone, fabric) {
+    'fabric',
+    'alertify'
+], function (Backbone, fabric, alertify) {
 
     return Backbone.View.extend({
         el                     : "#editorMap",
@@ -157,8 +158,7 @@ define([
         },
         addInput               : function (name) {
             if (this.editorMap.inputs[name] !== undefined || this.editorMap.functions[name] !== undefined) {
-                console.log(name)
-                //TODO: log the fail reason here once we have logging included
+                alertify.error("Input with name "+name+" already exists")
             } else {
                 this.editorMap.inputs[name] = {};
                 this.render();

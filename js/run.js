@@ -78,10 +78,8 @@ function cont(response, f, editor, inputs) {
 }
 
 self.onmessage = function (event) {
-    var editor = event.data.editor;
-    var debugLevel = event.data.debugLevel
+    var editor = event.data.localFunctions[event.data.main];
     var inputs = event.data.inputs
-
     if (editor.output === undefined)
         fail("No function wired to output")
     else {

@@ -7,10 +7,11 @@ define([
         step : function(){
             this.get("worker").postMessage({step : true})
         },
-        initialize    : function (test, editor, debug) {
+        initialize    : function (test, mainMethod, debug, localFunctions) {
             var that = this;
             var worker = debug ? new Worker('js/debug.js') : new Worker('js/run.js');
-            this.set({inputs : test.get("inputs"), test : test, output : test.get("output"), worker : worker, running : true, name : editor.get("name")})
+            var inputs = test.get("inputs")
+            this.set({inputs : inputs, test : test, output : test.get("output"), worker : worker, running : true, name : mainMethod})
             worker.onmessage = function (result) {
                 if(result.data.log !== undefined){
                     console.log(result.data.log)
@@ -19,15 +20,20 @@ define([
                 }else if(result.data.fail !== undefined){
                     that.failed(result.data.fail)
                 } else if(result.data.need !== undefined){
-                    worker.postMessage({input : result.data.need, value : test.get("inputs")[result.data.need]})
+                    worker.postMessage({input : result.data.need, value : inputs[result.data.need]})
                 }else{
                     //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
                     if(debug)
                         that.update(result.data.debug)
                 }
             }
-            worker.postMessage({inputs:test.get("inputs"), editor:editor.get("map")});
-            this.activeMap = editor.get("map")
+            //reduce is essentially foldl provided by underscore.js
+            var locals = localFunctions.reduce(function(memo, value){
+                memo[value.get("name")] = value.get("map")
+                return memo
+            }, {})
+            worker.postMessage({inputs:inputs, main:mainMethod, localFunctions : locals});
+            this.activeMap = locals[mainMethod]
         },
         finished : function(result){
             this.get("worker").terminate();

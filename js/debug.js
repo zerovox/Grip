@@ -9,11 +9,8 @@ _.each(primitives, function (prim) {
 })
 
 self.onmessage = function (event) {
-    if (event.data.editor) {
-        if (event.data.editor.output === undefined)
-            fail("No function wired to output")
-        else
-            env = newEnv(event.data.editor, event.data.inputs);
+    if (event.data.main) {
+        env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs);
     } else if (event.data.step) {
         if (env === undefined) {
             fail("Worker not initialized")
@@ -33,14 +30,21 @@ self.onmessage = function (event) {
         }
     } else if (event.data.need) {
         //TODO: Our currently active child wants an input provided by us.
-    } else if (result.data.log !== undefined) {
-        log(result.data.log)
-    } else if (result.data.result !== undefined) {
-        success(result.data.result)
-    } else if (result.data.fail !== undefined) {
-        fail(result.data.fail)
-    } else if (result.data.debug !== undefined) {
-        debug(result.data.debug)
+    } else if (event.data.log !== undefined) {
+        log(event.data.log)
+    } else if (event.data.result !== undefined) {
+        var ft = env.stack.pop()
+        if (ft.action === "w") {
+            env.returnVal = result.data.result
+        } else {
+            debug(env.editor)
+            fail("Current action was not waiting on a sub-process result, but one was returned. Result was:" + result.data.result)
+        }
+    } else if (event.data.fail !== undefined) {
+        fail(event.data.fail)
+    } else if (event.data.debug !== undefined) {
+        //TODO: Append our own debug data in some way
+        debug(event.data.debug)
     } else {
         fail("No instruction given to worker")
     }
@@ -67,15 +71,20 @@ function requestInput(name) {
 }
 
 function newEnv(editor, inputs) {
-    return {
-        editor : editor,
-        inputs : inputs,
-        stack  : [
-            {fName : editor.output, action : "e"}
-        ]
-    }
+    if (editor.output === undefined)
+        fail("No function wired to output")
+    else
+        return {
+            editor : editor,
+            inputs : inputs,
+            stack  : [
+                //TODO: Check if editor.outut is a map, if so dont do an "e"
+                {fName : editor.output, action : "e"}
+            ]
+        }
 }
 
+//TODO: Get rid of fName, look up function before hand, if not function delegate to different action corresponding to what it is
 function step(env) {
     var ft = env.stack.pop();
     var f = env.editor.functions[ft.fName];
@@ -97,20 +106,27 @@ function step(env) {
             env.stack.push({fName : ft.fName, action : "r", cont : function () {return response.apply()}})
         }
     } else if (ft.action === "r") {
+        //TODO: if using is set, mark f.inputs[using] as request fulfilled
         var response = ft.cont(env.returnVal)
         if (response.result !== undefined) {
             f.result = response.result;
             f.active = false
             env.returnVal = f.result
         } else {
-            env.stack.push({fName : ft.fName, action : "r", cont : response.cont})
+            env.stack.push({fName : ft.fName, action : "r", cont : response.cont, using : response.need})
             var inp = f.inputs[response.need]
-            if (inp === undefined) {
-                fail("Unwired function exception")
-            } else {
+            if (inp !== undefined) {
+                //TODO: mark inp as requested.
+                //TODO: check if fName is a map not a name, in that case dont use action "e"
                 env.stack.push({fName : inp.wired, action : "e"})
+            } else {
+                fail("Unwired function exception")
             }
         }
+    } else if (ft.action === "w") {
+        //Pass the step command on to the current sub-process,
+        ft.worker.postMessage({step : true})
+        env.stack.push(ft)
     }
 }
 

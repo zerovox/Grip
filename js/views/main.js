@@ -60,7 +60,6 @@ define([
                 this.updateEditor();
             }, this);
             channels.editors.on("switchFunctionGroup", function (name) {
-                console.log("test")
                 this.functionList.makeActive(name)
             }, this);
 
@@ -68,7 +67,7 @@ define([
             channels.tests.on("run", function (number) {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                this.scenarios.get("activeScenario").runTest(test, editor, false);
+                this.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
                 test.set({passed : true, finished : false})
                 this.testList.render()
                 this.updateTasks();
@@ -79,7 +78,7 @@ define([
             channels.tests.on("debug", function (number) {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var test = editor.get("tests").at(number)
-                this.scenarios.get("activeScenario").runTest(test, editor, true)
+                this.scenarios.get("activeScenario").runTest(test, editor.get("name"), true)
                 test.set({passed : true, finished : false})
                 this.updateTests()
                 this.updateTasks()

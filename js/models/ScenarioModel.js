@@ -31,8 +31,9 @@ define([
                 return true
             }
             return false
-        }, runTest : function(test, editor, debug){
-            var task = new TaskModel(test, editor, debug);
+        }, runTest : function(test, mainMethod, debug){
+            var localFunctions = this.get("list")
+            var task = new TaskModel(test, mainMethod, debug, localFunctions);
             this.get("tasks").add(task)
             if(!this.has("activeTask")){
                 this.set({activeTask : task})

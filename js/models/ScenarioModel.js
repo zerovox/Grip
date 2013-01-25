@@ -1,12 +1,17 @@
 define([
     'backbone',
     'models/TaskModel',
-    'collections/Tests'
-], function (Backbone, TaskModel, TestCollection) {
+    'collections/Tests',
+    'collections/Editors',
+    'collections/Functions'
+], function (Backbone, TaskModel, TestCollection, EditorCollection, FunctionCollection) {
 
     return Backbone.Model.extend({
-        initialize      : function () {
+        initialize      : function (scenario) {
             this.set("tasks", new TestCollection())
+            this.set({name : scenario.name, list : new EditorCollection(scenario.editors), functions : new FunctionCollection(scenario.functions)})
+            this.set("activeEditor", this.get("list").first())
+            this.get("list").first().set({activeEditor : true})
         },
         swap            : function (to) {
             var matchingEditors = this.get("list").where({name : to});
@@ -22,24 +27,24 @@ define([
                 console.log("No matching editor, or duplicate scenario names", matchingEditors);
             }
             return false;
-        }, activateTask : function(index){
+        }, activateTask : function (index) {
             var task = this.get("tasks").at(index)
-            if(task !== undefined && task !== this.get("activeTask")){
+            if (task !== undefined && task !== this.get("activeTask")) {
                 task.set({activeTask : true})
                 this.get("activeTask").set({activeTask : false})
                 this.set({activeTask : task})
                 return true
             }
             return false
-        }, runTest : function(test, mainMethod, debug){
+        }, runTest      : function (test, mainMethod, debug) {
             var localFunctions = this.get("list")
             var task = new TaskModel(test, mainMethod, debug, localFunctions);
             this.get("tasks").add(task)
-            if(!this.has("activeTask")){
+            if (!this.has("activeTask")) {
                 this.set({activeTask : task})
                 task.set({activeTask : true})
                 return true
-            } else if (debug){
+            } else if (debug) {
                 task.set({activeTask : true})
                 this.get("activeTask").set({activeTask : false})
                 this.set({activeTask : task})

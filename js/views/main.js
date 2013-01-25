@@ -1,6 +1,5 @@
 define([
     'backbone',
-    'mustache',
     'views/EditorList',
     'views/ScenarioList',
     'views/TestList',
@@ -11,17 +10,16 @@ define([
     'views/ControlBar',
     'views/DebugBar',
     'views/StackTrace',
-    'factory/ScenariosModelFactory',
+    'models/ScenariosModel',
     'libs/text!data/scenarios.json',
-    'primitives',
     'channels',
     'alertify'
-], function (Backbone, Mustache, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModelFactory, ScenariosJSON, primitives, channels, alertify) {
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace,ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
-            this.scenarios = ScenariosModelFactory(JSON.parse(ScenariosJSON), primitives);
+            this.scenarios = new ScenariosModel(JSON.parse(ScenariosJSON));
 
             //Create a view for each UI component
             this.scenarioList = new ScenarioList();

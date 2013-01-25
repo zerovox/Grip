@@ -1,8 +1,31 @@
 define([
-    'backbone'
-], function (Backbone) {
+    'backbone',
+    'models/ScenarioModel',
+    'collections/Scenarios'
+], function (Backbone, ScenarioModel, ScenarioCollection) {
 
     return Backbone.Model.extend({
+        //Override the constructor, this prevents scenariosJSON being interpreted as a map of objects to create, and let's us add them directly to the collection all
+        constructor : function(scenariosJSON){
+            Backbone.Model.apply(this);
+            this.set("all", new ScenarioCollection(scenariosJSON))
+            this.set("activeScenario", this.get("all").first())
+            this.get("all").first().set({activeScenario : true})
+            this.get("all").forEach(function(element, index, list){
+                var category = element.get("category")
+                if(category !== "active" && category !== "all"){
+                    if(this.has(category)){
+                        this.get(category).add(element)
+                    } else {
+                        var c = new ScenarioCollection()
+                        c.add(element)
+                        this.set(category, c)
+                    }
+                } else {
+                    console.log("Reserved category")
+                }
+            }, this)
+        },
         swap : function (to, scenariosModel) {
             var matchingScenarios = scenariosModel.get("all").where({name : to});
             if (_.size(matchingScenarios) === 1) {

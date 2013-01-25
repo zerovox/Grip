@@ -4,10 +4,13 @@ define([
 ], function (Backbone, alertify) {
 
     return Backbone.Model.extend({
-        complete : function(result){
+        initialize : function () {
+            this.set({finished:false, passed:false})
+        },
+        complete   : function (result) {
             this.set("finished", true)
 
-            if(this.get("output") === result){
+            if (this.get("output") === result) {
                 this.set("passed", true)
                 alertify.success("Test passed!")
             } else {
@@ -17,7 +20,7 @@ define([
 
             this.set("lastResult", result)
         },
-        fail : function(failMsg){
+        fail       : function (failMsg) {
             this.set("finished", true)
             this.set("passed", false)
             this.set("lastResult", "Error: " + failMsg)

@@ -1,11 +1,9 @@
 define([
     'backbone',
-    'mustache',
     'channels'
-], function (Backbone, Mustache, channels) {
+], function (Backbone, channels) {
     var AppRouter = Backbone.Router.extend({
         routes : {
-            // Default
             'editor/:name'        : "switchEditor",
             'scenario/:name'      : "switchScenario",
             'test/run/:number'    : "runTest",

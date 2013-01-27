@@ -1,8 +1,9 @@
 define([
     'backbone',
+    'underscore',
     'views/FabricFunctionList',
     'views/FunctionGroupView'
-], function (Backbone, FabricFunctionList, GroupView) {
+], function (Backbone, _, FabricFunctionList, GroupView) {
 
     return Backbone.View.extend({
         initialize : function () {

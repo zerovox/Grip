@@ -100,7 +100,8 @@
         ],
         "functions" : [
             "multiply",
-            "constant"
+            "constant",
+                "ifc"
         ]
     },
     {

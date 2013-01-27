@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="css/extra.css">
     <link rel="stylesheet" href="css/alertify.core.css">
     <link rel="stylesheet" href="css/alertify.default.css">
+
 </head>
 <body>
 
@@ -86,6 +87,12 @@
 <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <![endif]-->
+<script type="text/javascript">
+    if (typeof(window.require) !== "undefined") {
+        window.requireNode = window.require;
+        window.require = undefined;
+    }
+</script>
 <script data-main="js/main" type="text/javascript" src="js/libs/require.min.js"></script>
 </body>
 </html>

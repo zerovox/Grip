@@ -3,15 +3,17 @@ importScripts('data/primitives.js', 'libs/lodash.min.js')
 
 var resultCaching = true
 var env;
+var localFunctions;
 var prims = {}
 _.each(primitives, function (prim) {
     prims[prim.name] = prim
 })
 
-self.onmessage = function (event) {
-    if (main in event.data) {
+onmessage = function (event) {
+    if ("main" in event.data) {
         env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs);
-    } else if (event.data.step) {
+        localFunctions = event.data.localFunctions
+    } else if ("step" in event.data) {
         if (env === undefined) {
             fail("Worker not initialized")
         } else {
@@ -22,13 +24,13 @@ self.onmessage = function (event) {
                 success(env.returnVal);
             }
         }
-    } else if (input in event.data) {
+    } else if ("input" in event.data) {
         if (env === undefined) {
             fail("Worker not initialized")
         } else {
             env.returnVal = event.data.value
         }
-    } else if (need in event.data) {
+    } else if ("need" in event.data) {
         var ft = env.stack.pop()
         if (ft.action === "w") {
             env.stack.push({action : "u", need : event.data.need})
@@ -37,9 +39,9 @@ self.onmessage = function (event) {
             debug(env.editor)
             fail("Current action was not waiting on a sub-process result, but a sub-process asked for a dependency. Dependency was:" + event.data.need)
         }
-    } else if (log in event.data) {
-        log(event.data.log)
-    } else if (result in event.data.result) {
+    } else if ("log" in event.data) {
+        log("From sub-worker: " + event.data.log)
+    } else if ("result" in event.data) {
         var ft = env.stack.pop()
         if (ft.action === "w") {
             env.returnVal = event.data.result
@@ -47,9 +49,9 @@ self.onmessage = function (event) {
             debug(env.editor)
             fail("Current action was not waiting on a sub-process result, but one was returned. Result was:" + event.data.result)
         }
-    } else if (fail in event.data) {
+    } else if ("fail" in event.data) {
         fail(event.data.fail)
-    } else if (debug in event.data) {
+    } else if ("debug" in event.data) {
         //TODO: Append our own debug data in some way
         debug(event.data.debug)
     } else {
@@ -101,14 +103,21 @@ function step(env) {
             } else {
                 ft.func.active = true
                 ft.func.result = undefined;
-                var functionToApply;
-                if (ft.func.arg !== undefined) {
-                    functionToApply = prims[ft.func.function].new(ft.func.arg)
-                } else {
-                    functionToApply = prims[ft.func.function]
+                if (ft.func.function in prims) {
+                    var functionToApply;
+                    if (ft.func.arg !== undefined) {
+                        functionToApply = prims[ft.func.function].new(ft.func.arg)
+                    } else {
+                        functionToApply = prims[ft.func.function]
+                    }
+                    var response = functionToApply.apply
+                    env.stack.push({func : ft.func, action : "r", cont : function () {return response.apply()}})
+                } else if(ft.func.function in localFunctions) {
+                    var worker = new Worker('debug.js')
+                    worker.postMessage({main:ft.func.function, localFunctions : localFunctions})
+                    env.stack.push({worker : worker, action : "w"})
+                    log("Started worker on " + ft.func.function)
                 }
-                var response = functionToApply.apply
-                env.stack.push({func : ft.func, action : "r", cont : function () {return response.apply()}})
             }
             break
         case "r":
@@ -135,6 +144,7 @@ function step(env) {
             }
             break
         case "w":
+            log("Passing on step")
             //Pass the step command on to the current sub-process
             ft.worker.postMessage({step : true})
             env.stack.push(ft)

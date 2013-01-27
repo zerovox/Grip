@@ -6,9 +6,11 @@ define([
 
     return Backbone.Model.extend({
         //Override the constructor, this prevents scenariosJSON being interpreted as a map of objects to create, and let's us add them directly to the collection all
-        constructor : function(scenariosJSON){
+        constructor : function(scenarios){
+            //Call the default constructor with no attribute map to get an empty model
             Backbone.Model.apply(this);
-            this.set("all", new ScenarioCollection(scenariosJSON))
+
+            this.set("all", new ScenarioCollection(scenarios))
             this.set("activeScenario", this.get("all").first())
             this.get("all").first().set({activeScenario : true})
             this.get("all").forEach(function(element, index, list){

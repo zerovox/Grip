@@ -32,7 +32,7 @@ define([
                 memo[value.get("name")] = value.get("map")
                 return memo
             }, {})
-            worker.postMessage({inputs:inputs, main:mainMethod, localFunctions : locals});
+            worker.postMessage({main:mainMethod, localFunctions : locals});
             this.activeMap = locals[mainMethod]
         },
         finished : function(result){

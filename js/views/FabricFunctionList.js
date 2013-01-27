@@ -1,9 +1,11 @@
 define([
     'backbone',
+    'underscore',
     'fabric',
     'channels',
-    'alertify'
-], function (Backbone, fabric, channels, alertify) {
+    'alertify',
+    'views/fabricElements/Function'
+], function (Backbone, _, fabric, channels, alertify, Function) {
 
     return Backbone.View.extend({
         el         : "#functionList",
@@ -11,15 +13,25 @@ define([
             this.canvas = new fabric.Canvas(this.el, {renderOnAddition : false, selection : false, hoverCursor : 'default'});
             this.canvas.on({'mouse:down' : function (e) {
                 if (e.target !== undefined && e.target.f !== undefined) {
-                    if (e.target.f.get("func").arg === true) {
-                        alertify.prompt("Choose a value for the constant:", function (b, str) {
-                            if (b) {
-                                var func = e.target.f.get("func")['new'](str);
-                                channels.map.trigger("add", func);
-                            }
-                        })
+                    var f = e.target.f;
+                    if (f.has("func")) {
+                        if (f.get("func").arg === true) {
+                            alertify.prompt("Choose a value for the constant:", function (b, str) {
+                                if (b) {
+                                    var func = f.get("func")['new'](str);
+                                    channels.map.trigger("add", func);
+                                }
+                            })
+                        } else {
+                            channels.map.trigger("add", f.get("func"))
+                        }
+                        console.log(f.get("func"))
                     } else {
-                        channels.map.trigger("add", e.target.f.get("func"))
+                        var inputs = []
+                        _.each(f.get("map").inputs, function(name){
+                            inputs.push(name)
+                        })
+                        channels.map.trigger("add", {name : f.get("name"), inputs : inputs})
                     }
 
                     //Fire event to add function to main map.
@@ -27,7 +39,7 @@ define([
                 }
             }});
             var that = this;
-            $(window).resize(function(){that.resize()});
+            $(window).resize(function () {that.resize()});
         },
         set        : function (functionsCollection) {
             this.funcs = functionsCollection;
@@ -43,36 +55,25 @@ define([
         render     : function () {
             var canvas = this.canvas;
             canvas.clear();
-            var Function = fabric.util.createClass(fabric.Object, {
-                initialize : function (func, x, y) {
-                    if (typeof(y) === 'undefined') y = 0;
-                    options = {}
-                    this.height = 80;
-                    this.width = 160;
-                    padding = 20;
-                    options.top = y * this.height + (this.height / 2) + padding * (y + 1);
-                    options.left = x * this.width + (this.width / 2) + padding * (x + 1);
-                    this.callSuper('initialize', options)
-                    this.name = func.name;
-                    this.inputs = func.inputs;
-                },
-                _render    : function (ctx) {
-                    //ctx :: CanvasRenderingContext2D
-                    ctx.textAlight = "center"
-                    ctx.strokeStyle = "#999"
-                    ctx.fillRect(-80, -40, 160, 80);
-                    ctx.strokeRect(-80, -40, 160, 80);
-                    ctx.beginPath();
-                    ctx.arc(this.width / 2 - 1, 0, 10, -Math.PI / 2, Math.PI / 2)
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.fillStyle = "#fff"
-                    ctx.fillText(this.name, 0, 0, 80);
+            this.funcs.forEach(function (func, index) {
+                var inputs;
+                var name;
+                if (func.has("func")) {
+                    inputs = _.size(func.get("func").inputs)
+                    name = func.get("func").name;
+                } else {
+                    name = func.get("name")
+                    inputs = _.size(func.get("map").inputs)
                 }
 
-            });
-            this.funcs.forEach(function (func, index) {
-                var funcObject = new Function(func.get("func"), index)
+                var padding = 20;
+                var width = 160
+                var height = Math.max(40, 40 * inputs);
+                var options = {};
+                options.left = index * width + (width / 2) + padding * (index + 1);
+                options.top = (height / 2) + padding;
+                var funcObject = new Function(name, height, width, options)
+
                 //Disabling selection prevents canvas.on firing with this function object as a target, so instead we disable controls, borders and movement
                 funcObject.hasControls = funcObject.hasBorders = false;
                 funcObject.lockMovementY = true;

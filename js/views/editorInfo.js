@@ -9,16 +9,12 @@ define([
         initialize : function () {
 
         },
-        set        : function (editor, debug) {
+        set        : function (editor) {
             this.editor = editor;
-            this.debug = debug;
             this.render();
         },
         render     : function () {
             var html = Mustache.render(EditorInfo, this.editor.toJSON());
-            if (this.debug)
-                this.$el.html("");
-            else
                 this.$el.html(html);
         }
     });

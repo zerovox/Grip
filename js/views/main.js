@@ -139,6 +139,7 @@ define([
             this.functionList.show()
             this.debugBar.hide()
             this.stackTrace.hide()
+            this.editorInfo.show()
             this.editorMap.editorView()
         },
         enableDebug            : function () {
@@ -148,6 +149,7 @@ define([
             this.functionList.hide()
             this.debugBar.show()
             this.stackTrace.show()
+            this.editorInfo.hide()
             this.editorMap.debugView()
             this.updateEditor()
         }, updateEditor        : function () {
@@ -155,10 +157,10 @@ define([
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
             this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
             if (this.debug)
-                this.editorMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.debug)
+                this.editorMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
             else
-                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor").get("map"), this.scenarios.get("activeScenario").get("functions"), this.debug);
-            this.functionList.set(this.scenarios.get("activeScenario").get("functions"), this.debug);
+                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor").get("map"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
+            this.functionList.set(this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
         }, updateScenario      : function () {
             this.updateTasks(this)
             this.updateEditor(this)

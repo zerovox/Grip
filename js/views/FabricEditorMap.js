@@ -1,8 +1,9 @@
 define([
     'backbone',
     'fabric',
-    'alertify'
-], function (Backbone, fabric, alertify) {
+    'alertify',
+    'views/fabricElements/Function'
+], function (Backbone, fabric, alertify, Function) {
 
     return Backbone.View.extend({
         el                     : "#editorMap",
@@ -95,7 +96,7 @@ define([
                             else if (source.func.functionModel !== undefined)
                                 target.func.functionModel.inputs[target.name] = {wired : source.func.functionModel.name}
                             else
-                                target.func.functionModel.inputs[target.name]  = {wired : source.func.inputName}
+                                target.func.functionModel.inputs[target.name] = {wired : source.func.inputName}
                         }
                     } else {
                         fromInput = true;
@@ -120,12 +121,12 @@ define([
                 }
             }});
 
-            canvas.on({'mouse:up' : function(e){
+            canvas.on({'mouse:up' : function (e) {
                 dragging = false;
                 that.hideEdges()
-                if(removeFunction && e.target !== undefined){
+                if (removeFunction && e.target !== undefined) {
                     delete that.editorMap.functions[e.target.functionModel.name]
-                    if(that.editorMap.output === e.target.functionModel.name){
+                    if (that.editorMap.output === e.target.functionModel.name) {
                         delete that.editorMap.output
                     }
                     that.render()
@@ -139,8 +140,8 @@ define([
                     wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY })
                     canvas.renderAll()
                 }
-                if(dragging){
-                    if(e.e.layerX<20 || e.e.layerX > canvas.getWidth()-20 || e.e.layerY<20 || e.e.layerY > canvas.getHeight()-20){
+                if (dragging) {
+                    if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20) {
                         that.edges.setFill(that.edges.selectedFill)
                         removeFunction = true;
                     } else {
@@ -158,14 +159,14 @@ define([
         },
         addInput               : function (name) {
             if (this.editorMap.inputs[name] !== undefined || this.editorMap.functions[name] !== undefined) {
-                alertify.error("Input with name "+name+" already exists")
+                alertify.error("Input with name " + name + " already exists")
             } else {
                 this.editorMap.inputs[name] = {};
                 this.render();
                 //TODO: avoid rendering everything, see if we can just re-render inputs and wires
             }
         },
-        set                    : function (editorModel, functionsCollection) {
+        set                    : function (editorModel, functionsCollection, editors) {
             this.editorMap = editorModel
             if (this.editorMap.functions === undefined)
                 this.editorMap.functions = {}
@@ -173,6 +174,7 @@ define([
                 this.editorMap.inputs = {}
             if (this.functions === undefined || functionsCollection !== undefined)
                 this.functions = functionsCollection
+            this.editors = editors
             this.resize()
         },
         render                 : function () {
@@ -188,12 +190,23 @@ define([
                     return funcp.get("func").name === func.function;
                 })
                 //Find the 'real' function that corresponds to this functionModel
-                func.name = name;
                 var ff;
-                if (func.arg !== undefined) {
-                    ff = fullFunction.get("func")['new'](func.arg);
+                if (typeof fullFunction !== "undefined") {
+                    func.name = name;
+                    if (func.arg !== undefined) {
+                        ff = fullFunction.get("func")['new'](func.arg);
+                    } else {
+                        ff = fullFunction.get("func");
+                    }
                 } else {
-                    ff = fullFunction.get("func");
+                    var editor = this.editors.find(function (ed){
+                        return ed.get("name") === func.function
+                    })
+                    var inputs = []
+                    _.each(editor.get("map").inputs, function(name){
+                        inputs.push(name)
+                    })
+                   ff = {name : func.function, inputs : inputs}
                 }
                 functions[name] = this.newFunction(ff, func);
 
@@ -271,7 +284,7 @@ define([
             var height = 40;
             var width = 160
             var options = {top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width / 2};
-            var box = new this.Function(name, height, width, options);
+            var box = new Function(name, height, width, options);
             var output = new fabric.Circle({radius : 10, fill : 'grey', top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width})
 
             box.hasControls = box.hasBorders = output.hasControls = output.hasBorders = false;
@@ -284,40 +297,12 @@ define([
             canvas.add(output)
             return box;
         },
-        Function               : fabric.util.createClass(fabric.Object, {
-            initialize : function (name, x, y, options, arg) {
-                this.height = x;
-                this.width = y;
-                this.callSuper('initialize', options)
-                this.name = name;
-                this.arg = arg;
-            },
-            _render    : function (ctx) {
-                //ctx :: CanvasRenderingContext2D
-                ctx.textAlight = "center"
-                ctx.strokeStyle = "#2284A1"
-                ctx.fillStyle = "rgba(0, 0, 0, 0.85)"
-                ctx.fillRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                ctx.strokeRect(-this.width / 2, -this.height / 2, this.width, this.height);
-                ctx.beginPath();
-                ctx.arc(this.width / 2 - 1, 0, 10, -Math.PI / 2, Math.PI / 2)
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = "#fff"
-                ctx.textAlign = 'center'
-                if (this.arg !== undefined)
-                    ctx.fillText(this.arg, 0, 0, this.width - 20);
-                else
-                    ctx.fillText(this.name, 0, 0, this.width - 20);
-            }
-
-        }),
         newFunction            : function (funcReal, func) {
             var canvas = this.canvas;
             var height = Math.max(40, 40 * funcReal.inputs.length);
             var width = 160
             var options = {top : func.y, left : func.x};
-            var box = new this.Function(funcReal.name, height, width, options, func.arg);
+            var box = new Function(funcReal.name, height, width, options, func.arg);
             box.hasControls = box.hasBorders = false;
             canvas.add(box)
             box.inputs = {}
@@ -339,11 +324,11 @@ define([
                     positionInput(box)
                 })
                 positionInput(box);
-                if (func.inputs !== undefined){
+                if (func.inputs !== undefined) {
                     var inp = func.inputs[name]
-                    if(inp !== undefined)
+                    if (inp !== undefined)
                         input.wireTo = inp.wired;
-                    }
+                }
                 input.func = box;
                 input.name = name;
                 box.inputs[name] = input
@@ -397,10 +382,10 @@ define([
             var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
             canvas.setHeight(h);
             canvas.setWidth(w);
-            var left = new fabric.Rect({left:10, top:h/2, width:20, height: h});
-            var right = new fabric.Rect({left:w-10, top:h/2, width:20, height: h});
-            var top = new fabric.Rect({left:w/2, top:10, width : w-40, height : 20})
-            var bottom = new fabric.Rect({left:w/2, top:h-10, width : w-40, height : 20})
+            var left = new fabric.Rect({left : 10, top : h / 2, width : 20, height : h});
+            var right = new fabric.Rect({left : w - 10, top : h / 2, width : 20, height : h});
+            var top = new fabric.Rect({left : w / 2, top : 10, width : w - 40, height : 20})
+            var bottom = new fabric.Rect({left : w / 2, top : h - 10, width : w - 40, height : 20})
             this.edges = new fabric.Group([left, right, top, bottom])
             this.edges.selectable = false
             this.edges.unselectedFill = "rgba(198, 15, 19, .2)"
@@ -431,10 +416,10 @@ define([
                 this.maxHeightPercentage = 0.8
                 this.resize()
             }
-        }, showEdges : function(){
+        }, showEdges           : function () {
             this.canvas.add(this.edges)
             this.edges.setFill(this.edges.unselectedFill)
-        }, hideEdges : function(){
+        }, hideEdges           : function () {
             this.canvas.remove(this.edges)
         }, maxHeightPercentage : 0.8
     })

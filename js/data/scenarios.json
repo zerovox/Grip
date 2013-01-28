@@ -59,22 +59,12 @@
             {
                 "name"  : "squares",
                 "map"   : {
-                    "inputs"    : {"argument" : {}},
-                    "output"    : "a",
+                    "inputs"    : {"argument" : {}, "times" : {}},
                     "functions" : {
-                        "a" : {
-                            "function" : "multiply",
-                            "inputs"   : {
-                                "a" : "argument",
-                                "b" : "argument"
-                            },
-                            "x"        : 200,
-                            "y"        : 200
-                        },
                         "b" : {
                             "function" : "constant",
                             "inputs"   : {},
-                            "arg"      : 10,
+                            "arg"      : 1,
                             "x"        : 200,
                             "y"        : 200
                         }
@@ -83,16 +73,8 @@
                 },
                 "tests" : [
                     {
-                        "inputs" : {
-                            "argument" : 2
-                        },
-                        "output" : 4
-                    },
-                    {
-                        "inputs" : {
-                            "argument" : 3
-                        },
-                        "output" : 9
+                        "inputs" : {"argument":2,"times":2},
+                        "output" : 16
                     }
                 ],
                 "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
@@ -101,7 +83,10 @@
         "functions" : [
             "multiply",
             "constant",
-                "ifc"
+                "ifc",
+                "equals",
+                "minus",
+                "plus"
         ]
     },
     {
@@ -109,30 +94,18 @@
         "category"  : "Basics",
         "editors"   : [
             {
-                "name"  : "double",
+                "name"  : "Factorial",
                 "map"   : {},
-                "tests" : [
-                    {
-                        "inputs" : {
-                            "a" : 2
-                        },
-                        "output" : 4
-                    },
-                    {
-                        "inputs" : {
-                            "a" : 14
-                        },
-                        "output" : 28
-                    }
-                ],
-                "info"  : ""
+                "info"  : "Write a function that calculates factorials"
             }
         ],
         "functions" : [
-            "plus",
-            "minus",
             "multiply",
-            "constant"
+            "constant",
+            "ifc",
+            "equals",
+            "minus",
+            "plus"
         ]
     }
 

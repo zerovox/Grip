@@ -4,7 +4,7 @@ var primitives = (function () {
         group: "Mathematical",
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) * parseInt(b)}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) * parseInt(b), debug : "Calculated " + a + " * " + b}}}
             }}
         },
         inputs : ["a", "b"]
@@ -16,7 +16,7 @@ var primitives = (function () {
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) + parseInt(b)}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) + parseInt(b), debug : "Calculated " + a + " + " + b}}}
             }}
         }
     }
@@ -27,7 +27,7 @@ var primitives = (function () {
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) - parseInt(b)}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) - parseInt(b), debug : "Calculated " + a + " - " + b}}}
             }}
         }
     }
@@ -38,7 +38,7 @@ var primitives = (function () {
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : a === b}}}
+                return {need : "b", cont : function (b) {return {result : parseInt(a) == parseInt(b), debug : "Calculated " + a + " == " + b}}}
             }}
         }
     }
@@ -67,7 +67,7 @@ var primitives = (function () {
                 inputs : [],
                 arg    : arg,
                 apply  : function () {
-                    return {result : arg};
+                    return {result : arg, debug : "Constant"};
                 }
             }
         }

@@ -4,6 +4,7 @@ importScripts('data/primitives.js', 'libs/lodash.min.js')
 var resultCaching = true
 var env;
 var localFunctions;
+var LocalFunctionsFresh
 var prims = {}
 _.each(primitives, function (prim) {
     prims[prim.name] = prim
@@ -13,6 +14,7 @@ onmessage = function (event) {
     if ("main" in event.data) {
         env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs);
         localFunctions = event.data.localFunctions
+        LocalFunctionsFresh = _.clone(event.data.localFunctions, true)
     } else if ("step" in event.data) {
         if (env === undefined) {
             fail("Worker not initialized")
@@ -30,20 +32,33 @@ onmessage = function (event) {
         } else {
             env.returnVal = event.data.value
         }
-    } else if ("need" in event.data) {
+    } else {
+        fail("No instruction given to worker")
+    }
+}
+
+var onWorkerMessage = function (event) {
+    if ("need" in event.data) {
+        var need = event.data.need
         var ft = env.stack.pop()
+        var neededFunction = ft.func.inputs[need].wired
         if (ft.action === "w") {
-            env.stack.push({action : "u", need : event.data.need})
-            env.stack.push({func : env.editor.functions[event.data.need], action : "e"})
+            env.stack.push({action : "u", need : neededFunction, worker : ft.worker, func : ft.func})
+            if (neededFunction in env.editor.functions)
+                env.stack.push({func : env.editor.functions[neededFunction], action : "e"})
+            else
+                env.stack.push({input : neededFunction, action : "i"})
         } else {
             debug(env.editor)
-            fail("Current action was not waiting on a sub-process result, but a sub-process asked for a dependency. Dependency was:" + event.data.need)
+            fail("Current action was not waiting on a sub-process result, but a sub-process asked for a dependency. Dependency was:" + neededFunction)
         }
     } else if ("log" in event.data) {
-        log("From sub-worker: " + event.data.log)
+        log(">" + event.data.log)
     } else if ("result" in event.data) {
         var ft = env.stack.pop()
         if (ft.action === "w") {
+            ft.worker.terminate()
+            ft.func.result = event.data.result
             env.returnVal = event.data.result
         } else {
             debug(env.editor)
@@ -98,7 +113,7 @@ function step(env) {
     switch (ft.action) {
         case "e" :
             //Check cache for a result to the ft.func call, if not found, pass the 'real' implemented function on to the "r" action to run
-            if (resultCaching && "result" in ft.func) {
+            if (resultCaching && "result" in ft.func && ft.func.result !== undefined) {
                 env.returnVal = ft.func.result
             } else {
                 ft.func.active = true
@@ -112,11 +127,11 @@ function step(env) {
                     }
                     var response = functionToApply.apply
                     env.stack.push({func : ft.func, action : "r", cont : function () {return response.apply()}})
-                } else if(ft.func.function in localFunctions) {
+                } else if (ft.func.function in localFunctions) {
                     var worker = new Worker('debug.js')
-                    worker.postMessage({main:ft.func.function, localFunctions : localFunctions})
-                    env.stack.push({worker : worker, action : "w"})
-                    log("Started worker on " + ft.func.function)
+                    worker.onmessage = onWorkerMessage
+                    worker.postMessage({main : ft.func.function, localFunctions : LocalFunctionsFresh})
+                    env.stack.push({worker : worker, action : "w", func : ft.func})
                 }
             }
             break
@@ -126,6 +141,9 @@ function step(env) {
                 inp.responded = true;
             var response = ft.cont(env.returnVal)
             if ("result" in response) {
+                if ("debug" in response) {
+                    log(response.debug + " result was " + response.result)
+                }
                 ft.func.result = response.result;
                 ft.func.active = false
                 env.returnVal = ft.func.result
@@ -144,7 +162,6 @@ function step(env) {
             }
             break
         case "w":
-            log("Passing on step")
             //Pass the step command on to the current sub-process
             ft.worker.postMessage({step : true})
             env.stack.push(ft)
@@ -155,7 +172,7 @@ function step(env) {
             break
         case "u":
             //Update a sub-process with an input, then pass through any new step commands
-            env.stack.push({worker : ft.worker, action : "w"})
+            env.stack.push({worker : ft.worker, action : "w", func : ft.func})
             ft.worker.postMessage({input : ft.need, value : env.returnVal})
     }
 }

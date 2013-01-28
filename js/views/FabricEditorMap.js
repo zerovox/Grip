@@ -72,7 +72,6 @@ define([
                                 source.func.functionModel.inputs[source.name] = {wired : target.func.functionModel.name}
                             else
                                 source.func.functionModel.inputs[source.name] = {wired : target.func.inputName}
-
                         }
                     } else {
                         fromOutput = true;
@@ -152,6 +151,7 @@ define([
             }})
         },
         addFunction            : function (func) {
+
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
             this.editorMap.functions[funcModel.name] = funcModel;
@@ -203,7 +203,7 @@ define([
                         return ed.get("name") === func.function
                     })
                     var inputs = []
-                    _.each(editor.get("map").inputs, function(name){
+                    _.each(editor.get("map").inputs, function(map, name){
                         inputs.push(name)
                     })
                    ff = {name : func.function, inputs : inputs}
@@ -307,7 +307,6 @@ define([
             canvas.add(box)
             box.inputs = {}
             _.each(funcReal.inputs, function (name, index) {
-
                 var input = new fabric.Circle({radius : 10, fill : 'grey'})
                 input.hasControls = input.hasBorders = false;
                 input.lockMovementX = input.lockMovementY = true;

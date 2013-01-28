@@ -105,8 +105,9 @@ define([
 
             //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {
-                if (!this.debug)
+                if (!this.debug){
                     this.editorMap.addFunction(func)
+                }
             }, this);
 
             //Listen for the add input command, and if we are in editing mode, add the input

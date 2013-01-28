@@ -28,7 +28,7 @@ define([
                         console.log(f.get("func"))
                     } else {
                         var inputs = []
-                        _.each(f.get("map").inputs, function(name){
+                        _.each(f.get("map").inputs, function(map, name){
                             inputs.push(name)
                         })
                         channels.map.trigger("add", {name : f.get("name"), inputs : inputs})

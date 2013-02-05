@@ -14,11 +14,15 @@ require.config({
     },
     shim:{
         'backbone':{
-            deps:['underscore', 'jquery', 'modernizr', 'foundation', 'foundation.app'],
+            deps:['underscore', 'jquery'],
             exports:'Backbone'
+        },
+        'foundation.app' : {
+            deps:['modernizr', 'jquery', 'foundation']
         }
+
     }});
 
-require(['app'], function (App) {
+require(['app', 'foundation.app'], function (App) {
     App.initialize();
 });

@@ -14,7 +14,7 @@ define([
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace,ScenariosModel, ScenariosJSON, channels, alertify) {
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -168,7 +168,7 @@ define([
             this.scenarioList.set(this.scenarios)
         }, updateDebug         : function () {
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
-            this.stackTrace.set(this.scenarios.get("active"), this.debug)
+            this.stackTrace.set(this.scenarios.get("activeScenario").get("activeTask"), this.debug)
         }, updateTasks         : function () {
             this.taskList.set(this.scenarios.get("activeScenario").get("tasks"))
         }, updateTests         : function () {

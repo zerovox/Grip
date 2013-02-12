@@ -34,12 +34,12 @@
 
 <div class="row">
     <div class="two columns">
-        <ul class="nav-bar vertical" id="scenarioMenu">
-        </ul>
+        <ul class="nav-bar vertical" id="scenarioMenu"></ul>
+
         <ul class="button-group even two-up">
-        <li><a href="#" data-reveal-id="testModal" class="button">Test Cases</a></li>
-        <li><a href="#" data-reveal-id="taskModal" class="button">Task Manager</a></li>
-            </ul>
+            <li><a href="#" data-reveal-id="testModal" class="button">Test Cases</a></li>
+            <li><a href="#" data-reveal-id="taskModal" class="button">Task Manager</a></li>
+        </ul>
         <ul class="button-group even three-up alert small" id="controlBar">
             <li><a href="#" class="button alert tiny" id="addInput">Add input</a></li>
             <li><a href="#" class="button alert tiny" id="autoArrange">Auto arrange</a></li>
@@ -48,8 +48,13 @@
         <ul class="button-group even three-up alert small" id="debugBar">
             <li><a href="#" class="button alert tiny" id="step">Step</a></li>
             <li><a href="#" class="button alert tiny" id="stepOver">Step Over</a></li>
+            <li><a href="#" class="button alert tiny" id="stepReturn">Step Return</a></li>
         </ul>
+
         <div id="editorInfo"></div>
+
+        <ul class="pricing-table" id="stackTrace"></ul>
+
     </div>
 
     <div class="ten columns">
@@ -58,6 +63,9 @@
 
         <div class="canvasContainer">
             <canvas id="editorMap" resize="false"></canvas>
+        </div>
+        <div class="canvasContainer">
+            <canvas id="debugMap" resize="false"></canvas>
         </div>
 
     </div>

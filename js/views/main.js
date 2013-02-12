@@ -4,7 +4,8 @@ define([
     'views/ScenarioList',
     'views/TestList',
     'views/EditorInfo',
-    'views/FabricEditorMap',
+    'views/fabric/EditorMap',
+    'views/fabric/DebugMap',
     'views/FunctionList',
     'views/TaskList',
     'views/ControlBar',
@@ -14,7 +15,7 @@ define([
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, ScenariosJSON, channels, alertify) {
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, DebugMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -29,6 +30,7 @@ define([
             this.editorMap = new EditorMap();
             this.functionList = new FunctionList();
             this.taskList = new TaskList();
+            this.debugMap = new DebugMap();
 
             this.controlBar = new ControlBar();
             this.debugBar = new DebugBar();
@@ -141,7 +143,8 @@ define([
             this.debugBar.hide()
             this.stackTrace.hide()
             this.editorInfo.show()
-            this.editorMap.editorView()
+            this.editorMap.show()
+            this.debugMap.hide()
         },
         enableDebug            : function () {
             this.debug = true
@@ -151,20 +154,21 @@ define([
             this.debugBar.show()
             this.stackTrace.show()
             this.editorInfo.hide()
-            this.editorMap.debugView()
+            this.editorMap.hide()
+            this.debugMap.show()
             this.updateEditor()
         }, updateEditor        : function () {
-            this.updateTests(this)
+            this.updateTests()
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
             this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
             if (this.debug)
-                this.editorMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
+                this.debugMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
             else
                 this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor").get("map"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
             this.functionList.set(this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
         }, updateScenario      : function () {
-            this.updateTasks(this)
-            this.updateEditor(this)
+            this.updateTasks()
+            this.updateEditor()
             this.scenarioList.set(this.scenarios)
         }, updateDebug         : function () {
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)

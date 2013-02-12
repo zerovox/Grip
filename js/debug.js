@@ -12,7 +12,7 @@ _.each(primitives, function (prim) {
 
 onmessage = function (event) {
     if ("main" in event.data) {
-        env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs);
+        env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs, event.data.main);
         localFunctions = event.data.localFunctions
         LocalFunctionsFresh = _.clone(localFunctions, true)
     } else if ("step" in event.data) {
@@ -21,11 +21,7 @@ onmessage = function (event) {
         } else {
             if (env.stack.length !== 0) {
                 step(env)
-                var t = env.stack.pop()
-                if (t !== undefined) {
-                    debug(t.editor)
-                    env.stack.push(t)
-                }
+                debug(env)
             } else {
                 success(env.returnVal);
             }
@@ -47,18 +43,29 @@ function fail(reason) {
     self.postMessage({fail : reason})
 }
 
-function debug(editor) {
-    self.postMessage({debug : editor})
+function debug(env) {
+    self.postMessage({debug : debugArray(env.stack[env.stack.length - 1])})
 }
 
-function newEnv(editor, inputs) {
+function debugArray(env) {
+    if (env !== undefined) {
+        var a = debugArray(env.callee)
+        env.editor.name = env.name;
+        a.push(env.editor)
+        return a
+    } else {
+        return []
+    }
+}
+
+function newEnv(editor, inputs, name) {
     if (editor.output === undefined)
         fail("No function wired to output")
     else
         return {
             stack : [
                 //TODO: Check if editor.functions[editor.output] exists, otherwise use "i" mode
-                {func : editor.functions[editor.output], action : "e", inputs : inputs, editor : editor}
+                {func : editor.functions[editor.output], action : "e", inputs : inputs, editor : editor, name : name}
             ]
         }
 }
@@ -81,11 +88,10 @@ function step(env) {
                         functionToApply = prims[ft.func.function]
                     }
                     var response = functionToApply.apply
-                    env.stack.push({func : ft.func, action : "r", cont : function () {return response.apply()}, inputs : ft.inputs, editor : ft.editor, callee : ft.callee})
+                    env.stack.push({func : ft.func, action : "r", cont : function () {return response.apply()}, inputs : ft.inputs, editor : ft.editor, callee : ft.callee, name : ft.name})
                 } else if (ft.func.function in localFunctions) {
                     var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
-                    env.stack.push({func: editor.functions[editor.output], action : "e", editor : editor, callee : ft})
-                    log(ft.func)
+                    env.stack.push({func : editor.functions[editor.output], action : "e", editor : editor, callee : ft, name : ft.func.function})
                 }
             }
             break
@@ -104,12 +110,12 @@ function step(env) {
             } else {
                 if (response.need in ft.func.inputs) {
                     var inp = ft.func.inputs[response.need]
-                    env.stack.push({func : ft.func, action : "r", cont : response.cont, using : inp, inputs : ft.inputs, editor : ft.editor, callee : ft.callee})
+                    env.stack.push({func : ft.func, action : "r", cont : response.cont, using : inp, inputs : ft.inputs, editor : ft.editor, callee : ft.callee, name : ft.name})
                     inp.requested = true
                     if (inp.wired in ft.editor.functions)
-                        env.stack.push({func : ft.editor.functions[inp.wired], action : "e", inputs : ft.inputs, editor : ft.editor, callee : ft.callee})
+                        env.stack.push({func : ft.editor.functions[inp.wired], action : "e", inputs : ft.inputs, editor : ft.editor, callee : ft.callee, name:ft.name})
                     else
-                        env.stack.push({input : inp.wired, action : "i", inputs : ft.inputs, editor : ft.editor, callee : ft.callee})
+                        env.stack.push({input : inp.wired, action : "i", inputs : ft.inputs, editor : ft.editor, callee : ft.callee, name : ft.name})
                 } else {
                     fail("Unwired function exception")
                 }
@@ -121,9 +127,9 @@ function step(env) {
             } else {
                 var inp = ft.callee.func.inputs[ft.input]
                 if (inp.wired in ft.callee.editor.functions)
-                    env.stack.push({func: ft.callee.editor.functions[inp.wired], action : "e", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs})
+                    env.stack.push({func : ft.callee.editor.functions[inp.wired], action : "e", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs, name : ft.name})
                 else
-                    env.stack.push({input: inp.wired, action : "i", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs})
+                    env.stack.push({input : inp.wired, action : "i", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs, name : ft.name})
             }
             break
     }

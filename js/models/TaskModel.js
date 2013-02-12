@@ -22,7 +22,6 @@ define([
                 } else if(result.data.need !== undefined){
                     worker.postMessage({input : result.data.need, value : inputs[result.data.need]})
                 }else{
-                    //TODO: We need to step in or step out when appropriate, get this info from worker when this is implemented
                     if(debug)
                         that.update(result.data.debug)
                 }
@@ -33,7 +32,10 @@ define([
                 return memo
             }, {})
             worker.postMessage({main:mainMethod, localFunctions : locals, inputs : inputs});
-            this.activeMap = locals[mainMethod]
+
+            var s = locals[mainMethod]
+            s.name = mainMethod
+            this.stackTrace = [s]
         },
         finished : function(result){
             this.get("worker").terminate();
@@ -50,11 +52,19 @@ define([
             channels.tasks.trigger("failed", this)
         },
         update : function(editor){
-            this.activeMap = editor;
+            this.stackTrace = editor;
+            this.level = editor.length-1
             channels.tasks.trigger("update", this)
         }, getActiveMap : function(){
-            return this.activeMap;
+            return this.stackTrace[this.level];
+        }, setLevel : function(level){
+            this.level = level;
+        }, getStackTrace : function(){
+            return this.stackTrace
+        }, getLevel : function(){
+            return this.level;
         }
-    });
+
+    })
 
 });

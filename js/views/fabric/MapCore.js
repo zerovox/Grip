@@ -18,10 +18,13 @@ define([
     return function () {
         return {
             initialize  : function () {
-                var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
                 var that = this;
+                //Define a canvas, disable selection
+                var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
+                //Add our window resize triggers
                 $(window).resize(function () {that.resize()});
 
+                //This fires hover events for all objects
                 canvas.findTarget = (function (originalFn) {
                     return function () {
                         var target = originalFn.apply(this, arguments);
@@ -42,46 +45,51 @@ define([
                     };
                 })(canvas.findTarget);
 
+                //Call onInit if defined
                 if(this.onInit)
                     this.onInit(canvas)
             },
             set         : function (editorModel, functionsCollection, editors) {
-                //TODO: Rework this
                 this.editorMap = editorModel
                 if (typeof editorModel !== "undefined") {
                     if (this.editorMap.functions === undefined)
                         this.editorMap.functions = {}
                     if (this.editorMap.inputs === undefined)
                         this.editorMap.inputs = {}
-                    if (this.functions === undefined || functionsCollection !== undefined)
+                    if (functionsCollection !== undefined)
                         this.functions = functionsCollection
                     this.editors = editors
-                    this.resize()
                 }
+                this.resize()
             },
             render      : function () {
                 var canvas = this.canvas
                 var map = this.editorMap
+                //Clear the canvas
                 canvas.clear()
+                //Check we have a map to render
                 if (typeof map !== "undefined") {
 
                     //Store an ordered list of functions. Ordering is the same as the original model. Used to wire up the view.
                     var functions = {}
                     //For each function, add to canvas then add to list above.
                     _.each(map.functions, function (func, name) {
+                        //Find the 'real' function that corresponds to this functionModel
                         var fullFunction = this.functions.find(function (funcp) {
                             return funcp.get("func").name === func.function;
                         })
-                        //Find the 'real' function that corresponds to this functionModel
                         var ff;
                         if (typeof fullFunction !== "undefined") {
+                            //If the function is found, grab the actual function model from the backbone model container
                             func.name = name;
                             if (func.arg !== undefined) {
+                                //Instantiate a new copy of the function, like for constants with an argument.
                                 ff = fullFunction.get("func")['new'](func.arg);
                             } else {
                                 ff = fullFunction.get("func");
                             }
                         } else {
+                            //Check for a local function with this name instead
                             var editor = this.editors.find(function (ed) {
                                 return ed.get("name") === func.function
                             })
@@ -95,7 +103,7 @@ define([
 
                     }, this)
 
-                    //Store a mapping of arguments based on name. Used to wire up the view
+                    //Add out inputs to the list of functions. Used to wire up the view.
                     //For each input, add to canvas and then add to the mapping above
                     var index = 0;
                     _.each(map.inputs, function (input, name) {
@@ -112,11 +120,13 @@ define([
                         }, this);
                     }, this)
 
+                    //Add the function output to the view and wire it up
                     var out = this.newOutput();
                     if (map.output !== undefined) {
                         this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
                     }
                 }
+                //Call the render callback if defined
                 if(this.onRender)
                     this.onRender()
 
@@ -154,8 +164,7 @@ define([
                 if(this.onWired)
                     this.onWired(func, func2, wire)
 
-                //Only render this after we've called out to onWired
-                rewire();
+                rewire()
             },
             newInput    : function (name, x, y) {
                 var canvas = this.canvas;
@@ -217,6 +226,7 @@ define([
 
                 output.type = "functionOutput";
                 output.func = box;
+                box.output = output;
                 canvas.add(output)
 
                 function positionOutput(box) {
@@ -227,19 +237,11 @@ define([
 
                 positionOutput(box);
 
-                function updateModel(box) {
-                    box.functionModel.x = box.getLeft()
-                    box.functionModel.y = box.getTop()
-                }
-
                 box.on('moving', function () {
                     positionOutput(box)
-                    updateModel(box)
                 })
 
                 box.type = "function"
-                box.output = output;
-                box.functionModel = func;
 
                 if(this.onNewFunction)
                     this.onNewFunction(funcReal, func, box)

@@ -139,8 +139,21 @@ define([
             this.edges = new fabric.Group([left, right, top, bottom])
             this.edges.selectable = false
             this.edges.unselectedFill = "rgba(198, 15, 19, .2)"
-            this.edges.selectedFill = "rgba(198, 15, 19, .9)" /
-                this.edges.setFill(this.edges.unselectedFill)
+            this.edges.selectedFill = "rgba(198, 15, 19, .9)"
+            this.edges.setFill(this.edges.unselectedFill)
+        }, onWired          : function (func, func2, wire) {
+        }, onNewFunction    : function (funcModel, funcImpl, box) {
+            function updateModel(box) {
+                box.functionModel.x = box.getLeft()
+                box.functionModel.y = box.getTop()
+            }
+
+            box.functionModel = funcImpl;
+
+            box.on('moving', function () {
+                updateModel(box)
+            })
+
         }, addFunction      : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)

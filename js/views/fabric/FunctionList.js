@@ -4,7 +4,7 @@ define([
     'fabric',
     'channels',
     'alertify',
-    'views/fabricElements/Function'
+    'views/fabric/Function'
 ], function (Backbone, _, fabric, channels, alertify, Function) {
 
     return Backbone.View.extend({

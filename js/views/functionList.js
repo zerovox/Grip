@@ -1,7 +1,7 @@
 define([
     'backbone',
     'underscore',
-    'views/FabricFunctionList',
+    'views/fabric/FunctionList',
     'views/FunctionGroupView'
 ], function (Backbone, _, FabricFunctionList, GroupView) {
 

@@ -1,5 +1,5 @@
 //This gives us access to the variable primitives, the array of primitive functions
-importScripts('data/primitives.js', 'libs/lodash.min.js')
+importScripts('../data/primitives.js', '../libs/lodash.min.js')
 
 var resultCaching = true
 var env

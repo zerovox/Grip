@@ -9,7 +9,7 @@ define([
         },
         initialize    : function (test, mainMethod, debug, localFunctions) {
             var that = this;
-            var worker = debug ? new Worker('js/debug.js') : new Worker('js/run.js');
+            var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
             var inputs = test.get("inputs")
             this.set({inputs : inputs, test : test, output : test.get("output"), worker : worker, running : true, name : mainMethod})
             worker.onmessage = function (result) {

@@ -17,6 +17,26 @@ define([
     'alertify'
 ], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, DebugMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, ScenariosJSON, channels, alertify) {
 
+
+    var pfx = ["webkit", "moz", "ms", "o", ""];
+    function runPrefixMethod(obj, method) {
+        var p = 0, m, t;
+        while (p < pfx.length && !obj[m]) {
+            m = method;
+            if (pfx[p] == "") {
+                m = m.substr(0,1).toLowerCase() + m.substr(1);
+            }
+            m = pfx[p] + m;
+            t = typeof obj[m];
+            if (t != "undefined") {
+                pfx = [pfx[p]];
+                return (t == "function" ? obj[m]() : obj[m]);
+            }
+            p++;
+        }
+        return false;
+    }
+
     return Backbone.View.extend({
         initialize             : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
@@ -43,6 +63,24 @@ define([
             this.disableDebug()
 
             this.attachChannelListeners()
+
+            var that = this;
+            var e = document.getElementById("save");
+
+            //TODO: This doesn't belong here. Also, cancelFullScreen not called on escape button
+            //TODO: Fix the offset from onHover events
+            e.onclick = function() {
+                if (runPrefixMethod(document, "FullScreen") || runPrefixMethod(document, "IsFullScreen")) {
+                    that.editorMap.cancelFullScreen()
+                    runPrefixMethod(document, "CancelFullScreen");
+                    that.editorMap.render()
+                }
+                else {
+                    that.editorMap.fullScreen()
+                    runPrefixMethod(that.editorMap.el.parentElement, "RequestFullScreen");
+                    that.editorMap.render()
+                }
+            }
         },
         attachChannelListeners : function () {
 

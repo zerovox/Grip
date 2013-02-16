@@ -3,8 +3,8 @@ require([
     'backbone',
     'router',
     'views/Main',
-    'foundation.app'],
-    function (_, Backbone, Router, MainView, FoundationApp) {
+    'foundation.app'
+], function (_, Backbone, Router, MainView, FoundationApp) {
 
     _.extend(Backbone.View.prototype, {
         hide    : function () {

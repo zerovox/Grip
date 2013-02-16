@@ -11,7 +11,9 @@ var require = {
         alertify         : "libs/alertify.min",
         foundation       : "libs/foundation.min",
         'foundation.app' : "libs/foundation.app",
-        modernizr        : "libs/foundation.modernizr"
+        modernizr        : "libs/foundation.modernizr",
+        mocha            : "libs/mocha",
+        chai             : "libs/chai"
     },
     shim    : {
         'backbone'       : {

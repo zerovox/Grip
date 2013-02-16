@@ -8,11 +8,11 @@ define([
     /*
      The core of the Map views.
      Methods called:
-         onInit(canvas)
-         onWired(wire from, wire to, wire)
-         onResize(height, width)
-         onRender
-         onNewFunction(funcReal, func, box)
+     onInit(canvas)
+     onWired(wire from, wire to, wire)
+     onResize(height, width)
+     onRender
+     onNewFunction(funcReal, func, box)
      */
 
     return function () {
@@ -57,15 +57,8 @@ define([
             },
             set              : function (editorModel, functionsCollection, editors) {
                 this.editorMap = editorModel
-                if (typeof editorModel !== "undefined") {
-                    if (this.editorMap.functions === undefined)
-                        this.editorMap.functions = {}
-                    if (this.editorMap.inputs === undefined)
-                        this.editorMap.inputs = {}
-                    if (functionsCollection !== undefined)
-                        this.functions = functionsCollection
-                    this.editors = editors
-                }
+                this.functions = functionsCollection
+                this.editors = editors
                 this.render()
             },
             render           : function () {

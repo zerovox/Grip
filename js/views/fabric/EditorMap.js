@@ -42,9 +42,10 @@ define([
                             that.wireUp(source.func, target.func, source, target)
                             if (source.type === "output")
                                 that.editorMap.output = target.func.functionModel.name
-                            else if (target.func.functionModel !== undefined)
+                            else if (target.func.functionModel !== undefined){
+                                console.log(source.func.functionModel.name)
                                 source.func.functionModel.inputs[source.name] = {wired : target.func.functionModel.name}
-                            else
+                            }else
                                 source.func.functionModel.inputs[source.name] = {wired : target.func.inputName}
                         }
                     } else {
@@ -98,6 +99,7 @@ define([
                 dragging = false;
                 that.hideEdges()
                 if (removeFunction && e.target !== undefined) {
+                    //TODO: switch to editorModel
                     delete that.editorMap.functions[e.target.functionModel.name]
                     if (that.editorMap.output === e.target.functionModel.name) {
                         delete that.editorMap.output
@@ -157,10 +159,12 @@ define([
         }, addFunction      : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
+            //TODO: switch to editorModel
             this.editorMap.functions[funcModel.name] = funcModel;
             this.canvas.renderAll()
         },
         addInput            : function (name) {
+            //TODO: switch to editorModel
             if (this.editorMap.inputs[name] !== undefined || this.editorMap.functions[name] !== undefined) {
                 alertify.error("Input with name " + name + " already exists")
             } else {

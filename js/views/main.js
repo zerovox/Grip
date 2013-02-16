@@ -199,10 +199,10 @@ define([
             this.updateTests()
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
             this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
-            if (this.debug)
+            if (this.debug) //TODO: this needs to pass in something that get("map")s
                 this.debugMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
             else
-                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor").get("map"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
+                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
             this.functionList.set(this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
         }, updateScenario      : function () {
             this.updateTasks()

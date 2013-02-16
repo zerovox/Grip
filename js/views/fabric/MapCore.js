@@ -56,14 +56,14 @@ define([
                     this.onInit(canvas)
             },
             set              : function (editorModel, functionsCollection, editors) {
-                this.editorMap = editorModel
+                this.editorModel = editorModel
                 this.functions = functionsCollection
                 this.editors = editors
                 this.render()
             },
             render           : function () {
                 var canvas = this.canvas
-                var map = this.editorMap
+                var map = this.editorModel.get("map")
                 //Clear the canvas
                 canvas.clear()
                 //Check we have a map to render

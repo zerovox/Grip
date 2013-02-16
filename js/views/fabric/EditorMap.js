@@ -33,54 +33,55 @@ define([
             var dragging = false;
             var removeFunction = false;
 
+            function wireUp(source, target){
+                console.log(target, source)
+                if (target.func !== source.func) {
+                    that.wireUp(target.func, source.func, target, source);
+                    if (target.type === "output")
+                        that.editorModel.linkOutput(source.func.functionModel.name)
+                    else if (source.func.functionModel !== undefined)
+                        that.editorModel.linkInput(target.func.functionModel.name, target.name, source.func.functionModel.name)
+                    else
+                        that.editorModel.linkInput(target.func.functionModel.name, target.name, source.func.inputName)
+                }
+            }
+
+
+            //TODO: Replace all colours with some backbone model/view/something holding names of colours. Based on CSS instead?
+            function addWire(fabricEvent){
+                var x = fabricEvent.layerX
+                var y = fabricEvent.layerY
+                var wire = new fabric.Line([x, y, x, y], {
+                    fill        : '#2BA6CB',
+                    strokeWidth : 5,
+                    selectable  : false
+                })
+                canvas.add(wire);
+                wire.sendToBack();
+                return wire;
+            }
+
+
+            //TODO: Refactor out fromInput/fromOutput
             canvas.on({'mouse:down' : function (e) {
                 var target = e.target
                 if (target !== undefined && target.type === "functionOutput") {
                     canvas.remove(wire);
                     if (fromInput) {
-                        if (target.func !== source.func) {
-                            that.wireUp(source.func, target.func, source, target)
-                            if (source.type === "output")
-                                that.editorMap.output = target.func.functionModel.name
-                            else if (target.func.functionModel !== undefined){
-                                console.log(source.func.functionModel.name)
-                                source.func.functionModel.inputs[source.name] = {wired : target.func.functionModel.name}
-                            }else
-                                source.func.functionModel.inputs[source.name] = {wired : target.func.inputName}
-                        }
+                        wireUp(target, source)
                     } else {
                         fromOutput = true;
-                        wire = new fabric.Line([e.e.layerX, e.e.layerY, e.e.layerX, e.e.layerY], {
-                            fill        : '#2BA6CB',
-                            strokeWidth : 5,
-                            selectable  : false
-                        })
-                        canvas.add(wire);
-                        wire.sendToBack();
+                        wire = addWire(e.e);
                         source = target;
                     }
                     fromInput = false;
                 } else if (target !== undefined && (target.type === "input" || target.type === "output")) {
                     canvas.remove(wire);
                     if (fromOutput) {
-                        if (target.func !== source.func) {
-                            that.wireUp(target.func, source.func, target, source);
-                            if (target.type === "output")
-                                that.editorMap.output = source.func.functionModel.name
-                            else if (source.func.functionModel !== undefined)
-                                target.func.functionModel.inputs[target.name] = {wired : source.func.functionModel.name}
-                            else
-                                target.func.functionModel.inputs[target.name] = {wired : source.func.inputName}
-                        }
+                        wireUp(source, target)
                     } else {
                         fromInput = true;
-                        wire = new fabric.Line([e.e.layerX, e.e.layerY], {
-                            fill        : '#2BA6CB',
-                            strokeWidth : 5,
-                            selectable  : false
-                        })
-                        canvas.add(wire);
-                        wire.sendToBack();
+                        wire = addWire(e);
                         source = target;
                     }
                     fromOutput = false;
@@ -99,11 +100,7 @@ define([
                 dragging = false;
                 that.hideEdges()
                 if (removeFunction && e.target !== undefined) {
-                    //TODO: switch to editorModel
-                    delete that.editorMap.functions[e.target.functionModel.name]
-                    if (that.editorMap.output === e.target.functionModel.name) {
-                        delete that.editorMap.output
-                    }
+                    that.editorModel.removeFunction(e.target.functionModel.name)
                     that.render()
                 }
 
@@ -159,19 +156,15 @@ define([
         }, addFunction      : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
-            //TODO: switch to editorModel
-            this.editorMap.functions[funcModel.name] = funcModel;
+            this.editorModel.addFunction(funcModel)
             this.canvas.renderAll()
         },
         addInput            : function (name) {
-            //TODO: switch to editorModel
-            if (this.editorMap.inputs[name] !== undefined || this.editorMap.functions[name] !== undefined) {
+            if (this.editorModel.addInput(name))
+                this.render()
+            else
                 alertify.error("Input with name " + name + " already exists")
-            } else {
-                this.editorMap.inputs[name] = {};
-                this.render();
-                //TODO: avoid rendering everything, see if we can just re-render inputs and wires
-            }
+
         }
     }))
 });

@@ -4,21 +4,22 @@ define([
 ], function (Backbone, TestCollection) {
 
     return Backbone.Model.extend({
-        initialize        : function (editor) {
+        initialize     : function (editor) {
             this.set({tests : new TestCollection(editor.tests)})
             if (editor.map.functions === undefined)
                 editor.map.functions = {}
             if (editor.map.inputs === undefined)
                 editor.map.inputs = {}
         },
-        addFunction       : function (name, model) {
-            this.get("map").functions[name] = model;
-        }, removeFunction : function (name) {
-            if(this.get("map").output === name)
+        addFunction    : function (model) {
+            this.get("map").functions[model.name] = model;
+        },
+        removeFunction : function (name) {
+            if (this.get("map").output === name)
                 delete this.get("map").output
             delete this.get("map").functions[name]
         },
-        addInput          : function (name) {
+        addInput       : function (name) {
             if (name in this.get("map").inputs || name in this.get("map").functions) {
                 return false
             } else {
@@ -26,10 +27,11 @@ define([
                 return true
             }
         },
-        linkOutput: function(name){
+        linkOutput     : function (name) {
             this.get("map").output = name
         },
-        linkInput : function(functionName, functionInput, linkTo){
+        linkInput      : function (functionName, functionInput, linkTo) {
+            console.log(this.get("map").functions, functionName, functionInput, linkTo)
             this.get("map").functions[functionName].inputs[functionInput] = {wired : linkTo}
         }
 

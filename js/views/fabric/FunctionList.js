@@ -25,7 +25,6 @@ define([
                         } else {
                             channels.map.trigger("add", f.get("func"))
                         }
-                        console.log(f.get("func"))
                     } else {
                         var inputs = []
                         _.each(f.get("map").inputs, function(map, name){

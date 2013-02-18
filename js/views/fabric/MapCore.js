@@ -160,7 +160,7 @@ define([
                 }
 
                 if (this.onWired)
-                    this.onWired(func, func2, wire)
+                    this.onWired(inp, out, wire)
 
                 canvas.add(wire)
                 wire.sendToBack();

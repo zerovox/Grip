@@ -10,6 +10,7 @@ define([
             'test/debug/:number'  : "debugTest",
             'debug/'              : "debug",
             'functionGroup/:name' : "switchGroup",
+            'test/runAll'         : "runAll",
             '*actions'            : 'defaultAction'
         }
     });
@@ -23,11 +24,14 @@ define([
         app_router.on('route:switchEditor', function (name) {
             channels.editors.trigger("switch", name)
         })
-        app_router.on('route:switchGroup', function(name){
+        app_router.on('route:switchGroup', function (name) {
             channels.editors.trigger("switchFunctionGroup", name)
         })
         app_router.on('route:runTest', function (number) {
             channels.tests.trigger("run", number)
+        })
+        app_router.on('route:runAll', function () {
+            channels.tests.trigger("runall")
         })
         app_router.on('route:debugTest', function (number) {
             channels.tests.trigger("debug", number)

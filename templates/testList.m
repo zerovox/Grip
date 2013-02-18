@@ -29,6 +29,6 @@
         {{/tests}}
     </tbody>
 </table>
-<a href="#" class="button" id="addTestCase">Add Test Case</a>
+<a href="#" class="button" id="addTestCase">Add Test Case</a><a href="#/test/runAll" class="button alert" id="runAll">Run All</a>
 <a class="close-reveal-modal">×</a>
 

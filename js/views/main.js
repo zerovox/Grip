@@ -112,6 +112,17 @@ define([
                 this.updateTasks();
                 alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
             }, this)
+            channels.tests.on("runall", function () {
+                var editor = this.scenarios.get("activeScenario").get("activeEditor");
+                var that = this
+                editor.get("tests").forEach(function(test){
+                    that.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
+                    test.set({passed : true, finished : false})
+                    that.testList.render()
+                    that.updateTasks();
+                    alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
+                })
+            }, this)
 
             //Listen for test debug command, and start appropriate test in debug environment
             channels.tests.on("debug", function (number) {

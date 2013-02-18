@@ -13,6 +13,7 @@ define([
      onResize(height, width)
      onRender
      onNewFunction(funcReal, func, box)
+     onNewInput(inputName, inputObject)
      */
 
     return function () {
@@ -179,8 +180,12 @@ define([
                 output.func = box;
                 box.output = output;
                 box.inputName = name;
+                box.type = "functionInput"
                 canvas.add(box)
                 canvas.add(output)
+
+                if(this.onNewInput)
+                    this.onNewInput(name, box)
                 return box;
             },
             newFunction      : function (funcReal, func) {

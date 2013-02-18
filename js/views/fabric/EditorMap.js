@@ -9,17 +9,35 @@ define([
             canvas.on('object:over', function (e) {
                 e.target.oldfill = e.target.getFill();
 
-                //If hover over wires or functions, show remove target, in center, on click remove object
+                //If hover over wires or functions
                 if (e.target.type !== undefined && e.target.type === "wire")
                     e.target.setFill('red');
                 else
-                    e.target.setFill('#2BA6CB');
+                    e.target.setFill('red');
+
+                if (e.target.type !== undefined && e.target.type === "functionInput") {
+                    e.target.ex.setFill(e.target.ex.hoverFill)
+                }
+
+                console.log(e.target)
+                if (e.target.type !== undefined && e.target.type === "ex") {
+                    console.log(e.target.fullFill)
+                    e.target.setFill(e.target.fullFill)
+                    e.target.hovered = true
+                }
+
                 canvas.renderAll();
 
                 //TODO: don't render all, see if we can just render the object and send it to correct height. might not be possible
             });
 
             canvas.on('object:out', function (e) {
+                if (e.target.type !== undefined && e.target.type === "functionInput" && !e.target.ex.hovered) {
+                    e.target.ex.setFill(e.target.ex.noFill)
+                }
+                if (e.target.type !== undefined && e.target.type === "ex") {
+                    e.target.hovered = false
+                }
                 e.target.setFill(e.target.oldfill);
                 delete e.target.oldfill;
                 canvas.renderAll();
@@ -33,22 +51,20 @@ define([
             var dragging = false;
             var removeFunction = false;
 
-            function wireUp(source, target){
-                console.log(target, source)
+            function wireUp(source, target) {
                 if (target.func !== source.func) {
                     that.wireUp(target.func, source.func, target, source);
                     if (target.type === "output")
-                        that.editorModel.linkOutput(source.func.functionModel.name)
-                    else if (source.func.functionModel !== undefined)
-                        that.editorModel.linkInput(target.func.functionModel.name, target.name, source.func.functionModel.name)
+                        that.editorModel.linkOutput(source.func.modelId)
+                    else if (source.func.modelId !== undefined)
+                        that.editorModel.linkInput(target.func.modelId, target.name, source.func.modelId)
                     else
-                        that.editorModel.linkInput(target.func.functionModel.name, target.name, source.func.inputName)
+                        that.editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)
                 }
             }
 
-
             //TODO: Replace all colours with some backbone model/view/something holding names of colours. Based on CSS instead?
-            function addWire(fabricEvent){
+            function addWire(fabricEvent) {
                 var x = fabricEvent.layerX
                 var y = fabricEvent.layerY
                 var wire = new fabric.Line([x, y, x, y], {
@@ -60,7 +76,6 @@ define([
                 wire.sendToBack();
                 return wire;
             }
-
 
             //TODO: Refactor out fromInput/fromOutput
             canvas.on({'mouse:down' : function (e) {
@@ -90,6 +105,9 @@ define([
                 } else if (target !== undefined && target.type === "function") {
                     that.showEdges()
                     dragging = true;
+                } else if (target !== undefined && target.type === "ex"){
+                    that.editorModel.removeInput(target.input)
+                    that.render()
                 } else {
                     fromOutput = fromInput = false;
                     canvas.remove(wire);
@@ -100,7 +118,7 @@ define([
                 dragging = false;
                 that.hideEdges()
                 if (removeFunction && e.target !== undefined) {
-                    that.editorModel.removeFunction(e.target.functionModel.name)
+                    that.editorModel.removeFunction(e.target.modelId)
                     that.render()
                 }
 
@@ -140,18 +158,20 @@ define([
             this.edges.unselectedFill = "rgba(198, 15, 19, .2)"
             this.edges.selectedFill = "rgba(198, 15, 19, .9)"
             this.edges.setFill(this.edges.unselectedFill)
-        }, onWired          : function (func, func2, wire) {
         }, onNewFunction    : function (funcModel, funcImpl, box) {
+            var that = this;
+
             function updateModel(box) {
-                box.functionModel.x = box.getLeft()
-                box.functionModel.y = box.getTop()
+                that.editorModel.move(box.modelId, box.getLeft(), box.getTop())
             }
 
-            box.functionModel = funcImpl;
+            box.modelId = funcImpl.name
 
             box.on('moving', function () {
                 updateModel(box)
             })
+
+            this.canvas.renderAll()
 
         }, addFunction      : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
@@ -165,6 +185,23 @@ define([
             else
                 alertify.error("Input with name " + name + " already exists")
 
+        },
+        onNewInput          : function (name, input) {
+            var ex = new fabric.Rect(
+                { top : input.top, left : input.left - input.width / 2 + 10, width : 20, height : input.height-2}
+            );
+            ex.hoverFill = "rgba(198, 15, 19, .2)"
+            ex.fullFill = "rgba(198, 15, 19, .9)"
+            ex.noFill = "rgba(0,0,0,0)"
+            ex.setFill(ex.noFill)
+            ex.type = "ex"
+            ex.input = name
+            ex.hovered = false
+            ex.hasControls = ex.hasBorders = false;
+            ex.lockMovementX = ex.lockMovementY = true;
+
+            input.ex = ex
+            this.canvas.add(ex)
         }
     }))
 });

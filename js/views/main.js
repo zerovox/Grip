@@ -12,10 +12,11 @@ define([
     'views/DebugBar',
     'views/StackTrace',
     'models/ScenariosModel',
+    'models/EditorModel',
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, DebugMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, ScenariosJSON, channels, alertify) {
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, DebugMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, EditorModel, ScenariosJSON, channels, alertify) {
 
 
     var pfx = ["webkit", "moz", "ms", "o", ""];
@@ -200,7 +201,7 @@ define([
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
             this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
             if (this.debug) //TODO: this needs to pass in something that get("map")s
-                this.debugMap.set(this.scenarios.get("activeScenario").get("activeTask").getActiveMap(), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
+                this.debugMap.set(new EditorModel({map : this.scenarios.get("activeScenario").get("activeTask").getActiveMap()}), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
             else
                 this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
             this.functionList.set(this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));

@@ -7,23 +7,22 @@ define([
         onInit              : function (canvas) {
             var that = this;
             canvas.on('object:over', function (e) {
-                e.target.oldfill = e.target.getFill();
+                var target = e.target
+                target.oldfill = target.getFill();
 
                 //If hover over wires or functions
-                if (e.target.type !== undefined && e.target.type === "wire")
-                    e.target.setFill('red');
+                if (target.type !== undefined && target.type === "wire")
+                    target.setFill('red');
                 else
-                    e.target.setFill('red');
+                    target.setFill('red');
 
-                if (e.target.type !== undefined && e.target.type === "functionInput") {
-                    e.target.ex.setFill(e.target.ex.hoverFill)
+                if (target.type !== undefined && target.type === "functionInput") {
+                    target.ex.setFill(target.ex.hoverFill)
                 }
 
-                console.log(e.target)
-                if (e.target.type !== undefined && e.target.type === "ex") {
-                    console.log(e.target.fullFill)
-                    e.target.setFill(e.target.fullFill)
-                    e.target.hovered = true
+                if (target.type !== undefined && target.type === "ex") {
+                    target.setFill(target.fullFill)
+                    target.hovered = true
                 }
 
                 canvas.renderAll();
@@ -32,14 +31,15 @@ define([
             });
 
             canvas.on('object:out', function (e) {
-                if (e.target.type !== undefined && e.target.type === "functionInput" && !e.target.ex.hovered) {
-                    e.target.ex.setFill(e.target.ex.noFill)
+                var target = e.target
+                if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
+                    target.ex.setFill(target.ex.noFill)
                 }
-                if (e.target.type !== undefined && e.target.type === "ex") {
-                    e.target.hovered = false
+                if (target.type !== undefined && target.type === "ex") {
+                    target.hovered = false
                 }
-                e.target.setFill(e.target.oldfill);
-                delete e.target.oldfill;
+                target.setFill(target.oldfill);
+                delete target.oldfill;
                 canvas.renderAll();
             });
 

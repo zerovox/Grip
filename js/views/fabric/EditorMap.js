@@ -96,7 +96,7 @@ define([
                         wireUp(source, target)
                     } else {
                         fromInput = true;
-                        wire = addWire(e);
+                        wire = addWire(e.e);
                         source = target;
                     }
                     fromOutput = false;

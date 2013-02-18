@@ -6,6 +6,8 @@ define([
     return Backbone.Model.extend({
         initialize     : function (editor) {
             this.set({tests : new TestCollection(editor.tests)})
+            if (editor.map === undefined)
+                editor.map = {}
             if (editor.map.functions === undefined)
                 editor.map.functions = {}
             if (editor.map.inputs === undefined)
@@ -31,8 +33,15 @@ define([
             this.get("map").output = name
         },
         linkInput      : function (functionName, functionInput, linkTo) {
-            console.log(this.get("map").functions, functionName, functionInput, linkTo)
             this.get("map").functions[functionName].inputs[functionInput] = {wired : linkTo}
+        },
+        move           : function (name, x, y) {
+            this.get("map").functions[name].x = x
+            this.get("map").functions[name].y = y
+        }, removeInput : function (name){
+            if (this.get("map").output === name)
+                delete this.get("map").output
+            delete this.get("map").inputs[name]
         }
 
     });

@@ -22,6 +22,8 @@ var require = {
         },
         'foundation.app' : {
             deps : ['modernizr', 'jquery', 'foundation']
+        },
+        'mocha'         : {
+           exports : 'mocha'
         }
-
     }};

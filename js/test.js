@@ -1,9 +1,7 @@
 require([
-    'underscore',
-    'jquery',
     'chai',
     'mocha'
-], function (_, $, chai) {
+], function (chai, mocha) {
     assert = chai.assert;
     should = chai.should();
     expect = chai.expect;

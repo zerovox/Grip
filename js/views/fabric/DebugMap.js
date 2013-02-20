@@ -13,8 +13,8 @@ define([
                 if (status.requested) {
                     if (status.responded) {
                         console.log(wire)
-                        wire.fill = "rgb(43,166,203)"
-                        wire.setShadow({ color : 'rgba(3,166,203,0.9)', offsetX : 0, offsetY : 0, blur : 10});
+                        wire.fill = "rgb(93,164,35)"
+                        wire.setShadow({ color : 'rgba(93,164,35,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                         var text = new fabric.Text(""+status.result, {
                             fontSize: 14,
                             left: wire.left,

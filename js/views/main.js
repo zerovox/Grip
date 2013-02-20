@@ -3,40 +3,14 @@ define([
     'views/EditorList',
     'views/ScenarioList',
     'views/TestList',
-    'views/EditorInfo',
-    'views/fabric/EditorMap',
-    'views/fabric/DebugMap',
-    'views/FunctionList',
     'views/TaskList',
-    'views/ControlBar',
-    'views/DebugBar',
-    'views/StackTrace',
+    'views/Editor',
+    'views/Debug',
     'models/ScenariosModel',
-    'models/EditorModel',
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, DebugMap, FunctionList, TaskList, ControlBar, DebugBar, StackTrace, ScenariosModel, EditorModel, ScenariosJSON, channels, alertify) {
-
-
-    var pfx = ["webkit", "moz", "ms", "o", ""];
-    function runPrefixMethod(obj, method) {
-        var p = 0, m, t;
-        while (p < pfx.length && !obj[m]) {
-            m = method;
-            if (pfx[p] == "") {
-                m = m.substr(0,1).toLowerCase() + m.substr(1);
-            }
-            m = pfx[p] + m;
-            t = typeof obj[m];
-            if (t != "undefined") {
-                pfx = [pfx[p]];
-                return (t == "function" ? obj[m]() : obj[m]);
-            }
-            p++;
-        }
-        return false;
-    }
+], function (Backbone, EditorList, ScenarioList, TestList, TaskList, Editor, Debug, ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -47,41 +21,16 @@ define([
             this.scenarioList = new ScenarioList();
             this.editorList = new EditorList();
             this.testList = new TestList();
-            this.editorInfo = new EditorInfo();
-            this.editorMap = new EditorMap();
-            this.functionList = new FunctionList();
             this.taskList = new TaskList();
-            this.debugMap = new DebugMap();
+            this.editorView = new Editor()
+            this.debugView = new Debug()
 
-            this.controlBar = new ControlBar();
-            this.debugBar = new DebugBar();
-            this.stackTrace = new StackTrace();
+            this.debugView.hide()
 
             //Load the initial UI
             this.updateScenario()
 
-            //Don't start in debug mode
-            this.disableDebug()
-
             this.attachChannelListeners()
-
-            var that = this;
-            var e = document.getElementById("save");
-
-            //TODO: This doesn't belong here. Also, cancelFullScreen not called on escape button
-            //TODO: Fix the offset from onHover events
-            e.onclick = function() {
-                if (runPrefixMethod(document, "FullScreen") || runPrefixMethod(document, "IsFullScreen")) {
-                    that.editorMap.cancelFullScreen()
-                    runPrefixMethod(document, "CancelFullScreen");
-                    that.editorMap.render()
-                }
-                else {
-                    that.editorMap.fullScreen()
-                    runPrefixMethod(that.editorMap.el.parentElement, "RequestFullScreen");
-                    that.editorMap.render()
-                }
-            }
         },
         attachChannelListeners : function () {
 
@@ -98,8 +47,9 @@ define([
                 this.scenarios.get("activeScenario").swap(name, this.scenarios)
                 this.updateEditor();
             }, this);
+
             channels.editors.on("switchFunctionGroup", function (name) {
-                this.functionList.makeActive(name)
+                this.editorView.makeActive(name)
             }, this);
 
             //Listen for test run command, and run appropriate test
@@ -157,15 +107,12 @@ define([
 
             //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {
-                if (!this.debug){
-                    this.editorMap.addFunction(func)
-                }
+                    this.editorView.addFunction(func)
             }, this);
 
             //Listen for the add input command, and if we are in editing mode, add the input
             channels.map.on("addInput", function (name) {
-                if (!this.debug)
-                    this.editorMap.addInput(name);
+                    this.editorView.addInput(name);
             }, this);
 
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
@@ -187,46 +134,28 @@ define([
         },
         disableDebug           : function () {
             this.debug = false
-            this.editorInfo.show()
-            this.controlBar.show()
-            this.functionList.show()
-            this.debugBar.hide()
-            this.stackTrace.hide()
-            this.editorInfo.show()
-            this.editorMap.show()
-            this.debugMap.hide()
+            this.debugView.hide()
+            this.editorView.show()
         },
         enableDebug            : function () {
             this.debug = true
-            this.editorInfo.hide()
-            this.controlBar.hide()
-            this.functionList.hide()
-            this.debugBar.show()
-            this.stackTrace.show()
-            this.editorInfo.hide()
-            this.editorMap.hide()
-            this.debugMap.show()
-            this.updateEditor()
-        }, updateEditor        : function () {
-            this.updateTests()
-            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
-            this.editorInfo.set(this.scenarios.get("activeScenario").get("activeEditor"), this.debug)
-            if (this.debug) //TODO: this needs to pass in something that get("map")s
-                this.debugMap.set(new EditorModel({map : this.scenarios.get("activeScenario").get("activeTask").getActiveMap()}), this.scenarios.get("activeScenario").get("functions"), this.scenarios.get("activeScenario").get("list"))
-            else
-                this.editorMap.set(this.scenarios.get("activeScenario").get("activeEditor"), this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
-            this.functionList.set(this.scenarios.get("activeScenario").get("functions"),this.scenarios.get("activeScenario").get("list"));
+            this.debugView.show()
+            this.editorView.hide()
         }, updateScenario      : function () {
             this.updateTasks()
             this.updateEditor()
             this.scenarioList.set(this.scenarios)
         }, updateDebug         : function () {
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
-            this.stackTrace.set(this.scenarios.get("activeScenario").get("activeTask"), this.debug)
+            this.debugView.set(this.scenarios.get("activeScenario"))
         }, updateTasks         : function () {
             this.taskList.set(this.scenarios.get("activeScenario").get("tasks"))
         }, updateTests         : function () {
             this.testList.set(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
+        }, updateEditor : function(){
+            this.updateTests()
+            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
+            this.editorView.set(this.scenarios.get("activeScenario"))
         }
 
     });

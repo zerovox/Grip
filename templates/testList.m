@@ -20,15 +20,15 @@
             <td>{{#finished}}{{#passed}}Test Passed{{/passed}}{{^passed}}Test Failed with output {{lastResult}}{{/passed}}{{/finished}}{{^finished}}{{#passed}}Test currently running{{/passed}}{{^passed}}Test not yet run{{/passed}}{{/finished}}</td>
             <td>
                 <ul class="button-group">
-                    <li><a href="#/test/run/{{index}}" class="button small alert">Run</a></li>
-                    <li><a href="#" class="button small alert">Run until first recursion</a></li>
-                    <li><a href="#/test/debug/{{index}}" class="button small alert">Debug</a></li>
+                    <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>
+                    <li><a href="#" class="button small alert recurse" data-index="{{index}}">Run until first recursion</a></li>
+                    <li><a href="#" class="button small alert debug" data-index="{{index}}">Debug</a></li>
                 </ul>
             </td>
         </tr>
         {{/tests}}
     </tbody>
 </table>
-<a href="#" class="button" id="addTestCase">Add Test Case</a><a href="#/test/runAll" class="button alert" id="runAll">Run All</a>
+<a href="#" class="button" id="addTestCase">Add Test Case</a><a href="#" class="button alert" id="runAll">Run All</a>
 <a class="close-reveal-modal">×</a>
 

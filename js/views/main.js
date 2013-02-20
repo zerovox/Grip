@@ -62,6 +62,7 @@ define([
                 this.updateTasks();
                 alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
             }, this)
+
             channels.tests.on("runall", function () {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var that = this

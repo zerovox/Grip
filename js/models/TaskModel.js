@@ -7,6 +7,9 @@ define([
         step : function(){
             this.get("worker").postMessage({step : true})
         },
+        stepOver : function(){
+            this.get("worker").postMessage({stepOver : true})
+        },
         initialize    : function (test, mainMethod, debug, localFunctions) {
             var that = this;
             var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
@@ -35,7 +38,8 @@ define([
 
             var s = locals[mainMethod]
             s.name = mainMethod
-            this.stackTrace = [s]
+            this.set("stackTrace", [s])
+
         },
         finished : function(result){
             this.get("worker").terminate();
@@ -52,17 +56,22 @@ define([
             channels.tasks.trigger("failed", this)
         },
         update : function(editor){
-            this.stackTrace = editor;
-            this.level = editor.length-1
+            this.set("stackTrace", editor)
+            this.set("stackTrace", editor)
+            this.set("level",editor.length-1)
             channels.tasks.trigger("update", this)
         }, getActiveMap : function(){
-            return this.stackTrace[this.level];
+            return this.get("stackTrace")[this.get("level")];
         }, setLevel : function(level){
-            this.level = level;
+            console.log(this.get("level"))
+            this.set("level", level)
+            console.log(this.get("level"))
         }, getStackTrace : function(){
-            return this.stackTrace
+            return this.get("stackTrace")
         }, getLevel : function(){
-            return this.level;
+            return this.get("level")
+        }, isRunning : function(){
+            return this.get("running")
         }
 
     })

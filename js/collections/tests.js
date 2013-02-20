@@ -4,7 +4,7 @@ define([
 ], function (Backbone, TestModel) {
     return Backbone.Collection.extend({
         model:TestModel,
-        initialize:function () {
+        initialize:function (a, b, c) {
         }
     });
 });

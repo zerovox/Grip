@@ -29,6 +29,22 @@ onmessage = function (event) {
                 debugState(env.previousState)
             }
         }
+    } else if ("stepOver" in event.data) {
+        if (env === undefined) {
+            fail("Worker not initialized")
+        } else {
+            if (env.stack.length !== 0) {
+                var temp = env.stack.pop()
+                env.stack.push({action : "o"})
+                env.stack.push(temp)
+                while(step(env)){}
+                debugState(env.previousState)
+            } else {
+                success(env.returnVal);
+                //Final debug view, show the previous state
+                debugState(env.previousState)
+            }
+        }
     } else {
         fail("No instruction given to worker")
     }
@@ -152,7 +168,10 @@ function step(env) {
                     env.stack.push({input : inp.wired, action : "i", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs, name : ft.name, using : inp})
             }
             break
+        case "o":
+           return false
     }
+    return true
 }
 
 function e(ft, extra) {

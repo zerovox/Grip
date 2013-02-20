@@ -20,14 +20,14 @@
         </td>
         <td>
             <ul class="button-group">
-                <li><a href="#" class="button small alert">Stop</a></li>
-                <li><a href="#" class="button small alert">Peek</a></li>
-                <li><a href="#" class="button small alert">Clear</a></li>
+                <li><a href="#" class="button small alert stop" data-index="{{index}}">Stop</a></li>
+                <li><a href="#" class="button small alert clear" data-index="{{index}}">Clear</a></li>
             </ul>
         </td>
     </tr>
     {{/tasks}}
     </tbody>
 </table>
+<a href="#" class="button alert" id="clearFinished">Clear Finished</a>
 <a class="close-reveal-modal">×</a>
 

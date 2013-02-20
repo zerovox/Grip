@@ -103,7 +103,7 @@ define([
                 this.scenarios.get("activeScenario").get("activeTask").step()
             }, this)
             channels.tasks.on("stepOver", function () {
-                //TODO: this.taskList.stepOver();
+                this.scenarios.get("activeScenario").get("activeTask").stepOver()
             }, this)
 
             //Listen for the add function command, and if we are in editing mode, add the function

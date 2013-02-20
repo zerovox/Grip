@@ -15,7 +15,9 @@ define([
             this.debug = true
         },
         set            : function (scen) {
+            this.scenario && this.scenario.get("activeTask").off(null, this.updateDebug)
             this.scenario = scen
+            this.scenario.get("activeTask").on("change:level", this.updateDebug, this)
             this.updateDebug()
         },
         render         : function () {

@@ -7,13 +7,8 @@ define([
     'views/fabric/EditorMap',
     'views/FunctionList',
     'views/TaskList',
-    'views/ControlBar',
-    'models/ScenariosModel',
-    'models/EditorModel',
-    'libs/text!data/scenarios.json',
-    'channels',
-    'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar, ScenariosModel, EditorModel, ScenariosJSON, channels, alertify) {
+    'views/ControlBar'
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar) {
 
     return Backbone.View.extend({
         initialize      : function () {
@@ -60,10 +55,10 @@ define([
             this.functionList.hide()
         }, makeActive   : function (name) {
             this.functionList.makeActive(name)
-        }, addFunction  : function (x) {
-            this.editorMap.addFunction(x)
-        }, addInput     : function (x) {
-            this.editorMap.addInput(x)
+        }, addFunction  : function (func) {
+            this.editorMap.addFunction(func)
+        }, addInput     : function (inp) {
+            this.editorMap.addInput(inp)
         }
 
     });

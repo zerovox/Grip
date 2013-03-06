@@ -10,6 +10,23 @@ define([
     'views/ControlBar'
 ], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar) {
 
+    var pfx = ["webkit", "moz", "ms", "o", ""];
+    function runPrefixMethod(obj, method) {
+        var p = 0, m, t;
+        while (p < pfx.length && !obj[m]) {
+            m = method;
+            if (pfx[p] == "") {
+                m = m.substr(0,1).toLowerCase() + m.substr(1);
+            }
+            m = pfx[p] + m;
+            t = typeof obj[m];
+            if (t != "undefined") {
+                pfx = [pfx[p]];
+                return (t == "function" ? obj[m]() : obj[m]);
+            }
+            p++;
+        }
+    }
     return Backbone.View.extend({
         initialize      : function () {
             //Create a view for each UI component

@@ -6,39 +6,48 @@ define([
     return Backbone.View.extend(_.extend(new MapCore(), {
         onInit              : function (canvas) {
             var that = this;
+
+            //TODO: Refactor next two event handlers
             canvas.on('object:over', function (e) {
                 var target = e.target
-                target.oldfill = target.getFill();
+                target.oldfill = target.getFill()
+                if (target.type !== undefined) {
+                    console.log(target.type)
+                    //If hover over wires or functions
+                    if (target.type === "wire") {
+                        target.oldfill = target.getStroke();
+                        target.setStroke('red');
+                    }
 
-                //If hover over wires or functions
-                if (target.type !== undefined && target.type === "wire")
-                    target.setFill('red');
-                else
-                    target.setFill('red');
+                    if (target.type === "input")
+                        target.setFill('red');
 
-                if (target.type !== undefined && target.type === "functionInput") {
-                    target.ex.setFill(target.ex.hoverFill)
+                    if (target.type === "functionInput") {
+                        target.ex.setFill(target.ex.hoverFill)
+                    }
+
+                    if (target.type === "ex") {
+                        target.setFill(target.fullFill)
+                        target.hovered = true
+                    }
+
+                    canvas.renderAll();
                 }
-
-                if (target.type !== undefined && target.type === "ex") {
-                    target.setFill(target.fullFill)
-                    target.hovered = true
-                }
-
-                canvas.renderAll();
-
-                //TODO: don't render all, see if we can just render the object and send it to correct height. might not be possible
             });
 
             canvas.on('object:out', function (e) {
                 var target = e.target
-                if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
-                    target.ex.setFill(target.ex.noFill)
+                if (target.type !== undefined && target.type === "wire") {
+                    target.setStroke(target.oldfill);
+                } else {
+                    if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
+                        target.ex.setFill(target.ex.noFill)
+                    }
+                    if (target.type !== undefined && target.type === "ex") {
+                        target.hovered = false
+                    }
+                    target.setFill(target.oldfill);
                 }
-                if (target.type !== undefined && target.type === "ex") {
-                    target.hovered = false
-                }
-                target.setFill(target.oldfill);
                 delete target.oldfill;
                 canvas.renderAll();
             });
@@ -67,11 +76,13 @@ define([
             function addWire(fabricEvent) {
                 var x = fabricEvent.layerX
                 var y = fabricEvent.layerY
-                var wire = new fabric.Line([x, y, x, y], {
-                    fill        : '#2BA6CB',
-                    strokeWidth : 5,
+                var wire = new fabric.Path("M" + x + "," + y + " C" + x + "," + y + " " + x + "," + y + " " + x + "," + y, {
+                    fill        : "",
+                    strokeWidth : 4,
+                    stroke      : '#2BA6CB',
                     selectable  : false
                 })
+
                 canvas.add(wire);
                 wire.sendToBack();
                 return wire;
@@ -105,7 +116,7 @@ define([
                 } else if (target !== undefined && target.type === "function") {
                     that.showEdges()
                     dragging = true;
-                } else if (target !== undefined && target.type === "ex"){
+                } else if (target !== undefined && target.type === "ex") {
                     that.editorModel.removeInput(target.input)
                     that.render()
                 } else {
@@ -127,7 +138,17 @@ define([
 
             canvas.on({'mouse:move' : function (e) {
                 if (fromOutput || fromInput) {
-                    wire.set({ 'x2' : e.e.layerX, 'y2' : e.e.layerY })
+                    var x = wire.path[0][1]
+                    var y = wire.path[0][2]
+                    var xp = e.e.layerX
+                    var yp = e.e.layerY
+                    var controlMid = ((x + xp) / 2)
+                    wire.path[1][1] = controlMid
+                    wire.path[1][2] = y
+                    wire.path[1][3] = controlMid
+                    wire.path[1][4] = yp
+                    wire.path[1][5] = xp
+                    wire.path[1][6] = yp
                     canvas.renderAll()
                 }
                 if (dragging) {
@@ -188,7 +209,7 @@ define([
         },
         onNewInput          : function (name, input) {
             var ex = new fabric.Rect(
-                { top : input.top, left : input.left - input.width / 2 + 10, width : 20, height : input.height-2}
+                { top : input.top, left : input.left - input.width / 2 + 10, width : 20, height : input.height - 2}
             );
             ex.hoverFill = "rgba(198, 15, 19, .2)"
             ex.fullFill = "rgba(198, 15, 19, .9)"

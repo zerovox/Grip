@@ -136,19 +136,31 @@ define([
                 canvas.remove(inp.wire)
                 var fill = '#2284A1';
 
-                var wire = new fabric.Line([inp.getLeft(), inp.getTop(), out.getLeft(), out.getTop()], {
-                    fill        : fill,
-                    strokeWidth : 2
+
+
+                var wire = new fabric.Path("M"+inp.getLeft()+","+inp.getTop()+" C"+((out.getLeft() + inp.getLeft())/2)+","+inp.getTop()+" "+((out.getLeft() + inp.getLeft())/2)+","+out.getTop()+" "+out.getLeft()+","+out.getTop(), {
+                    fill        : "",
+                    strokeWidth : 4,
+                    stroke: fill
                 })
+
                 wire.lockMovementX = wire.lockMovementY = true;
                 wire.hasBorders = wire.hasControls = false;
                 wire.type = "wire"
                 inp.wire = wire
 
+
                 function rewire() {
                     var context = canvas.getContext();
-                    wire.set({ 'x1' : inp.getLeft(), 'y1' : inp.getTop() })
-                    wire.set({ 'x2' : out.getLeft(), 'y2' : out.getTop() })
+                    var controlMid = ((out.getLeft() + inp.getLeft())/2)
+                    wire.path[0][1] = inp.getLeft()
+                    wire.path[0][2] = inp.getTop()
+                    wire.path[1][1] = controlMid
+                    wire.path[1][2] = inp.getTop()
+                    wire.path[1][3] = controlMid
+                    wire.path[1][4] = out.getTop()
+                    wire.path[1][5] = out.getLeft()
+                    wire.path[1][6] = out.getTop()
                     wire.render(context);
                 }
 

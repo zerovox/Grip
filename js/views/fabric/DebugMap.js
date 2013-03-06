@@ -13,20 +13,21 @@ define([
                 if (status.requested) {
                     if (status.responded) {
                         console.log(wire)
-                        wire.fill = "rgb(93,164,35)"
+                        wire.stroke = "rgb(93,164,35)"
                         wire.setShadow({ color : 'rgba(93,164,35,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                         var text = new fabric.Text(""+status.result, {
                             fontSize: 14,
-                            left: wire.left,
-                            top: wire.top - 6,
+                            left: inp.getLeft(),
+                            top: inp.getTop() - 10,
                             lineHeight: 1,
                             fontFamily: 'Helvetica',
-                            fontWeight: 'bold'
+                            fontWeight: 'bold',
+                            'text-align': 'right'
                         });
                         this.canvas.add(text);
-
+                        text.left = text.left - (text.width/2) -12
                     } else {
-                        wire.fill = "rgb(192,15,19)"
+                        wire.stroke = "rgb(192,15,19)"
                         wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                     }
                 } else {
@@ -36,7 +37,7 @@ define([
                 //We always request the output
                 //TODO: Check this doesn't break recursives
                 //TODO: We need more information on this, on finish we should show this as a
-                wire.fill = "rgb(192,15,19)"
+                wire.stroke = "rgb(192,15,19)"
                 wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});
             }
         },
@@ -49,7 +50,7 @@ define([
                 var text = new fabric.Text(func.debugString, {
                     fontSize: 14,
                     left: box.left,
-                    top: box.top + 14 + (box.height/2),
+                    top: box.top + 10 + (box.height/2),
                     lineHeight: 1,
                     fontFamily: 'Helvetica',
                     fontWeight: 'bold'

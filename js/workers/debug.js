@@ -37,7 +37,7 @@ onmessage = function (event) {
                 var temp = env.stack.pop()
                 env.stack.push({action : "o"})
                 env.stack.push(temp)
-                while(step(env)){}
+                while (step(env)) {}
                 debugState(env.previousState)
             } else {
                 success(env.returnVal);
@@ -62,7 +62,7 @@ function fail(reason) {
     self.postMessage({fail : reason})
 }
 
-function debugState(state){
+function debugState(state) {
     self.postMessage({debug : debugArray(state)})
 }
 
@@ -86,12 +86,15 @@ function newEnv(editor, inputs, name) {
     if (editor.output === undefined)
         fail("No function wired to output")
     else
-        return {
-            stack : [
-                //TODO: Check if editor.functions[editor.output] exists, otherwise use "i" mode
-                {func : editor.functions[editor.output], action : "e", inputs : inputs, editor : editor, name : name, using : editor.outputDebug}
-            ]
-        }
+        var func = editor.functions[editor.output]
+    if (func === undefined)
+        return {stack : [
+            {action : "i", inputs : inputs, editor : editor, name : name, using : editor.outputDebug, input : editor.output}
+        ]}
+    else
+        return {stack : [
+            {func : func, action : "e", inputs : inputs, editor : editor, name : name, using : editor.outputDebug}
+        ]}
 }
 
 function step(env) {
@@ -117,9 +120,13 @@ function step(env) {
                     env.stack.push(e(ft, {action : "r", cont : function () {return response.apply()}}))
                 } else if (ft.func.function in localFunctions) {
                     var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
-                    env.stack.push(e(ft, {action : "r", cont : function(result){ return {result : result, debug : ft.func.function}}}))
+                    env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))
                     //We don't use the extend here, as we want to create a fresh stack frame
-                    env.stack.push({func : editor.functions[editor.output], action : "e", editor : editor, callee : ft, name : ft.func.function})
+                    var func = editor.functions[editor.output]
+                    if(func === undefined)
+                    env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
+                    else
+                    env.stack.push({func : func, action : "e", editor : editor, callee : ft, name : ft.func.function})
                 }
             }
             break
@@ -143,7 +150,7 @@ function step(env) {
                     var inp = ft.func.inputs[response.need]
                     env.stack.push(e(ft, {action : "r", cont : response.cont}))
                     inp.requested = true
-                    if (inp.wired in ft.editor.functions){
+                    if (inp.wired in ft.editor.functions) {
                         env.stack.push(e(ft, {action : "e", func : ft.editor.functions[inp.wired], using : inp}))
                     } else
                         env.stack.push(e(ft, {action : "i", input : inp.wired, using : inp}))
@@ -161,7 +168,7 @@ function step(env) {
             } else {
                 var inp = ft.callee.func.inputs[ft.input]
                 inp.requested = true
-                env.stack.push(e(ft, {action : "r", cont : function(result){ return {result : result}}}))
+                env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result}}}))
                 if (inp.wired in ft.callee.editor.functions)
                     env.stack.push({func : ft.callee.editor.functions[inp.wired], action : "e", editor : ft.callee.editor, callee : ft.callee.callee, inputs : ft.callee.inputs, name : ft.name, using : inp})
                 else
@@ -169,7 +176,7 @@ function step(env) {
             }
             break
         case "o":
-           return false
+            return false
     }
     return true
 }

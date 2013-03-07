@@ -15,7 +15,7 @@
     <tbody id="testTableBody">
         {{#tests}}
         <tr>
-            <td>{{#inputs}}{{toJSON}}{{/inputs}}</td>
+            <td>{{{inputMap}}}</td>
             <td>{{output}}</td>
             <td>{{#running}}Test Running{{/running}}{{^running}}{{#passed}}Test passed{{/passed}}{{^passed}}Test failed with output {{lastResult}}{{/passed}}{{/running}}</td>
             <td>

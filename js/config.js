@@ -21,7 +21,7 @@ var require = {
             exports : 'Backbone'
         },
         'foundation.app' : {
-            deps : ['modernizr', 'jquery', 'foundation']
+            deps : ['modernizr', 'jquery', 'foundation', 'libs/jquery-editable-poshytip.min']
         },
         'mocha'         : {
            exports : 'mocha'

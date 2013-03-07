@@ -18,7 +18,7 @@ define([
 
     return function () {
         return {
-            initialize       : function () {
+            initialize          : function () {
                 var that = this;
                 this.full = false;
                 //Define a canvas, disable selection
@@ -31,10 +31,20 @@ define([
                 //Make sure the canvas is the correct size
                 this.resize()
 
-                //This fires hover events for all objects
+                //Record a pointer to the original findTarget method
+                this.ft = canvas.findTarget;
+
+                //Call onInit if defined
+                if (this.onInit)
+                    this.onInit(canvas)
+            },
+            addFindTargetEvents : function (canvas) {
+                //TODO: Adjust find target for fullscreen
+                //Piggyback on canvas.findTarget : https://github.com/kangax/fabric.js/wiki/Working-with-events
                 canvas.findTarget = (function (originalFn) {
                     return function () {
                         var target = originalFn.apply(this, arguments);
+                        //console.log(target, arguments)
                         if (target) {
                             if (this._hoveredTarget !== target) {
                                 canvas.fire('object:over', { target : target });
@@ -50,23 +60,21 @@ define([
                         }
                         return target;
                     };
-                })(canvas.findTarget);
-
-                //Call onInit if defined
-                if (this.onInit)
-                    this.onInit(canvas)
+                })(this.ft);
             },
-            set              : function (editorModel, functionsCollection, editors) {
+            set                 : function (editorModel, functionsCollection, editors) {
                 this.editorModel = editorModel
                 this.functions = functionsCollection
                 this.editors = editors
                 this.render()
             },
-            render           : function () {
+            render              : function () {
                 var canvas = this.canvas
                 var map = this.editorModel.get("map")
                 //Clear the canvas
                 canvas.clear()
+                //Add find target events
+                this.addFindTargetEvents(canvas)
                 //Check we have a map to render
                 if (typeof map !== "undefined") {
 
@@ -131,17 +139,15 @@ define([
                     this.onRender()
 
             },
-            wireUp           : function (func, func2, inp, out) {
+            wireUp              : function (func, func2, inp, out) {
                 var canvas = this.canvas;
                 canvas.remove(inp.wire)
                 var fill = '#2284A1';
 
-
-
-                var wire = new fabric.Path("M"+inp.getLeft()+","+inp.getTop()+" C"+((out.getLeft() + inp.getLeft())/2)+","+inp.getTop()+" "+((out.getLeft() + inp.getLeft())/2)+","+out.getTop()+" "+out.getLeft()+","+out.getTop(), {
+                var wire = new fabric.Path("M" + inp.getLeft() + "," + inp.getTop() + " C" + ((out.getLeft() + inp.getLeft()) / 2) + "," + inp.getTop() + " " + ((out.getLeft() + inp.getLeft()) / 2) + "," + out.getTop() + " " + out.getLeft() + "," + out.getTop(), {
                     fill        : "",
                     strokeWidth : 4,
-                    stroke: fill
+                    stroke      : fill
                 })
 
                 wire.lockMovementX = wire.lockMovementY = true;
@@ -149,10 +155,9 @@ define([
                 wire.type = "wire"
                 inp.wire = wire
 
-
                 function rewire() {
                     var context = canvas.getContext();
-                    var controlMid = ((out.getLeft() + inp.getLeft())/2)
+                    var controlMid = ((out.getLeft() + inp.getLeft()) / 2)
                     wire.path[0][1] = inp.getLeft()
                     wire.path[0][2] = inp.getTop()
                     wire.path[1][1] = controlMid
@@ -178,7 +183,7 @@ define([
                 wire.sendToBack();
                 rewire()
             },
-            newInput         : function (name, x, y) {
+            newInput            : function (name, x, y) {
                 var canvas = this.canvas;
                 var height = 40;
                 var width = 160
@@ -196,11 +201,11 @@ define([
                 canvas.add(box)
                 canvas.add(output)
 
-                if(this.onNewInput)
+                if (this.onNewInput)
                     this.onNewInput(name, box)
                 return box;
             },
-            newFunction      : function (funcReal, func) {
+            newFunction         : function (funcReal, func) {
                 var canvas = this.canvas;
                 var height = Math.max(40, 40 * funcReal.inputs.length);
                 var width = 160
@@ -265,7 +270,7 @@ define([
 
                 return box;
             },
-            newOutput        : function () {
+            newOutput           : function () {
                 var canvas = this.canvas;
                 var box = new fabric.Circle({radius : 30, fill : 'grey', top : (canvas.height / 2), left : canvas.width})
 
@@ -276,7 +281,7 @@ define([
                 canvas.add(box)
                 return box;
             },
-            fullScreen       : function () {
+            fullScreen          : function () {
                 this.full = true
                 var canvas = this.canvas;
                 var h = window.screen.height
@@ -287,11 +292,11 @@ define([
                 if (this.onResize)
                     this.onResize(h, w)
             },
-            cancelFullScreen : function () {
+            cancelFullScreen    : function () {
                 this.full = false
                 this.resize()
             },
-            resize           : function () {
+            resize              : function () {
                 if (!this.full) {
                     var canvas = this.canvas;
                     var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
@@ -302,15 +307,15 @@ define([
                         this.onResize(h, w)
                 }
             },
-            createGUID       : function () {
+            createGUID          : function () {
                 //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a built in function
                 return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
-            }, hide          : function () {
+            }, hide             : function () {
                 this.$el.parent().hide();
-            }, show          : function () {
+            }, show             : function () {
                 this.$el.parent().show();
             }
         }

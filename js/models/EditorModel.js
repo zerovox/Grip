@@ -12,6 +12,7 @@ define([
                 editor.map.functions = {}
             if (editor.map.inputs === undefined)
                 editor.map.inputs = {}
+            this.set("map", editor.map)
         },
         addFunction    : function (model) {
             this.get("map").functions[model.name] = model;
@@ -30,9 +31,11 @@ define([
             }
         },
         linkOutput     : function (name) {
+            console.log(name)
             this.get("map").output = name
         },
         linkInput      : function (functionName, functionInput, linkTo) {
+            console.log(functionName, functionInput, linkTo)
             this.get("map").functions[functionName].inputs[functionInput] = {wired : linkTo}
         },
         move           : function (name, x, y) {

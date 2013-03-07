@@ -63,9 +63,12 @@ define([
             function wireUp(source, target) {
                 if (target.func !== source.func) {
                     that.wireUp(target.func, source.func, target, source);
-                    if (target.type === "output")
-                        that.editorModel.linkOutput(source.func.modelId)
-                    else if (source.func.modelId !== undefined)
+                    if (target.type === "output"){
+                        if(source.func.type === "functionInput")
+                            that.editorModel.linkOutput(source.func.inputName)
+                        else
+                            that.editorModel.linkOutput(source.func.modelId)
+                    } else if (source.func.modelId !== undefined)
                         that.editorModel.linkInput(target.func.modelId, target.name, source.func.modelId)
                     else
                         that.editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)

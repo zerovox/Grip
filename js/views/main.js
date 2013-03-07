@@ -52,6 +52,11 @@ define([
                 this.editorView.makeActive(name)
             }, this);
 
+            channels.editors.on("new", function (name) {
+                this.scenarios.get("activeScenario").newEditor(name);
+                this.updateEditor()
+            }, this);
+
             //Listen for test run command, and run appropriate test
             channels.tests.on("run", function (number) {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");

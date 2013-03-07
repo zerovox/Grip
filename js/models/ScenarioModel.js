@@ -52,6 +52,9 @@ define([
             }
             return false
 
+        }, newEditor : function(name){
+            var newEditor  = new (this.get("list").model)({name : name})
+            this.get("list").add(newEditor)
         }
     });
 

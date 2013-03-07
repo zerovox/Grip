@@ -17,7 +17,7 @@
         <tr>
             <td>{{#inputs}}{{toJSON}}{{/inputs}}</td>
             <td>{{output}}</td>
-            <td>{{#finished}}{{#passed}}Test Passed{{/passed}}{{^passed}}Test Failed with output {{lastResult}}{{/passed}}{{/finished}}{{^finished}}{{#passed}}Test currently running{{/passed}}{{^passed}}Test not yet run{{/passed}}{{/finished}}</td>
+            <td>{{#running}}Test Running{{/running}}{{^running}}{{#passed}}Test passed{{/passed}}{{^passed}}Test failed with output {{lastResult}}{{/passed}}{{/running}}</td>
             <td>
                 <ul class="button-group">
                     <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>

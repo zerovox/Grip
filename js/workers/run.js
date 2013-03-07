@@ -13,7 +13,20 @@ onmessage = function (event) {
     if ("main" in event.data) {
         localFunctions = event.data.localFunctions
         LocalFunctionsFresh = _.clone(localFunctions, true)
-        success(eval(newEnv(event.data.localFunctions[event.data.main], event.data.inputs, event.data.main)))
+        var editor = event.data.localFunctions[event.data.main]
+        var inputs = event.data.inputs
+        var name = event.data.main
+        var func = editor.functions[editor.output];
+        if (editor.output === undefined)
+            return fail("No function wired to output")
+        else {
+            if (func === undefined) {
+                success(input({inputs : inputs, editor : editor, input : editor.output}))
+            } else {
+                success(eval({func : func, inputs : inputs, editor : editor, name : name}))
+            }
+        }
+
     } else {
         fail("No instruction given to worker")
     }
@@ -29,14 +42,6 @@ function success(result) {
 
 function fail(reason) {
     self.postMessage({fail : reason})
-}
-
-function newEnv(editor, inputs, name) {
-    if (editor.output === undefined)
-        return fail("No function wired to output")
-    else
-        return {func : editor.functions[editor.output], inputs : inputs, editor : editor, name : name}
-
 }
 
 function eval(ft) {
@@ -55,7 +60,11 @@ function eval(ft) {
             return cont(e(ft, {cont : function () {return response.apply()}}), undefined)
         } else if (ft.func.function in localFunctions) {
             var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
-            return eval({func : editor.functions[editor.output], editor : editor, callee : ft, name : ft.func.function})
+            var func = editor.functions[editor.output]
+            if (func === undefined)
+                return input({input : editor.output, editor : editor, callee : ft, name : ft.func.function})
+            else
+                return eval({func : func, editor : editor, callee : ft, name : ft.func.function})
         }
     }
 

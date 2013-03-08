@@ -27,10 +27,11 @@ define([
                 var total = 0;
                 var passing = 0;
 
+                //TODO: Convert this to a mustache template, render this first
                 var inputMap = function(inputs, index){
                     var str = ""
                     _.each(inputs, function(a,b,c){
-                        str += b + ' &rarr; <a href="#" class="edit" data-pk="'+index+'" data-type="text" data-name="'+b+'" data-original-title="Enter '+b+'">' + a + "</a>\n"
+                        str += b + ' &rarr; <a href="#" class="edit" data-pk="'+index+'" data-type="text" data-name="'+b+'" data-original-title="Enter '+b+'">' + a + "</a><br \\>"
                     })
                     return str
                 }
@@ -54,7 +55,12 @@ define([
                         var d = new $.Deferred
                         if(that.tests !== undefined){
                             console.log(that.tests)
-                            that.tests.at(params.pk).get("inputs")[params.name] = params.value
+                            if(isFinite(parseFloat(params.value)))
+                                params.value = parseFloat(params.value)
+                            if(params.name === "")
+                                that.tests.at(params.pk).set("output", params.value)
+                            else
+                                that.tests.at(params.pk).get("inputs")[params.name] = params.value
                             d.resolve()
                             that.render()
                             return d.promise()
@@ -68,21 +74,8 @@ define([
                 channels.tests.trigger("runall")
                 e.preventDefault()
             }, newTestCase : function () {
-                var that = this;
-                alertify.prompt("Please enter the inputs as a comma separated list with strings enclosed by quotation marks.", function (e, inputs) {
-                    if (e) {
-                        alertify.prompt("Please enter the desired output for this test with strings enclosed by quotation marks.", function (e, output) {
-                            if (e) {
-                                that.tests.add({inputs : JSON.parse(inputs), output : JSON.parse(output), finished : false, passed : false})
-                                that.render();
-
-                                //TODO: Don't parse JSON here, show possible inputs in a table/form instead
-                            }
-                        })
-                    }
-                })
-                e.preventDefault();
-
+                this.tests.newEmptyCase()
+                this.render()
             }, run         : function (e) {
                 channels.tests.trigger("run", $(e.target).data("index"))
                 e.preventDefault()

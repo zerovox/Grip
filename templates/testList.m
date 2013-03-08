@@ -16,8 +16,8 @@
         {{#tests}}
         <tr>
             <td>{{{inputMap}}}</td>
-            <td>{{output}}</td>
-            <td>{{#running}}Test Running{{/running}}{{^running}}{{#passed}}Test passed{{/passed}}{{^passed}}Test failed with output {{lastResult}}{{/passed}}{{/running}}</td>
+            <td><a href="#" class="edit" data-pk="{{index}}" data-type="text" data-original-title="Enter output">{{output}}</a></td>
+            <td>{{#running}}Test Running{{/running}}{{^running}}{{#passed}}Test passed{{/passed}}{{^lastResult}}Not yet run{{/lastResult}}{{#lastResult}}{{^passed}}Test failed with output {{lastResult}}{{/passed}}{{/lastResult}}{{/running}}</td>
             <td>
                 <ul class="button-group">
                     <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>

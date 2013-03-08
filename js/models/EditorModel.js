@@ -5,7 +5,7 @@ define([
 
     return Backbone.Model.extend({
         initialize     : function (editor) {
-            this.set({tests : new TestCollection(editor.tests)})
+            this.set({tests : new TestCollection(editor.tests, this)})
             if (editor.map === undefined)
                 editor.map = {}
             if (editor.map.functions === undefined)

@@ -16,11 +16,11 @@ define([
 
                     if (target.type === "wire") {
                         target.oldfill = target.getStroke();
-                        //target.setStroke('red');
+                        //target.setStroke('rgb(77,77,77)');
                     }
 
                     if (target.type === "input"){
-                        target.setFill('red');
+                        target.setFill('rgb(77,77,77)');
                         target.hoverText = new fabric.Text(target.name, {
                             fontSize: 16,
                             left: target.getLeft(),
@@ -35,7 +35,7 @@ define([
                     }
 
                     if (target.type === "output" || target.type === "functionOutput" ){
-                        target.setFill('red');
+                        target.setFill('rgb(77,77,77)');
                     }
 
                     if (target.type === "functionInput") {

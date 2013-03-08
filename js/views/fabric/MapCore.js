@@ -167,6 +167,8 @@ define([
                     wire.path[1][5] = out.getLeft()
                     wire.path[1][6] = out.getTop()
                     wire.render(context);
+
+                    wire.sendToBack();
                 }
 
                 if (func !== undefined) {
@@ -180,16 +182,16 @@ define([
                     this.onWired(inp, out, wire)
 
                 canvas.add(wire)
-                wire.sendToBack();
                 rewire()
+                return wire;
             },
             newInput            : function (name, x, y) {
                 var canvas = this.canvas;
                 var height = 40;
-                var width = 160
+                var width = 120
                 var options = {top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width / 2};
                 var box = new Function(name, height, width, options);
-                var output = new fabric.Circle({radius : 10, fill : 'grey', top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width})
+                var output = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width, stroke : 1})
 
                 box.hasControls = box.hasBorders = output.hasControls = output.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = output.lockMovementX = output.lockMovementY = true;
@@ -208,14 +210,15 @@ define([
             newFunction         : function (funcReal, func) {
                 var canvas = this.canvas;
                 var height = Math.max(40, 40 * funcReal.inputs.length);
-                var width = 160
+                var width = 140
                 var options = {top : func.y, left : func.x};
                 var box = new Function(funcReal.name, height, width, options, func.arg);
                 box.hasControls = box.hasBorders = false;
+                canvas.add(box)
 
                 box.inputs = {}
                 _.each(funcReal.inputs, function (name, index) {
-                    var input = new fabric.Circle({radius : 10, fill : 'grey'})
+                    var input = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
                     input.hasControls = input.hasBorders = false;
                     input.lockMovementX = input.lockMovementY = true;
                     input.type = "input";
@@ -241,7 +244,7 @@ define([
                     box.inputs[name] = input
                 })
 
-                var output = new fabric.Circle({radius : 10, fill : 'grey'})
+                var output = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
                 output.hasControls = output.hasBorders = false;
                 output.lockMovementX = output.lockMovementY = true;
 
@@ -264,7 +267,6 @@ define([
                 if (this.onNewFunction)
                     this.onNewFunction(funcReal, func, box)
 
-                canvas.add(box)
                 canvas.add(output)
                 positionOutput(box);
 
@@ -272,7 +274,7 @@ define([
             },
             newOutput           : function () {
                 var canvas = this.canvas;
-                var box = new fabric.Circle({radius : 30, fill : 'grey', top : (canvas.height / 2), left : canvas.width})
+                var box = new fabric.Circle({radius : 30, fill : 'rgb(230,230,230)', top : (canvas.height / 2), left : canvas.width, stroke : 1})
 
                 box.hasControls = box.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = true;
@@ -300,7 +302,7 @@ define([
                 if (!this.full) {
                     var canvas = this.canvas;
                     var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
-                    var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
+                    var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 30 : $(window).width() - 30;
                     canvas.setHeight(h);
                     canvas.setWidth(w);
                     if (this.onResize)

@@ -46,7 +46,7 @@ define([
         },
         resize     : function () {
             var h = Math.max(120, ($(window).height() - 100) * 0.20);
-            var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 40 : $(window).width() - 40;
+            var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 30 : $(window).width() - 30;
             this.canvas.setHeight(h);
             this.canvas.setWidth(w);
             this.render()
@@ -66,7 +66,7 @@ define([
                 }
 
                 var padding = 20;
-                var width = 160
+                var width = 140
                 var height = Math.max(40, 40 * inputs);
                 var options = {};
                 options.left = index * width + (width / 2) + padding * (index + 1);

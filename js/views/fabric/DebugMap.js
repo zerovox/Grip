@@ -16,16 +16,16 @@ define([
                         wire.stroke = "rgb(93,164,35)"
                         wire.setShadow({ color : 'rgba(93,164,35,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                         var text = new fabric.Text(""+status.result, {
-                            fontSize: 14,
+                            fontSize: 16,
                             left: inp.getLeft(),
-                            top: inp.getTop() - 10,
+                            top: inp.getTop() - 14,
                             lineHeight: 1,
                             fontFamily: 'Helvetica',
                             fontWeight: 'bold',
                             'text-align': 'right'
                         });
                         this.canvas.add(text);
-                        text.left = text.left - (text.width/2) -12
+                        text.left = text.left - (text.width/2) -14
                     } else {
                         wire.stroke = "rgb(192,15,19)"
                         wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});

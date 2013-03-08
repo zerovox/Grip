@@ -12,15 +12,31 @@ define([
                 var target = e.target
                 target.oldfill = target.getFill()
                 if (target.type !== undefined) {
-                    console.log(target.type)
                     //If hover over wires or functions
+
                     if (target.type === "wire") {
                         target.oldfill = target.getStroke();
-                        target.setStroke('red');
+                        //target.setStroke('red');
                     }
 
-                    if (target.type === "input")
+                    if (target.type === "input"){
                         target.setFill('red');
+                        target.hoverText = new fabric.Text(target.name, {
+                            fontSize: 16,
+                            left: target.getLeft(),
+                            top: target.getTop() - 14,
+                            lineHeight: 1,
+                            fontFamily: 'Helvetica',
+                            fontWeight: 'bold',
+                            'text-align': 'right'
+                        });
+                        that.canvas.add(target.hoverText);
+                        target.hoverText.left = target.hoverText.left - (target.hoverText.width/2) - 14
+                    }
+
+                    if (target.type === "output" || target.type === "functionOutput" ){
+                        target.setFill('red');
+                    }
 
                     if (target.type === "functionInput") {
                         target.ex.setFill(target.ex.hoverFill)
@@ -42,6 +58,10 @@ define([
                 } else {
                     if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
                         target.ex.setFill(target.ex.noFill)
+                    }
+                    if (target.hoverText !== undefined){
+                        canvas.remove(target.hoverText)
+                        delete target.hoverText
                     }
                     if (target.type !== undefined && target.type === "ex") {
                         target.hovered = false
@@ -114,8 +134,8 @@ define([
                         source = target;
                     }
                     fromOutput = false;
-                } else if (target !== undefined && target.type === "wire") {
-                    console.log("remove wire")
+                /*} else if (target !== undefined && target.type === "wire") {
+                    console.log("remove wire")*/
                 } else if (target !== undefined && target.type === "function") {
                     that.showEdges()
                     dragging = true;

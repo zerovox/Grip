@@ -2,9 +2,8 @@ define([
     'backbone',
     'mustache',
     'libs/text!templates/testList.m',
-    'alertify',
     'channels'
-], function (Backbone, Mustache, TestListTemplate, alertify, channels) {
+], function (Backbone, Mustache, TestListTemplate, channels) {
 
     return Backbone.View.extend({
             el             : '#testModal',

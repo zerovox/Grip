@@ -31,11 +31,9 @@ define([
             }
         },
         linkOutput     : function (name) {
-            console.log(name)
             this.get("map").output = name
         },
         linkInput      : function (functionName, functionInput, linkTo) {
-            console.log(functionName, functionInput, linkTo)
             this.get("map").functions[functionName].inputs[functionInput] = {wired : linkTo}
         },
         move           : function (name, x, y) {

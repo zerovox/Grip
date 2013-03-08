@@ -23,7 +23,7 @@ define([
         render         : function () {
             //All the views are self rendering.
         }, updateDebug : function () {
-            this.debugMap.set(new EditorModel({map : this.scenario.get("activeTask").getActiveMap()}), this.scenario.get("functions"), this.scenario.get("list"))
+            this.debugMap.set(new EditorModel({map : this.scenario.get("activeTask").getActiveMap(), task : this.scenario.get("activeTask")}), this.scenario.get("functions"), this.scenario.get("list"))
             this.stackTrace.set(this.scenario.get("activeTask"))
         }, show        : function () {
             this.debugBar.show()

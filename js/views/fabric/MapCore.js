@@ -69,6 +69,8 @@ define([
                 this.render()
             },
             render              : function () {
+                if (this.beforeRender)
+                    this.beforeRender()
                 var canvas = this.canvas
                 var map = this.editorModel.get("map")
                 //Clear the canvas

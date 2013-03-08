@@ -120,13 +120,15 @@ function step(env) {
                     env.stack.push(e(ft, {action : "r", cont : function () {return response.apply()}}))
                 } else if (ft.func.function in localFunctions) {
                     var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
+                    ft.func.envEditor = editor;
                     env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))
                     //We don't use the extend here, as we want to create a fresh stack frame
                     var func = editor.functions[editor.output]
-                    if(func === undefined)
-                    env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
+                    log(editor)
+                    if (func === undefined)
+                        env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
                     else
-                    env.stack.push({func : func, action : "e", editor : editor, callee : ft, name : ft.func.function})
+                        env.stack.push({func : func, action : "e", editor : editor, callee : ft, name : ft.func.function})
                 }
             }
             break

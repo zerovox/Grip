@@ -9,17 +9,31 @@ define([
         onInit              : function (canvas) {
             this.boxes = []
             var that = this;
+            var animated = false;
             canvas.on('mouse:down', function (e) {
-                console.log("md")
-                _.each(that.boxes, function (b) {
-                    console.log(box, e)
-                    var box = b.box
-                    if (e.e.layerX >= (box.left - (box.width / 2)) && e.e.layerX < (box.left + (box.width / 2)) && e.e.layerY >= (box.top - box.height / 2) && e.e.layerY < (box.top + (box.height / 2))) {
-                        console.log("Click Clack")
-                        that.editorModel.get("task").extend(b.func.envEditor)
-                    }
-                })
-                //console.log(func.envEditor, this.editorModel.get("task"))
+                if (!animated) {
+                    _.each(that.boxes, function (b) {
+                        var box = b.box
+                        if (e.e.layerX >= (box.left - (box.width / 2)) && e.e.layerX < (box.left + (box.width / 2)) && e.e.layerY >= (box.top - box.height / 2) && e.e.layerY < (box.top + (box.height / 2))) {
+                            animated = true;
+                            box.bringToFront()
+                            box.opacity = 0.7
+                            box.animate('width', canvas.getWidth() * 2, {
+                                duration : 500
+                            });
+
+                            box.animate('height', canvas.getHeight() * 2, {
+                                duration   : 500,
+                                onChange   : canvas.renderAll.bind(canvas),
+                                onComplete : function () {
+                                    animated = false;
+                                    that.editorModel.get("task").extend(b.func.envEditor)
+                                }
+                            });
+
+                        }
+                    })
+                }
             })
         },
         beforeRender        : function () {
@@ -77,7 +91,6 @@ define([
 
             if ("envEditor" in func) {
                 this.boxes.push({box : box, func : func})
-                console.log(this.boxes)
             }
         }
 

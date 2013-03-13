@@ -29,10 +29,6 @@ define([
             ctx.fillStyle = "rgba(34, 34, 34, 0.95)"
             ctx.roundRect(-this.width / 2, -this.height / 2, this.width, this.height, 4).fill();
             ctx.roundRect(-this.width / 2, -this.height / 2, this.width, this.height, 4).stroke();
-            ctx.beginPath();
-            ctx.arc(this.width / 2 - 1, 0, 10, -Math.PI / 2, Math.PI / 2)
-            ctx.closePath();
-            ctx.fill();
             ctx.fillStyle = "#fff"
             ctx.textAlign = 'center'
             ctx.font = "11pt 'Helvetica Neue' Calibri"

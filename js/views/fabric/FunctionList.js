@@ -65,7 +65,7 @@ define([
                     inputs = _.size(func.get("map").inputs)
                 }
 
-                var padding = 20;
+                var padding = 10;
                 var width = 140
                 var height = Math.max(40, 40 * inputs);
                 var options = {};

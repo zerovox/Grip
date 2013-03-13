@@ -16,7 +16,7 @@ define([
                 alertify.error("Test failed!")
             }
             this.set("running", false)
-            this.set("lastResult", result)
+            this.set("lastResult", ""+result)
         },
         fail       : function (failMsg) {
             this.set("passed", false)

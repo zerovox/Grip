@@ -1,111 +1,236 @@
 [
     {
-        "name"      : "Squaring",
+        "name"      : "Getting Started",
         "category"  : "Basics",
         "editors"   : [
             {
-                "name"  : "square",
-                "map"   : {
-                    "inputs"    : {
-                        "argument" : {}
-                    },
-                    "output"    : "a",
-                    "functions" : {
-                        "a" : {
-                            "function" : "multiply",
-                            "x"        : 200,
-                            "y"        : 200,
-                            "inputs"   : {
-                                "a" : {
-                                    "wired" : "b"
-                                },
-                                "b" : {
-                                    "wired" : "b"
-                                }
-                            }
-                        },
-                        "b" : {
-                            "function" : "multiply",
-                            "x"        : 300,
-                            "y"        : 300,
-                            "inputs"   : {
-                                "a" : {
-                                    "wired" : "argument"
-                                },
-                                "b" : {
-                                    "wired" : "argument"
-                                }
-                            }
-                        }
-                    }
-
-                },
+                "name"  : "successor",
+                "map"   : { "inputs" : { "argument" : {} }, "functions" : { } },
                 "tests" : [
-                    {
-                        "inputs" : {
-                            "argument" : 2
-                        },
-                        "output" : 4
-                    },
-                    {
-                        "inputs" : {
-                            "argument" : 3
-                        },
-                        "output" : 9
-                    }
+                    { "inputs" : { "argument" : 0 }, "output" : 1 },
+                    { "inputs" : { "argument" : 1 }, "output" : 2 },
+                    { "inputs" : { "argument" : -1 }, "output" : 0 }
                 ],
-                "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                "info"  : "First, you are going to write a really simple function that takes a number and adds one to it. To do this, click on the plus box below. This will create a plus function on the function editor above which you can drag around. You'll then need to create a number in a similar way. A number is just a function that always retuns the same value, and you'll be asked to se a value for it. Type in 1 and click ok. You can now wire up the argument and the number to the plus, and wire up the plus to the output to finish out function. Once you've written the function, be sure to run all the tests in the test case window to check your definition. Once the test cases pass, you should see a button to move on to the next task."
             },
             {
-                "name"  : "squares",
-                "map"   : {
-                    "inputs"    : {"argument" : {}, "times" : {}},
-                    "functions" : {
-                        "b" : {
-                            "function" : "constant",
-                            "inputs"   : {},
-                            "arg"      : 1,
-                            "x"        : 200,
-                            "y"        : 200
-                        }
-                    }
-
-                },
+                "name"  : "predecessor",
+                "map"   : { "inputs" : { "argument" : {} }, "functions" : { } },
                 "tests" : [
-                    {
-                        "inputs" : {"argument":2,"times":2},
-                        "output" : 16
-                    }
+                    { "inputs" : { "argument" : 0 }, "output" : -1 },
+                    { "inputs" : { "argument" : 1 }, "output" : 0 },
+                    { "inputs" : { "argument" : 1 }, "output" : 0 }
                 ],
-                "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
-            }
-        ],
-        "functions" : [
-            "multiply",
-            "constant",
-                "ifc",
-                "equals",
-                "minus",
-                "plus"
-        ]
-    },
-    {
-        "name"      : "Power",
-        "category"  : "Basics",
-        "editors"   : [
+                "info"  : "What was the point to the previous exersize? As you saw, incrementing a number took two functions. If you click Locak Functions in the function list below, you should see we now have successor avalible to us. This means every time we want to add one to a number, we can just use the function we just created instead, and recreating the same code. This is called abstraction, where we take a commonly used idea, and abstract the implementation away. For this task, write a function that decreses a numbers value by one. The definition should be very similar to the previous one. Make sure you run the tests to continue to the next exersize."
+            },
             {
-                "name"  : "Factorial",
-                "map"   : {},
-                "info"  : "Write a function that calculates factorials"
+                "name"  : "isZero?",
+                "map"   : { "inputs" : { "argument" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "argument" : 0 }, "output" : true },
+                    { "inputs" : { "argument" : 1 }, "output" : false },
+                    { "inputs" : { "argument" : -1 }, "output" : false }
+                ],
+                "info"  : "Now write another very simple function to test if an number is equal to zero. You should only need one function and one number for this, don't over think it! Run all the test cases to continue."
+            },
+            {
+                "name"  : "tax",
+                "map"   : { "inputs" : { "cost" : {}, "tax" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "cost" : 16, "tax" : 0 }, "output" : 16 },
+                    { "inputs" : { "cost" : 20, "tax" : 0.1 }, "output" : 22 },
+                    { "inputs" : { "cost" : 700, "tax" : 0.175 }, "output" : 822.5 }
+                ],
+                "info"  : "Imagine you're writing the software behind a online shop and you need to caculate the total of an order after tax has been applied. There are two inputs to this calculation, 'cost' which will contain the cost of items and 'tax' which will contain a decimal such as 0.25 meaning the rate of tax is 25%. Write a function to output the total cost after tax. "
             }
+
         ],
         "functions" : [
+            "number",
             "multiply",
-            "constant",
-            "ifc",
             "equals",
             "minus",
             "plus"
+        ]
+    },
+    {
+        "name"      : "Composition",
+        "category"  : "Basics",
+        "editors"   : [
+            {
+                "name"  : "or",
+                "map"   : { "inputs" : { "a" : {}, "b" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false}, "output" : true },
+                    { "inputs" : { "a" : false, "b" : true}, "output" : true },
+                    { "inputs" : { "a" : true, "b" : true}, "output" : true }
+                ],
+                "info"  : "As we saw in the last exercise, we can create more complicated functions by chaining together multiple simple functions. This is called composition of functions. We can use this in conjuction with abstraction to describe some complicated functions in terms of simple building blocks. We're going to start off by defining some simple logical functions, and build up to something more complicated. To start with, describe an or function, that returns true only if one(or more!) of the inputs is true. You should only need one function!"
+            },{
+                "name"  : "and",
+                "map"   : { "inputs" : { "a" : {}, "b" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false}, "output" : false },
+                    { "inputs" : { "a" : false, "b" : true}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : true}, "output" : true }
+                ],
+                "info"  : "Very similar to the previous exercise, define a function that returns true only if both a and b are true."
+            },{
+                "name"  : "4-and",
+                "map"   : { "inputs" : { "a" : {}, "b" : {}, "c" : {}, "d" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false, "c" : false, "d" : false}, "output" : false },
+                    { "inputs" : { "a" : false, "b" : false, "c" : true, "d" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false, "c" : true, "d" : true}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false, "c" : false, "d" : true}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : true, "c" : true, "d" : true}, "output" : true }
+                ],
+                "info"  : "Now we can build more complicated functions like a 4-way and function. See if you can solve this in two different ways, once using the and functions you described earlier, and then replacing each and with the same implementation you defined it with. Which function is easier to understand?"
+            },{
+                "name"  : "not",
+                "map"   : { "inputs" : { "a" : {}}, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false}, "output" : true },
+                    { "inputs" : { "a" : true}, "output" : false }
+                ],
+                "info"  : "We'll keep building up our logical function toolbox, this time defining the very simple function 'not', which returns the opposite of the input. You might find it interesting that this appears slightly more complicated than the definiton for both 'and' and 'or'. The smallest function that computes 'not' is one function larger than the smallest definiton for both 'and' and 'or'. What is iteresting about the 'not' function that yeilds this property?"
+            },{
+                "name"  : "xor",
+                "map"   : { "inputs" : { "a" : {}, "b" : {} }, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false}, "output" : true },
+                    { "inputs" : { "a" : false, "b" : true}, "output" : true },
+                    { "inputs" : { "a" : true, "b" : true}, "output" : false }
+                ],
+                "info"  : "Now we want to define a function called 'exclusive or', or 'xor' for short. This returns true if exactly one of the two inputs is true. "
+            },{
+                "name"  : "3-even",
+                "map"   : { "inputs" : { "a" : {}, "b" : {}, "c" : {}}, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false, "c" : false}, "output" : true },
+                    { "inputs" : { "a" : false, "b" : false, "c" : true}, "output" : false },
+                    { "inputs" : { "a" : false, "b" : true, "c" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false, "c" : true}, "output" : true },
+                    { "inputs" : { "a" : true, "b" : true, "c" : true}, "output" : false }
+                ],
+                "info"  : "Next see if you can define a function that returns true if an even number of inputs its three inputs is true. Try to use the 'xor' function we defined in the pervious exercize."
+            },{
+                "name"  : "4-even",
+                "map"   : { "inputs" : { "a" : {}, "b" : {}, "c" : {}, "d" : {}}, "functions" : { } },
+                "tests" : [
+                    { "inputs" : { "a" : false, "b" : false, "c" : false, "d" : false}, "output" : true },
+                    { "inputs" : { "a" : false, "b" : false, "c" : true, "d" : true}, "output" : true },
+                    { "inputs" : { "a" : false, "b" : true, "c" : false, "d" : false}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : false, "c" : true, "d" : true}, "output" : false },
+                    { "inputs" : { "a" : true, "b" : true, "c" : true, "d" : true}, "output" : true }
+                ],
+                "info"  : "Your last exercize on logical functions is to define a very similar function to the previous one, except this time there are 4 arguments. How can you use the function created last time to help define this one? How is the similiar to the solution you came up with for the last one? How would this extend to more than 4 inputs? In the next section we are going to look at generalising this pattern."
+            }],
+        "functions" : [
+            "if",
+            "equals",
+            "true",
+            "false"
+        ]
+    },{
+                "name"      : "Recursion",
+                "category"  : "Basics",
+                "editors"   : [
+                    {
+                        "name"  : "square",
+                        "map"   : {
+                            "inputs"    : {
+                                "argument" : {}
+                            },
+                            "output"    : "a",
+                            "functions" : {
+                                "a" : {
+                                    "function" : "multiply",
+                                    "x"        : 200,
+                                    "y"        : 200,
+                                    "inputs"   : {
+                                        "a" : {
+                                            "wired" : "b"
+                                        },
+                                        "b" : {
+                                            "wired" : "b"
+                                        }
+                                    }
+                                },
+                                "b" : {
+                                    "function" : "multiply",
+                                    "x"        : 300,
+                                    "y"        : 300,
+                                    "inputs"   : {
+                                        "a" : {
+                                            "wired" : "argument"
+                                        },
+                                        "b" : {
+                                            "wired" : "argument"
+                                        }
+                                    }
+                                }
+                            }
+
+                        },
+                        "tests" : [
+                            {
+                                "inputs" : {
+                                    "argument" : 2
+                                },
+                                "output" : 4
+                            },
+                            {
+                                "inputs" : {
+                                    "argument" : 3
+                                },
+                                "output" : 9
+                            }
+                        ],
+                        "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                    },
+                    {
+                        "name"  : "squares",
+                        "map"   : {
+                            "inputs"    : {
+                                "argument" : {},
+                                "times"    : {}
+                            },
+                            "functions" : {
+                                "b" : {
+                                    "function" : "number",
+                                    "inputs"   : {},
+                                    "arg"      : 1,
+                                    "x"        : 200,
+                                    "y"        : 200
+                                }
+                            }
+
+                        },
+                        "tests" : [
+                            {
+                                "inputs" : {
+                                    "argument" : 2,
+                                    "times"    : 2
+                                },
+                                "output" : 16
+                            }
+                        ],
+                        "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                    }
+        ],
+        "functions" : [
+            "number",
+            "multiply",
+            "if",
+            "equals",
+            "minus",
+            "plus",
+            "true",
+            "false"
         ]
     }
 

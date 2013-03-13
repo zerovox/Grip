@@ -4,7 +4,7 @@ var primitives = (function () {
         group: "Mathematical",
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) * parseInt(b), debug : "Calculated " + a + " * " + b}}}
+                return {need : "b", cont : function (b) {return {result : parseFloat(a) * parseFloat(b), debug : "Calculated " + a + " * " + b}}}
             }}
         },
         inputs : ["a", "b"]
@@ -16,7 +16,7 @@ var primitives = (function () {
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) + parseInt(b), debug : "Calculated " + a + " + " + b}}}
+                return {need : "b", cont : function (b) {return {result : parseFloat(a) + parseFloat(b), debug : "Calculated " + a + " + " + b}}}
             }}
         }
     }
@@ -27,26 +27,26 @@ var primitives = (function () {
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) - parseInt(b), debug : "Calculated " + a + " - " + b}}}
+                return {need : "b", cont : function (b) {return {result : parseFloat(a) - parseFloat(b), debug : "Calculated " + a + " - " + b}}}
             }}
         }
     }
 
     var equals = {
         name   : "equals",
-        group: "Expressions",
+        group: "Logic",
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : parseInt(a) == parseInt(b), debug : "Calculated " + a + " == " + b}}}
+                return {need : "b", cont : function (b) {return {result : a === b, debug : "Calculated " + a + " == " + b}}}
             }}
         }
     }
 
     var ifc = {
         inputs : ["test", "then", "els"],
-        group: "Expressions",
-        name   : "ifc",
+        group: "Logic",
+        name   : "if",
         apply  : function () {
             return {need : "test", cont : function (test) {
                 if (/true/i.test(test))
@@ -57,9 +57,27 @@ var primitives = (function () {
         }
     }
 
+    var tru = {
+        group: "Logic",
+        inputs : [],
+        name   : "true",
+        apply  : function () {
+            return {result : true}
+        }
+    }
+
+    var fals = {
+        group: "Logic",
+        inputs : [],
+        name   : "false",
+        apply  : function () {
+            return {result : false}
+        }
+    }
+
     var constant = {
-        name  : "constant",
-        group : "Expressions",
+        name  : "number",
+        group : "Mathematical",
         arg   : true,
         'new' : function (arg) {
             return {
@@ -73,5 +91,5 @@ var primitives = (function () {
         }
     }
 
-    return [mul, plus, constant, equals, minus, ifc];
+    return [constant, mul, plus, equals, minus, ifc, tru, fals];
 })();

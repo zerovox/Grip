@@ -51,7 +51,7 @@ define([
         newInput    : function () {
             alertify.prompt("Chose a name for the new input:", function (e, str) {
                 if (e) {
-                    channels.map.trigger("addInput", str);
+                    this.editorMap.addInput(str);
                 }
             })
         },

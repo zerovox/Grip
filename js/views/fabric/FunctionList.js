@@ -2,10 +2,10 @@ define([
     'backbone',
     'underscore',
     'fabric',
-    'channels',
+    'views/fabric/EditorMap',
     'alertify',
     'views/fabric/Function'
-], function (Backbone, _, fabric, channels, alertify, Function) {
+], function (Backbone, _, fabric, EditorMap, alertify, Function) {
 
     return new ( Backbone.View.extend({
         el         : "#functionList",
@@ -19,18 +19,18 @@ define([
                             alertify.prompt("Choose a value for the constant:", function (b, str) {
                                 if (b) {
                                     var func = f.get("func")['new'](str);
-                                    channels.map.trigger("add", func);
+                                    EditorMap.addFunction(func);
                                 }
                             })
                         } else {
-                            channels.map.trigger("add", f.get("func"))
+                            EditorMap.addFunction(f.get("func"))
                         }
                     } else {
                         var inputs = []
                         _.each(f.get("map").inputs, function(map, name){
                             inputs.push(name)
                         })
-                        channels.map.trigger("add", {name : f.get("name"), inputs : inputs})
+                        EditorMap.addFunction({name : f.get("name"), inputs : inputs})
                     }
 
                     //Fire event to add function to main map.

@@ -24,8 +24,11 @@ define([
             this.testList = new TestList(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
             this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
             this.editorView = new Editor(this.scenarios.get("activeScenario"))
+
+            //TODO: Clean up this
             this.debugView = {remove : function () {}};
             $("#debugMap").parent().hide()
+            $("#stackTrace").hide()
             this.modalBar = new ModalBar()
 
             this.attachChannelListeners()
@@ -101,16 +104,6 @@ define([
                 this.updateTests()
             }, this);
 
-            //Listen for the add function command, and if we are in editing mode, add the function
-            channels.map.on("add", function (func) {
-                this.editorView.addFunction(func)
-            }, this);
-
-            //Listen for the add input command, and if we are in editing mode, add the input
-            channels.map.on("addInput", function (name) {
-                this.editorView.addInput(name);
-            }, this);
-
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
                 if (this.scenarios.get("activeScenario").has("activeTask") && !this.debug) {
@@ -124,9 +117,6 @@ define([
                     this.updateEditor()
             }, this)
 
-        },
-        render                 : function () {
-            //All the views are self rendering.
         },
         disableDebug           : function () {
             if (this.debug) {

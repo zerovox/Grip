@@ -26,10 +26,6 @@ define([
         },
         makeActive   : function (name) {
             this.functionList.makeActive(name)
-        }, addFunction  : function (func) {
-            this.editorMap.addFunction(func)
-        }, addInput     : function (inp) {
-            this.editorMap.addInput(inp)
         }, removeChildren : function(){
             this.editorInfo.remove()
             this.functionList.remove()

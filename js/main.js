@@ -8,10 +8,14 @@ require([
     $.fn.editable.defaults.mode = 'inline';
 
     _.extend(Backbone.View.prototype, {
-        hide    : function () {
+        hide      : function () {
             this.$el.hide()
-        }, show : function () {
+        }, show   : function () {
             this.$el.show()
+        }, remove : function () {
+            this.$el.empty();
+            this.stopListening();
+            return this;
         }
     })
 

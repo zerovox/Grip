@@ -3,7 +3,7 @@ define([
     'views/fabric/MapCore'
 ], function (Backbone, MapCore) {
 
-    return Backbone.View.extend(_.extend(new MapCore(), {
+    return new (Backbone.View.extend(_.extend(new MapCore(), {
         el                  : "#debugMap",
         maxHeightPercentage : 1,
         onInit              : function (canvas) {
@@ -94,5 +94,5 @@ define([
             }
         }
 
-    }))
+    })));
 });

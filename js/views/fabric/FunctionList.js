@@ -7,7 +7,7 @@ define([
     'views/fabric/Function'
 ], function (Backbone, _, fabric, channels, alertify, Function) {
 
-    return Backbone.View.extend({
+    return new ( Backbone.View.extend({
         el         : "#functionList",
         initialize : function () {
             this.canvas = new fabric.Canvas(this.el, {renderOnAddition : false, selection : false, hoverCursor : 'default'});
@@ -93,7 +93,7 @@ define([
         show       : function () {
             this.$el.parent().show();
         }
-    });
+    }));
 
 })
 ;

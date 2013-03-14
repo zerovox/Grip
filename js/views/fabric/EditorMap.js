@@ -3,7 +3,7 @@ define([
     'fabric',
     'views/fabric/MapCore'
 ], function (Backbone, fabric, MapCore) {
-    return Backbone.View.extend(_.extend(new MapCore(), {
+    return new (Backbone.View.extend(_.extend(new MapCore(), {
         onInit              : function (canvas) {
             var that = this;
 
@@ -19,22 +19,22 @@ define([
                         //target.setStroke('rgb(77,77,77)');
                     }
 
-                    if (target.type === "input"){
+                    if (target.type === "input") {
                         target.setFill('rgb(77,77,77)');
                         target.hoverText = new fabric.Text(target.name, {
-                            fontSize: 16,
-                            left: target.getLeft(),
-                            top: target.getTop() - 14,
-                            lineHeight: 1,
-                            fontFamily: 'Helvetica',
-                            fontWeight: 'bold',
-                            'text-align': 'right'
+                            fontSize     : 16,
+                            left         : target.getLeft(),
+                            top          : target.getTop() - 14,
+                            lineHeight   : 1,
+                            fontFamily   : 'Helvetica',
+                            fontWeight   : 'bold',
+                            'text-align' : 'right'
                         });
                         that.canvas.add(target.hoverText);
-                        target.hoverText.left = target.hoverText.left - (target.hoverText.width/2) - 14
+                        target.hoverText.left = target.hoverText.left - (target.hoverText.width / 2) - 14
                     }
 
-                    if (target.type === "output" || target.type === "functionOutput" ){
+                    if (target.type === "output" || target.type === "functionOutput") {
                         target.setFill('rgb(77,77,77)');
                     }
 
@@ -59,7 +59,7 @@ define([
                     if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
                         target.ex.setFill(target.ex.noFill)
                     }
-                    if (target.hoverText !== undefined){
+                    if (target.hoverText !== undefined) {
                         canvas.remove(target.hoverText)
                         delete target.hoverText
                     }
@@ -83,8 +83,8 @@ define([
             function wireInModel(source, target, editorModel) {
                 if (target.func !== source.func) {
                     that.wireUp(target.func, source.func, target, source);
-                    if (target.type === "output"){
-                        if(source.func.type === "functionInput")
+                    if (target.type === "output") {
+                        if (source.func.type === "functionInput")
                             editorModel.linkOutput(source.func.inputName)
                         else
                             editorModel.linkOutput(source.func.modelId)
@@ -134,8 +134,8 @@ define([
                         source = target;
                     }
                     fromOutput = false;
-                /*} else if (target !== undefined && target.type === "wire") {
-                    console.log("remove wire")*/
+                    /*} else if (target !== undefined && target.type === "wire") {
+                     console.log("remove wire")*/
                 } else if (target !== undefined && target.type === "function") {
                     that.showEdges()
                     dragging = true;
@@ -247,5 +247,5 @@ define([
             input.ex = ex
             this.canvas.add(ex)
         }
-    }))
+    })));
 });

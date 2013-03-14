@@ -9,7 +9,7 @@ define([
     return Backbone.View.extend({
         initialize     : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
-            this.debugMap = new DebugMap();
+            this.debugMap = DebugMap;
             this.debugBar = new DebugBar();
             this.stackTrace = new StackTrace();
             this.debug = true

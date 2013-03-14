@@ -7,7 +7,7 @@ define([
 
     return Backbone.View.extend({
         initialize : function () {
-            this.listView = new FabricFunctionList()
+            this.listView = FabricFunctionList
             this.groupView = new GroupView()
             //this.categories
         },

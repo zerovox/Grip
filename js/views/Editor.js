@@ -14,7 +14,7 @@ define([
         initialize      : function () {
             //Create a view for each UI component
             this.editorInfo = new EditorInfo();
-            this.editorMap = new EditorMap();
+            this.editorMap = EditorMap;
             this.functionList = new FunctionList();
             this.controlBar = new ControlBar({editorMap : this.editorMap});
 

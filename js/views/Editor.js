@@ -10,48 +10,14 @@ define([
     'views/ControlBar'
 ], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar) {
 
-    var pfx = ["webkit", "moz", "ms", "o", ""];
-    function runPrefixMethod(obj, method) {
-        var p = 0, m, t;
-        while (p < pfx.length && !obj[m]) {
-            m = method;
-            if (pfx[p] == "") {
-                m = m.substr(0,1).toLowerCase() + m.substr(1);
-            }
-            m = pfx[p] + m;
-            t = typeof obj[m];
-            if (t != "undefined") {
-                pfx = [pfx[p]];
-                return (t == "function" ? obj[m]() : obj[m]);
-            }
-            p++;
-        }
-    }
     return Backbone.View.extend({
         initialize      : function () {
             //Create a view for each UI component
             this.editorInfo = new EditorInfo();
             this.editorMap = new EditorMap();
             this.functionList = new FunctionList();
-            this.controlBar = new ControlBar();
+            this.controlBar = new ControlBar({editorMap : this.editorMap});
 
-            var that = this;
-            var e = document.getElementById("save");
-
-            //TODO: This doesn't belong here. Also, cancelFullScreen not called on escape button
-            //TODO: Fix the offset from onHover events
-            e.onclick = function () {
-                if (runPrefixMethod(document, "FullScreen") || runPrefixMethod(document, "IsFullScreen")) {
-                    that.editorMap.cancelFullScreen()
-                    runPrefixMethod(document, "CancelFullScreen");
-                    that.editorMap.render()
-                }
-                else {
-                    that.editorMap.fullScreen()
-                    runPrefixMethod(that.editorMap.el.parentElement, "RequestFullScreen");
-                    that.editorMap.render()
-                }
-            }
         }, set          : function (scen) {
             this.scenario = scen
             this.updateEditor()

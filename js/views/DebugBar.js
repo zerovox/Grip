@@ -1,17 +1,26 @@
 define([
     'backbone',
-    'channels'
-], function (Backbone, channels) {
+    'channels',
+    'mustache',
+    'libs/text!templates/debugBar.m'
+], function (Backbone, channels, Mustache, DebugBar) {
 
     return Backbone.View.extend({
         el         : '#debugBar',
-        initialize : function () {
-            $('#step').click(function () {
+        events : {
+            "click #step" : "step",
+            "click #stepOver" : "stepOver"
+        },
+        initialize : function(){
+          this.render()
+        },
+        step : function(){
                 channels.tasks.trigger("step");
-            })
-            $('#stepOver').click(function () {
+        }, stepOver : function(){
                 channels.tasks.trigger("stepOver")
-            })
+        }, render : function(){
+            var html = Mustache.render(DebugBar, {});
+            this.$el.html(html);
         }
     });
 

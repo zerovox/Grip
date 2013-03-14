@@ -19,4 +19,5 @@ require([
     mainView.render()
 
     Router.initialize();
+
 });

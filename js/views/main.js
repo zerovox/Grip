@@ -6,11 +6,12 @@ define([
     'views/TaskList',
     'views/Editor',
     'views/Debug',
+    'views/ModalBar',
     'models/ScenariosModel',
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, EditorList, ScenarioList, TestList, TaskList, Editor, Debug, ScenariosModel, ScenariosJSON, channels, alertify) {
+], function (Backbone, EditorList, ScenarioList, TestList, TaskList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -18,12 +19,13 @@ define([
             this.scenarios = new ScenariosModel(JSON.parse(ScenariosJSON));
 
             //Create a view for each UI component
-            this.scenarioList = new ScenarioList();
-            this.editorList = new EditorList();
-            this.testList = new TestList();
-            this.taskList = new TaskList();
+            this.scenarioList = new ScenarioList()
+            this.editorList = new EditorList()
+            this.testList = new TestList()
+            this.taskList = new TaskList()
             this.editorView = new Editor()
             this.debugView = new Debug()
+            this.modalBar = new ModalBar()
 
             this.debugView.hide()
 

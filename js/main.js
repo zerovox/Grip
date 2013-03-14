@@ -13,6 +13,8 @@ require([
         }, show   : function () {
             this.$el.show()
         }, remove : function () {
+            if(this.removeChildren)
+                this.removeChildren()
             this.$el.empty();
             this.stopListening();
             return this;

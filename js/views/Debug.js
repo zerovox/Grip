@@ -15,7 +15,7 @@ define([
             this.scenario.get("activeTask").on("change:level", this.updateDebug, this)
 
             //TODO: Plug in active task to debug bar, skip the channels
-            this.debugBar = new DebugBar();
+            this.debugBar = new DebugBar(this.scenario.get("activeTask"));
             this.stackTrace = new StackTrace(this.scenario.get("activeTask"));
         },
         updateDebug : function () {
@@ -25,7 +25,7 @@ define([
         }, removeChildren        : function () {
             this.debugBar.remove()
             this.stackTrace.remove()
-            this.debugMap.hide()
+            this.debugMap.remove()
         }
 
     });

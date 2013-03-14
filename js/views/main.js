@@ -61,7 +61,7 @@ define([
                 var test = editor.get("tests").at(number)
                 this.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
                 test.start()
-                this.testList.render()
+                this.updateTests()
                 this.updateTasks();
                 alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
             }, this)
@@ -72,7 +72,7 @@ define([
                 editor.get("tests").forEach(function (test) {
                     that.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
                     test.start()
-                    that.testList.render()
+                    that.updateTests()
                     that.updateTasks();
                     alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
                 })
@@ -100,14 +100,6 @@ define([
                 this.updateTasks()
                 this.updateTests()
             }, this);
-
-            //Listen for the step command, then move the active task forward one step
-            channels.tasks.on("step", function () {
-                this.scenarios.get("activeScenario").get("activeTask").step()
-            }, this)
-            channels.tasks.on("stepOver", function () {
-                this.scenarios.get("activeScenario").get("activeTask").stepOver()
-            }, this)
 
             //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {

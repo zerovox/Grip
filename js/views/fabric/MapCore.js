@@ -144,6 +144,7 @@ define([
             wireUp              : function (func, func2, inp, out) {
                 var canvas = this.canvas;
                 canvas.remove(inp.wire)
+                delete inp.wire
                 var fill = '#2284A1';
 
                 var wire = new fabric.Path("M" + inp.getLeft() + "," + inp.getTop() + " C" + ((out.getLeft() + inp.getLeft()) / 2) + "," + inp.getTop() + " " + ((out.getLeft() + inp.getLeft()) / 2) + "," + out.getTop() + " " + out.getLeft() + "," + out.getTop(), {
@@ -157,34 +158,35 @@ define([
                 wire.type = "wire"
                 inp.wire = wire
 
-                function rewire() {
-                    var context = canvas.getContext();
-                    var controlMid = ((out.getLeft() + inp.getLeft()) / 2)
-                    wire.path[0][1] = inp.getLeft()
-                    wire.path[0][2] = inp.getTop()
-                    wire.path[1][1] = controlMid
-                    wire.path[1][2] = inp.getTop()
-                    wire.path[1][3] = controlMid
-                    wire.path[1][4] = out.getTop()
-                    wire.path[1][5] = out.getLeft()
-                    wire.path[1][6] = out.getTop()
-                    wire.render(context);
-
-                    wire.sendToBack();
+                function rewire(inp) {
+                    if(typeof inp !== "undefined" && "wire" in inp && inp.wire == wire){
+                        var context = canvas.getContext();
+                        var controlMid = ((out.getLeft() + inp.getLeft()) / 2)
+                        wire.path[0][1] = inp.getLeft()
+                        wire.path[0][2] = inp.getTop()
+                        wire.path[1][1] = controlMid
+                        wire.path[1][2] = inp.getTop()
+                        wire.path[1][3] = controlMid
+                        wire.path[1][4] = out.getTop()
+                        wire.path[1][5] = out.getLeft()
+                        wire.path[1][6] = out.getTop()
+                        wire.render(context);
+                        wire.sendToBack();
+                    }
                 }
 
                 if (func !== undefined) {
-                    func.on('moving', rewire)
+                    func.on('moving', function(){rewire(inp)})
                 }
                 if (func2 !== undefined) {
-                    func2.on('moving', rewire)
+                    func2.on('moving', function(){rewire(inp)})
                 }
 
                 if (this.onWired)
                     this.onWired(inp, out, wire)
 
                 canvas.add(wire)
-                rewire()
+                rewire(inp)
                 return wire;
             },
             newInput            : function (name, x, y) {

@@ -80,18 +80,18 @@ define([
             var dragging = false;
             var removeFunction = false;
 
-            function wireUp(source, target) {
+            function wireInModel(source, target, editorModel) {
                 if (target.func !== source.func) {
                     that.wireUp(target.func, source.func, target, source);
                     if (target.type === "output"){
                         if(source.func.type === "functionInput")
-                            that.editorModel.linkOutput(source.func.inputName)
+                            editorModel.linkOutput(source.func.inputName)
                         else
-                            that.editorModel.linkOutput(source.func.modelId)
+                            editorModel.linkOutput(source.func.modelId)
                     } else if (source.func.modelId !== undefined)
-                        that.editorModel.linkInput(target.func.modelId, target.name, source.func.modelId)
+                        editorModel.linkInput(target.func.modelId, target.name, source.func.modelId)
                     else
-                        that.editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)
+                        editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)
                 }
             }
 
@@ -117,7 +117,7 @@ define([
                 if (target !== undefined && target.type === "functionOutput") {
                     canvas.remove(wire);
                     if (fromInput) {
-                        wireUp(target, source)
+                        wireInModel(target, source, that.editorModel)
                     } else {
                         fromOutput = true;
                         wire = addWire(e.e);
@@ -127,7 +127,7 @@ define([
                 } else if (target !== undefined && (target.type === "input" || target.type === "output")) {
                     canvas.remove(wire);
                     if (fromOutput) {
-                        wireUp(source, target)
+                        wireInModel(source, target, that.editorModel)
                     } else {
                         fromInput = true;
                         wire = addWire(e.e);

@@ -34,18 +34,40 @@ var primitives = (function () {
 
     var equals = {
         name   : "equals",
-        group: "Logic",
+        group: "Logical",
         inputs : ["a", "b"],
         apply  : function () {
             return {need : "a", cont : function (a) {
-                return {need : "b", cont : function (b) {return {result : a === b, debug : "Calculated " + a + " == " + b}}}
+                return {need : "b", cont : function (b) {return {result : a == b, debug : "Calculated " + a + " == " + b}}}
+            }}
+        }
+    }
+
+    var lt = {
+        name   : "less than",
+        group: "Mathematical",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : parseFloat(a) < parseFloat(b), debug : "Calculated " + a + " + " + b}}}
+            }}
+        }
+    }
+
+    var gt = {
+        name   : "greater than",
+        group: "Mathematical",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : parseFloat(a) > parseFloat(b), debug : "Calculated " + a + " + " + b}}}
             }}
         }
     }
 
     var ifc = {
         inputs : ["test", "then", "els"],
-        group: "Logic",
+        group: "Logical",
         name   : "if",
         apply  : function () {
             return {need : "test", cont : function (test) {
@@ -58,7 +80,7 @@ var primitives = (function () {
     }
 
     var tru = {
-        group: "Logic",
+        group: "Logical",
         inputs : [],
         name   : "true",
         apply  : function () {
@@ -67,7 +89,7 @@ var primitives = (function () {
     }
 
     var fals = {
-        group: "Logic",
+        group: "Logical",
         inputs : [],
         name   : "false",
         apply  : function () {
@@ -81,7 +103,7 @@ var primitives = (function () {
         arg   : true,
         'new' : function (arg) {
             return {
-                name   : "constant",
+                name   : "number",
                 inputs : [],
                 arg    : arg,
                 apply  : function () {
@@ -91,5 +113,114 @@ var primitives = (function () {
         }
     }
 
-    return [constant, mul, plus, equals, minus, ifc, tru, fals];
+    var succ = {
+        name   : "successor",
+        group: "Mathematical",
+        inputs : ["a"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {result : parseFloat(a)+1, debug : "Calculated " + a + " + 1"}
+            }}
+        }
+    }
+    var pred = {
+        name   : "predecessor",
+        group: "Mathematical",
+        inputs : ["a"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {result : parseFloat(a)-1, debug : "Calculated " + a + " - 1"}
+            }}
+        }
+    }
+
+    var ez = {
+        name   : "is zero",
+        group: "Mathematical",
+        inputs : ["a"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {result : parseFloat(a)===0, debug : "Calculated (" + a + " = 0)?"}
+            }}
+        }
+    }
+
+    var or = {
+        name   : "or",
+        group: "Logical",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a || b, debug : "Calculated " + a + " or " + b}}}
+            }}
+        }
+    }
+
+    var and = {
+        name   : "and",
+        group: "Logical",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a && b, debug : "Calculated " + a + " and " + b}}}
+            }}
+        }
+    }
+
+    var not = {
+        name   : "not",
+        group: "Logical",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+               return {result : !a, debug : "Calculated not " + a}
+            }}
+        }
+    }
+
+    var join = {
+        name   : "join",
+        group: "String",
+        inputs : ["a", "b"],
+        apply  : function () {
+            return {need : "a", cont : function (a) {
+                return {need : "b", cont : function (b) {return {result : a + b, debug : "Calculated " + a + b}}}
+            }}
+        }
+    }
+
+    var length = {
+        name   : "length",
+        group: "String",
+        inputs : ["string"],
+        apply  : function () {
+            return {need : "string", cont : function (a) {
+                return {result : a.length, debug : "Calculated length of " + a}
+            }}
+        }
+    }
+
+    var take = {
+        name   : "take",
+        group: "String",
+        inputs : ["string", "n"],
+        apply  : function () {
+            return {need : "string", cont : function (a) {
+                return {need : "n", cont : function (b) {return {result : a.substr(0,b), debug : "Took first " + b + " characters from " + a}}}
+            }}
+        }
+    }
+    var drop = {
+        name   : "drop",
+        group: "String",
+        inputs : ["string", "n"],
+        apply  : function () {
+            return {need : "string", cont : function (a) {
+                return {need : "n", cont : function (b) {return {result : a.substr(b, a.length-b), debug : "Dropped first " + b + " characters from " + a}}}
+            }}
+        }
+    }
+
+
+    return [constant, mul, plus, equals, minus, ifc, tru, fals, succ, pred, ez, or, and, not, join, length, take, drop, lt, gt];
 })();

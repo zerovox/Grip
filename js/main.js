@@ -16,6 +16,7 @@ require([
             if(this.removeChildren)
                 this.removeChildren()
             this.$el.empty();
+            this.undelegateEvents();
             this.stopListening();
             return this;
         }

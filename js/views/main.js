@@ -23,7 +23,7 @@ define([
             this.editorList = new EditorList()
             this.testList = new TestList()
             this.taskList = new TaskList()
-            this.editorView = new Editor()
+            this.editorView = new Editor(this.scenarios.get("activeScenario"))
             this.debugView = new Debug()
             this.modalBar = new ModalBar()
 
@@ -73,7 +73,7 @@ define([
             channels.tests.on("runall", function () {
                 var editor = this.scenarios.get("activeScenario").get("activeEditor");
                 var that = this
-                editor.get("tests").forEach(function(test){
+                editor.get("tests").forEach(function (test) {
                     that.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
                     test.start()
                     that.testList.render()
@@ -115,12 +115,12 @@ define([
 
             //Listen for the add function command, and if we are in editing mode, add the function
             channels.map.on("add", function (func) {
-                    this.editorView.addFunction(func)
+                this.editorView.addFunction(func)
             }, this);
 
             //Listen for the add input command, and if we are in editing mode, add the input
             channels.map.on("addInput", function (name) {
-                    this.editorView.addInput(name);
+                this.editorView.addInput(name);
             }, this);
 
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
@@ -131,9 +131,11 @@ define([
                 }
             }, this)
 
-            channels.tasks.on("update", function(){
-                this.updateDebug()
-                this.updateEditor()
+            channels.tasks.on("update", function () {
+                if (this.debug)
+                    this.updateDebug()
+                else
+                    this.updateEditor()
             }, this)
 
         },
@@ -141,14 +143,21 @@ define([
             //All the views are self rendering.
         },
         disableDebug           : function () {
-            this.debug = false
-            this.debugView.hide()
-            this.editorView.show()
+            if (this.debug) {
+                this.debug = false
+                this.debugView.hide()
+
+                this.editorView.remove()
+                this.editorView = new Editor(this.scenarios.get("activeScenario"))
+            }
         },
         enableDebug            : function () {
-            this.debug = true
-            this.debugView.show()
-            this.editorView.hide()
+            if (!this.debug) {
+                this.debug = true
+                this.debugView.show()
+
+                this.editorView.remove()
+            }
         }, updateScenario      : function () {
             this.updateTasks()
             this.updateEditor()
@@ -160,10 +169,11 @@ define([
             this.taskList.set(this.scenarios.get("activeScenario").get("tasks"))
         }, updateTests         : function () {
             this.testList.set(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
-        }, updateEditor : function(){
+        }, updateEditor        : function () {
             this.updateTests()
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
-            this.editorView.set(this.scenarios.get("activeScenario"))
+            this.editorView.remove()
+            this.editorView = new Editor(this.scenarios.get("activeScenario"))
         }
 
     });

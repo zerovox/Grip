@@ -6,7 +6,7 @@ define([
 
     return Backbone.View.extend({
         el         : "#functionMenu",
-        set        : function (groups) {
+        initialize : function (groups) {
             this.groups = groups
             this.render()
         },

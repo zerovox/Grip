@@ -54,6 +54,7 @@ define([
         render     : function () {
             var canvas = this.canvas;
             canvas.clear();
+            if(this.funcs){
             this.funcs.forEach(function (func, index) {
                 var inputs;
                 var name;
@@ -82,6 +83,7 @@ define([
             });
 
             canvas.renderAll();
+            }
 
             //we want to listen for new functions added to the global function collection passed in above.
             //also functions that get removed
@@ -89,9 +91,13 @@ define([
         },
         hide       : function () {
             this.$el.parent().hide();
+            this.canvas.clear()
         },
         show       : function () {
             this.$el.parent().show();
+            this.render()
+        }, remove : function(){
+            this.hide();
         }
     }));
 

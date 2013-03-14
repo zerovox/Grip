@@ -323,6 +323,8 @@ define([
                 this.$el.parent().hide();
             }, show             : function () {
                 this.$el.parent().show();
+            }, remove : function(){
+                this.hide();
             }
         }
     }

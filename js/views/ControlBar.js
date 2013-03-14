@@ -64,7 +64,6 @@ define([
         }, render   : function () {
             var html = Mustache.render(ControlBar, {});
             this.$el.html(html);
-            console.log(html, this.$el)
         }
     });
 

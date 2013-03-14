@@ -6,13 +6,9 @@ define([
 ], function (Backbone, _, FabricFunctionList, GroupView) {
 
     return Backbone.View.extend({
-        initialize : function () {
+        initialize     : function (functionsCollection, editorCollection) {
             this.listView = FabricFunctionList
-            this.groupView = new GroupView()
-            //this.categories
-        },
-        set        : function (functionsCollection, editorCollection) {
-
+            this.listView.show()
             this.groups = []
             _.each(_.uniq(functionsCollection.pluck("group")), function (name) {
                 this.groups.push({name : name, active : false})
@@ -21,29 +17,25 @@ define([
             _.first(this.groups).active = true
             this.list = functionsCollection
             this.locals = editorCollection
-            this.render()
+            this.groupView = new GroupView(this.groups)
+            this.render(_.first(this.groups).name)
         },
-        makeActive : function (name) {
+        makeActive     : function (name) {
             _.find(this.groups,function (obj) {return obj.active}).active = false;
             _.find(this.groups,function (obj) {return name === obj.name}).active = true;
+            this.groupView = new GroupView(this.groups)
             this.render(name)
         },
-        render     : function (name) {
-            if (typeof name === "undefined")
-                name = _.find(this.groups,function (obj) {return obj.active}).name
+        render         : function (name) {
             if (name === "LocalFunctions")
                 this.listView.set(this.locals)
             else
                 this.listView.set(this.list.where({group : name}))
-            this.groupView.set(this.groups)
+
         },
-        hide       : function () {
-            this.listView.hide()
-            this.groupView.hide()
-        },
-        show       : function () {
-            this.listView.show()
-            this.groupView.show()
+        removeChildren : function () {
+            this.groupView.remove()
+            this.listView.remove()
         }
     });
 

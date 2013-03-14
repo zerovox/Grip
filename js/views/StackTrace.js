@@ -10,7 +10,7 @@ define([
         events    : {
             "click .level" : "setLevel"
         },
-        set       : function (task) {
+        initialize       : function (task) {
             this.task = task
             this.stackTrace = task.getStackTrace()
             this.level = task.getLevel()

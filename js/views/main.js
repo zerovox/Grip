@@ -19,17 +19,14 @@ define([
             this.scenarios = new ScenariosModel(JSON.parse(ScenariosJSON));
 
             //Create a view for each UI component
-            this.scenarioList = new ScenarioList()
-            this.editorList = new EditorList()
-            this.testList = new TestList()
+            this.scenarioList = new ScenarioList(this.scenarios)
+            this.editorList = new EditorList(this.scenarios.get("activeScenario"), this.debug)
+            this.testList = new TestList(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
             this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
             this.editorView = new Editor(this.scenarios.get("activeScenario"))
             this.debugView = {remove : function () {}};
             $("#debugMap").parent().hide()
             this.modalBar = new ModalBar()
-
-            //Load the initial UI
-            this.updateScenario()
 
             this.attachChannelListeners()
         },
@@ -159,25 +156,30 @@ define([
         }, updateScenario      : function () {
             this.updateTasks()
             this.updateEditor()
-            this.scenarioList.set(this.scenarios)
+
+            this.scenarioList.remove()
+            this.scenarioList = new ScenarioList(this.scenarios)
         }, updateDebug         : function () {
             if (this.debug) {
                 this.debugView.remove()
                 this.debugView = new Debug(this.scenarios.get("activeScenario"))
             }
-            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
+            this.editorList.remove()
+            this.editorList = new EditorList(this.scenarios.get("activeScenario"), this.debug)
         }, updateTasks         : function () {
             this.taskList.remove()
             this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
         }, updateTests         : function () {
-            this.testList.set(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
+            this.testList.remove()
+            this.testList = new TestList(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
         }, updateEditor        : function () {
             if (!this.debug) {
                 this.editorView.remove()
                 this.editorView = new Editor(this.scenarios.get("activeScenario"))
             }
             this.updateTests()
-            this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
+            this.editorList.remove()
+            this.editorList = new EditorList(this.scenarios.get("activeScenario"), this.debug)
         }
 
     });

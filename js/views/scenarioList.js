@@ -6,11 +6,9 @@ define([
 
     return Backbone.View.extend({
         el         : '#scenarioMenu',
-        initialize : function () {
-            this.set = function (scenarioCollection) {
-                this.scenarios = scenarioCollection
-                this.render()
-            }
+        initialize : function (scenarioCollection) {
+            this.scenarios = scenarioCollection
+            this.render()
         },
         render     : function () {
             var toRender = this.scenarios.toJSON()
@@ -18,8 +16,8 @@ define([
             delete toRender.all
 
             var categoryList = []
-            _.each(toRender, function(scenarios, name){
-                categoryList.push({categoryName:name, scenarios:scenarios.toJSON()})
+            _.each(toRender, function (scenarios, name) {
+                categoryList.push({categoryName : name, scenarios : scenarios.toJSON()})
             });
             var html = Mustache.render(ScenarioListTemplate, {categories : categoryList});
             this.$el.html(html);

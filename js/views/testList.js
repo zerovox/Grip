@@ -7,8 +7,6 @@ define([
 
     return Backbone.View.extend({
             el             : '#testModal',
-            initialize     : function () {
-            },
             events         : {
                 "click #runAll"      : "runAll",
                 "click #addTestCase" : "newTestCase",
@@ -16,7 +14,7 @@ define([
                 "click .debug"       : "debug",
                 "click .recurse"     : "recurse"
             },
-            set            : function (testCollection) {
+            initialize            : function (testCollection) {
                 this.tests = testCollection;
                 this.render();
             },

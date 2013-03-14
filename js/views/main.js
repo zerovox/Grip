@@ -22,7 +22,7 @@ define([
             this.scenarioList = new ScenarioList()
             this.editorList = new EditorList()
             this.testList = new TestList()
-            this.taskList = new TaskList()
+            this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
             this.editorView = new Editor(this.scenarios.get("activeScenario"))
             this.debugView = {remove : function () {}};
             $("#debugMap").parent().hide()
@@ -167,7 +167,8 @@ define([
             }
             this.editorList.set(this.scenarios.get("activeScenario"), this.debug)
         }, updateTasks         : function () {
-            this.taskList.set(this.scenarios.get("activeScenario").get("tasks"))
+            this.taskList.remove()
+            this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
         }, updateTests         : function () {
             this.testList.set(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
         }, updateEditor        : function () {

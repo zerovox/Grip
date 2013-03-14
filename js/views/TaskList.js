@@ -11,12 +11,9 @@ define([
             "click .clear" : "clear",
             "click #clearFinished" : "clearFinished"
         },
-        initialize : function () {
-            this.render()
-        },
-        set        : function (TaskCollection) {
+        initialize : function (TaskCollection) {
             this.tasks = TaskCollection;
-            this.render();
+            this.render()
         },
         render     : function () {
             var toRender

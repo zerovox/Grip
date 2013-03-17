@@ -23,17 +23,21 @@ define([
             this.debugView = {remove : function () {}};
             $("#debugMap").parent().hide()
 
+            this.scenarios.on("change", function(){
+                this.scenarioList.remove()
+                this.scenarioList = new ScenarioList(this.scenarios)
+                this.editorView.remove()
+                this.editorView = new Editor(this.scenarios.get("activeScenario"))
+            }, this)
+
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
                 this.scenarios.swap(name, this.scenarios)
-                this.scenarioList.remove()
-                this.scenarioList = new ScenarioList(this.scenarios)
             }, this);
 
             //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
                 this.scenarios.get("activeScenario").swap(name, this.scenarios)
-                this.updateEditor();
             }, this);
 
             channels.editors.on("switchFunctionGroup", function (name) {
@@ -42,7 +46,6 @@ define([
 
             channels.editors.on("new", function (name) {
                 this.scenarios.get("activeScenario").newEditor(name);
-                this.updateEditor()
             }, this);
 
             //Listen for the enable debug mode command, and if we have debug data enter debug mode
@@ -56,6 +59,7 @@ define([
                     this.debugView = new Debug({task : this.scenarios.get("activeScenario").get("activeTask")})
                 }
             }, this)
+
             channels.debug.on("disable", function () {
                 if (this.debug) {
                     this.debug = false
@@ -72,16 +76,12 @@ define([
                         $("#testModal").reveal()
                     else
                         console.log($("#testModal").reveal)
+
+                    this.editorView.remove()
+                    this.editorView = new Editor(this.scenarios.get("activeScenario"))
                 }
-                this.updateEditor()
             }, this)
 
-        },
-        updateEditor : function () {
-            if (!this.debug) {
-                this.editorView.remove()
-                this.editorView = new Editor(this.scenarios.get("activeScenario"))
-            }
         }
 
     });

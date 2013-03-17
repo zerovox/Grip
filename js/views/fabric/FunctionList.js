@@ -27,7 +27,7 @@ define([
                         }
                     } else {
                         var inputs = []
-                        _.each(f.get("map").inputs, function(map, name){
+                        _.each(f.get("map").inputs, function (map, name) {
                             inputs.push(name)
                         })
                         EditorMap.addFunction({name : f.get("name"), inputs : inputs})
@@ -54,35 +54,35 @@ define([
         render     : function () {
             var canvas = this.canvas;
             canvas.clear();
-            if(this.funcs){
-            this.funcs.forEach(function (func, index) {
-                var inputs;
-                var name;
-                if (func.has("func")) {
-                    inputs = _.size(func.get("func").inputs)
-                    name = func.get("func").name;
-                } else {
-                    name = func.get("name")
-                    inputs = _.size(func.get("map").inputs)
-                }
+            if (this.funcs) {
+                this.funcs.forEach(function (func, index) {
+                    var inputs;
+                    var name;
+                    if (func.has("func")) {
+                        inputs = _.size(func.get("func").inputs)
+                        name = func.get("func").name;
+                    } else {
+                        name = func.get("name")
+                        inputs = _.size(func.get("map").inputs)
+                    }
 
-                var padding = 10;
-                var width = 140
-                var height = Math.max(40, 40 * inputs);
-                var options = {};
-                options.left = index * width + (width / 2) + padding * (index + 1);
-                options.top = (height / 2) + padding;
-                var funcObject = new Function(name, height, width, options)
+                    var padding = 10;
+                    var width = 140
+                    var height = Math.max(40, 40 * inputs);
+                    var options = {};
+                    options.left = index * width + (width / 2) + padding * (index + 1);
+                    options.top = (height / 2) + padding;
+                    var funcObject = new Function(name, height, width, options)
 
-                //Disabling selection prevents canvas.on firing with this function object as a target, so instead we disable controls, borders and movement
-                funcObject.hasControls = funcObject.hasBorders = false;
-                funcObject.lockMovementY = true;
-                funcObject.lockMovementX = true;
-                funcObject.f = func;
-                canvas.add(funcObject);
-            });
+                    //Disabling selection prevents canvas.on firing with this function object as a target, so instead we disable controls, borders and movement
+                    funcObject.hasControls = funcObject.hasBorders = false;
+                    funcObject.lockMovementY = true;
+                    funcObject.lockMovementX = true;
+                    funcObject.f = func;
+                    canvas.add(funcObject);
+                });
 
-            canvas.renderAll();
+                canvas.renderAll();
             }
 
             //we want to listen for new functions added to the global function collection passed in above.
@@ -94,10 +94,9 @@ define([
             this.canvas.clear()
         },
         show       : function () {
-            if(this.$el)
-                this.$el.parent().show();
+            this.$el.parent().show();
             this.resize()
-        }, remove : function(){
+        }, remove  : function () {
             this.hide();
         }
     }));

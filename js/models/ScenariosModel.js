@@ -37,6 +37,7 @@ define([
                     match.set({activeScenario : true})
                     this.get("activeScenario").set({activeScenario : false});
                     this.set({activeScenario : match});
+                    this.trigger("change")
                     return true;
                 }
             } else {

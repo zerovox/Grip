@@ -67,6 +67,7 @@ define([
                 this.functions = functionsCollection
                 this.editors = editors
                 this.render()
+                return this; //Allow set to be chained
             },
             render              : function () {
                 if (this.beforeRender)
@@ -323,6 +324,7 @@ define([
                 this.$el.parent().hide();
             }, show             : function () {
                 this.$el.parent().show();
+                this.resize()
             }, remove : function(){
                 this.hide();
             }

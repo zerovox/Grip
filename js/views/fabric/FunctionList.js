@@ -95,7 +95,7 @@ define([
         },
         show       : function () {
             this.$el.parent().show();
-            this.render()
+            this.resize()
         }, remove : function(){
             this.hide();
         }

@@ -6,7 +6,6 @@ define([
         routes : {
             'editor/:name'        : "switchEditor",
             'scenario/:name'      : "switchScenario",
-            'debug/'              : "debug",
             'functionGroup/:name' : "switchGroup",
             '*actions'            : 'defaultAction'
         }
@@ -23,9 +22,6 @@ define([
         })
         app_router.on('route:switchGroup', function (name) {
             channels.editors.trigger("switchFunctionGroup", name)
-        })
-        app_router.on('route:debug', function (t) {
-            channels.debug.trigger("enable")
         })
         app_router.on('route:defaultAction', function (actions) {
         })

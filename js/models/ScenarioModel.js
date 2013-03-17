@@ -8,7 +8,6 @@ define([
 
     return Backbone.Model.extend({
         initialize      : function (scenario) {
-            this.set("tasks", new TestCollection())
             this.set({name : scenario.name, list : new EditorCollection(scenario.editors), functions : new FunctionCollection(scenario.functions)})
             this.set("activeEditor", this.get("list").first())
             this.get("list").first().set({activeEditor : true})

@@ -6,9 +6,8 @@ define([
     'views/ModalBar',
     'models/ScenariosModel',
     'libs/text!data/scenarios.json',
-    'channels',
-    'alertify'
-], function (Backbone, ScenarioList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels, alertify) {
+    'channels'
+], function (Backbone, ScenarioList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels) {
 
     return Backbone.View.extend({
         initialize             : function () {

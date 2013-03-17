@@ -109,16 +109,7 @@ function step(env) {
                 ft.using.responded = true
             } else {
                 ft.func.result = undefined;
-                if (ft.func.function in prims) {
-                    var functionToApply;
-                    if (ft.func.arg !== undefined) {
-                        functionToApply = prims[ft.func.function].new(ft.func.arg)
-                    } else {
-                        functionToApply = prims[ft.func.function]
-                    }
-                    var response = functionToApply.apply
-                    env.stack.push(e(ft, {action : "r", cont : function () {return response.apply()}}))
-                } else if (ft.func.function in localFunctions) {
+                if (ft.func.function in localFunctions) {
                     var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
                     ft.func.envEditor = editor;
                     env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))
@@ -129,6 +120,15 @@ function step(env) {
                         env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
                     else
                         env.stack.push({func : func, action : "e", editor : editor, callee : ft, name : ft.func.function})
+                } else if (ft.func.function in prims) {
+                    var functionToApply;
+                    if (ft.func.arg !== undefined) {
+                        functionToApply = prims[ft.func.function].new(ft.func.arg)
+                    } else {
+                        functionToApply = prims[ft.func.function]
+                    }
+                    var response = functionToApply.apply
+                    env.stack.push(e(ft, {action : "r", cont : function () {return response.apply()}}))
                 }
             }
             break

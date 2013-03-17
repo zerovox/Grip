@@ -49,7 +49,14 @@ function eval(ft) {
         return ft.func.result
     } else {
         ft.func.result = undefined;
-        if (ft.func.function in prims) {
+        if (ft.func.function in localFunctions) {
+            var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
+            var func = editor.functions[editor.output]
+            if (func === undefined)
+                return input({input : editor.output, editor : editor, callee : ft, name : ft.func.function})
+            else
+                return eval({func : func, editor : editor, callee : ft, name : ft.func.function})
+        } else if (ft.func.function in prims) {
             var functionToApply;
             if (ft.func.arg !== undefined) {
                 functionToApply = prims[ft.func.function].new(ft.func.arg)
@@ -57,14 +64,8 @@ function eval(ft) {
                 functionToApply = prims[ft.func.function]
             }
             var response = functionToApply.apply
+
             return cont(e(ft, {cont : function () {return response.apply()}}), undefined)
-        } else if (ft.func.function in localFunctions) {
-            var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
-            var func = editor.functions[editor.output]
-            if (func === undefined)
-                return input({input : editor.output, editor : editor, callee : ft, name : ft.func.function})
-            else
-                return eval({func : func, editor : editor, callee : ft, name : ft.func.function})
         }
     }
 

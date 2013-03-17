@@ -6,13 +6,12 @@ define([
 
     return Backbone.View.extend({
         el : '#editorMenu',
-        initialize : function (scenario, debug) {
+        initialize : function (scenario) {
             this.scenario = scenario;
-            this.debug = debug
             this.render();
         },
         render     : function () {
-            var html = Mustache.render(EditorListTemplate, {editors : this.scenario.get("list").toJSON(), hasDebugData : this.scenario.has("activeTask"), debug : this.debug});
+            var html = Mustache.render(EditorListTemplate, {editors : this.scenario.get("list").toJSON()});
             this.$el.html(html);
         }
     });

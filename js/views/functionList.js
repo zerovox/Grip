@@ -32,6 +32,8 @@ define([
             else
                 this.listView.set(this.list.where({group : name}))
 
+            this.listView.show()
+
         },
         removeChildren : function () {
             this.groupView.remove()

@@ -12,16 +12,16 @@ define([
 
     return Backbone.View.extend({
         initialize      : function (scen) {
+            //Create a view for each UI component from top to bottom
+            this.controlBar = new ControlBar({editorMap : this.editorMap});
+            this.editorInfo = new EditorInfo(scen.get("activeEditor"));
+            this.editorList = new EditorList(scen)
+
             //Get the singleton map instance
-            this.editorMap = EditorMap
-            //Give the editor the latest map
-            this.editorMap.set(scen.get("activeEditor"), scen.get("functions"), scen.get("list"));
-            //Make sure it is visible
+            this.editorMap = EditorMap.set(scen.get("activeEditor"), scen.get("functions"), scen.get("list"));
+            //Make sure map is visible
             this.editorMap.show()
 
-            //Create a view for each UI component
-            this.editorInfo = new EditorInfo(scen.get("activeEditor"));
-            this.controlBar = new ControlBar({editorMap : this.editorMap});
             this.functionList = new FunctionList(scen.get("functions"), scen.get("list"));
         },
         makeActive   : function (name) {
@@ -31,6 +31,7 @@ define([
             this.functionList.remove()
             this.controlBar.remove()
             this.editorMap.remove()
+            this.editorList.remove()
         }
 
     });

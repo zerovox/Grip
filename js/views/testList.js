@@ -22,7 +22,6 @@ define([
             },
             render         : function () {
                 //TODO: Move this logic inside the test model
-                console.log(this.tests)
                 var tests = this.tests === undefined ? undefined : this.tests.toJSON()
                 var total = 0;
                 var passing = 0;

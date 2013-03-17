@@ -6,9 +6,8 @@ define([
     'views/EditorInfo',
     'views/fabric/EditorMap',
     'views/FunctionList',
-    'views/TaskList',
     'views/ControlBar'
-], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, TaskList, ControlBar) {
+], function (Backbone, EditorList, ScenarioList, TestList, EditorInfo, EditorMap, FunctionList, ControlBar) {
 
     return Backbone.View.extend({
         initialize      : function (scen) {

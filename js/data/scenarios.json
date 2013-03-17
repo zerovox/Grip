@@ -125,7 +125,8 @@
         "tests" : [
             { "inputs" : { "str" : ""}, "output" : true },
             { "inputs" : { "str" : "a"}, "output" : false },
-            { "inputs" : { "str" : "empty string!"}, "output" : false }
+            { "inputs" : { "str" : "empty string!"}, "output" : false },
+            { "inputs" : { "str" : " "}, "output" : false }
         ],
         "info"  : "You'll see for this set of exercises we've made a bunch of functions from the previous exercises avalible to you. You'll also notice some new functions in the String category. These are all operations over strings of characters. We have the join function, which takes two strings and joins them together to form a longer string, the length function, which returns the length of a string, and the take and drop functions, which either take the first n characters of a string, or remove them. To get started, let's create a convenience function for deciding if a string is the empty string. The empty string always has length 0."
     }],

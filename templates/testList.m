@@ -21,8 +21,8 @@
             <td>
                 <ul class="button-group">
                     <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>
-                    <li><a href="#" class="button small alert recurse" data-index="{{index}}">Run until first recursion</a></li>
                     <li><a href="#" class="button small alert debug" data-index="{{index}}">Debug</a></li>
+                    <li><a href="#" class="button small alert stop" data-index="{{index}}">Stop</a></li>
                 </ul>
             </td>
         </tr>

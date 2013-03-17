@@ -10,7 +10,7 @@ define([
         stepOver         : function () {
             this.get("worker").postMessage({stepOver : true})
         },
-        initialize       : function (test, mainMethod, debug, localFunctions) {
+        initialize       : function (test, mainMethod, debug, localFunctions, globalFunctions) {
             var that = this;
             var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
             var inputs = test.get("inputs")
@@ -39,6 +39,8 @@ define([
             var s = locals[mainMethod]
             s.name = mainMethod
             this.set("stackTrace", [s])
+            this.set("globalFunctions", globalFunctions)
+            this.set("localFunctions", localFunctions)
 
         },
         finished         : function (result) {
@@ -62,9 +64,7 @@ define([
         }, getActiveMap  : function () {
             return this.get("stackTrace")[this.get("level")];
         }, setLevel      : function (level) {
-            console.log(this.get("level"))
             this.set("level", level)
-            console.log(this.get("level"))
         }, getStackTrace : function () {
             return this.get("stackTrace")
         }, getLevel      : function () {

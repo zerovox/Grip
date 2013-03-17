@@ -23,7 +23,8 @@ define([
             this.set("running", false)
             this.set("lastResult", "Error: " + failMsg)
         },
-        start       : function(){
+        start       : function(task){
+            this.task = task;
             this.set("running", true)
         }
     });

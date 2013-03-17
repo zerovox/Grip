@@ -1,8 +1,6 @@
 define([
     'backbone',
     'views/ScenarioList',
-    'views/TestList',
-    'views/TaskList',
     'views/Editor',
     'views/Debug',
     'views/ModalBar',
@@ -10,7 +8,7 @@ define([
     'libs/text!data/scenarios.json',
     'channels',
     'alertify'
-], function (Backbone, ScenarioList, TestList, TaskList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels, alertify) {
+], function (Backbone, ScenarioList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels, alertify) {
 
     return Backbone.View.extend({
         initialize             : function () {
@@ -19,8 +17,6 @@ define([
 
             //Create a view for each UI component
             this.scenarioList = new ScenarioList(this.scenarios)
-            this.testList = new TestList(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
-            this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
             this.editorView = new Editor(this.scenarios.get("activeScenario"))
             this.modalBar = new ModalBar()
 
@@ -55,53 +51,7 @@ define([
                 this.updateEditor()
             }, this);
 
-            //Listen for test run command, and run appropriate test
-            channels.tests.on("run", function (number) {
-                var editor = this.scenarios.get("activeScenario").get("activeEditor");
-                var test = editor.get("tests").at(number)
-                this.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
-                test.start()
-                this.updateTests()
-                this.updateTasks();
-                alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
-            }, this)
-
-            channels.tests.on("runall", function () {
-                var editor = this.scenarios.get("activeScenario").get("activeEditor");
-                var that = this
-                editor.get("tests").forEach(function (test) {
-                    that.scenarios.get("activeScenario").runTest(test, editor.get("name"), false);
-                    test.start()
-                    that.updateTests()
-                    that.updateTasks();
-                    alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
-                })
-            }, this)
-
-            //Listen for test debug command, and start appropriate test in debug environment
-            channels.tests.on("debug", function (number) {
-                var editor = this.scenarios.get("activeScenario").get("activeEditor");
-                var test = editor.get("tests").at(number)
-                this.scenarios.get("activeScenario").runTest(test, editor.get("name"), true)
-                test.start()
-                this.updateTests()
-                this.updateTasks()
-                this.updateDebug()
-                alertify.log("Started debugging on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
-                //TODO: instead of marking this test as running, perhaps we should listen to new tasks created, match these against tests, if they match then set the task as running? overkill? do we ever run anyway but through the test interface? if we have two tests of the same inputs, should they both be marked as running when eitehr is run
-            }, this)
-
-            channels.tasks.on("succeeded", function (task) {
-                this.updateTasks()
-                this.updateTests()
-            }, this);
-
-            channels.tasks.on("failed", function (task) {
-                this.updateTasks()
-                this.updateTests()
-            }, this);
-
-            //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
+            //Listen for the enable debug mode command, and if we have debug data enter debug mode
             channels.debug.on("enable", function () {
                 if (this.scenarios.get("activeScenario").has("activeTask")) {
                     this.enableDebug()
@@ -138,14 +88,11 @@ define([
         enableDebug            : function () {
             if (!this.debug) {
                 this.debug = true
-                this.debugView.remove()
-                this.debugView = new Debug(this.scenarios.get("activeScenario"))
-
                 this.editorView.remove()
                 this.scenarioList.remove()
+                this.updateDebug()
             }
         }, updateScenario      : function () {
-            this.updateTasks()
             this.updateEditor()
 
             this.scenarioList.remove()
@@ -153,20 +100,14 @@ define([
         }, updateDebug         : function () {
             if (this.debug) {
                 this.debugView.remove()
-                this.debugView = new Debug(this.scenarios.get("activeScenario"))
+                console.log(this.scenarios.get("activeScenario").get("activeTask"))
+                this.debugView = new Debug({task : this.scenarios.get("activeScenario").get("activeTask")})
             }
-        }, updateTasks         : function () {
-            this.taskList.remove()
-            this.taskList = new TaskList(this.scenarios.get("activeScenario").get("tasks"))
-        }, updateTests         : function () {
-            this.testList.remove()
-            this.testList = new TestList(this.scenarios.get("activeScenario").get("activeEditor").get("tests"))
         }, updateEditor        : function () {
             if (!this.debug) {
                 this.editorView.remove()
                 this.editorView = new Editor(this.scenarios.get("activeScenario"))
             }
-            this.updateTests()
         }
 
     });

@@ -7,23 +7,22 @@ define([
 ], function (Backbone, DebugMap, DebugBar, StackTrace, EditorModel) {
 
     return Backbone.View.extend({
-        initialize        : function (scen) {
-            this.scenario = scen
-            this.debugMap = DebugMap;
-            this.debugMap.set(new EditorModel({map : this.scenario.get("activeTask").getActiveMap(), task : this.scenario.get("activeTask")}), this.scenario.get("functions"), this.scenario.get("list"))
-            this.scenario.get("activeTask").on("change:level", this.updateDebug, this)
+        initialize        : function (task) {
+            this.task = task.task;
+            this.debugMap = DebugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
+            this.task.on("change", this.updateDebug, this)
 
             //TODO: Plug in active task to debug bar, skip the channels
-            this.debugBar = new DebugBar(this.scenario.get("activeTask"));
-            this.stackTrace = new StackTrace(this.scenario.get("activeTask"));
+            this.debugBar = new DebugBar(this.task);
+            this.stackTrace = new StackTrace(this.task);
 
             //Make sure the debug map is visible and correctly positioned
             this.debugMap.show()
         },
         updateDebug       : function () {
-            this.debugMap.set(new EditorModel({map : this.scenario.get("activeTask").getActiveMap(), task : this.scenario.get("activeTask")}), this.scenario.get("functions"), this.scenario.get("list"))
+            this.debugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
             this.stackTrace.remove()
-            this.stackTrace = new StackTrace(this.scenario.get("activeTask"))
+            this.stackTrace = new StackTrace(this.task);
         }, removeChildren : function () {
             this.debugBar.remove()
             this.stackTrace.remove()

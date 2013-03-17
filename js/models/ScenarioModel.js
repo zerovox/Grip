@@ -27,26 +27,13 @@ define([
                 console.log("No matching editor, or duplicate scenario names", matchingEditors);
             }
             return false;
-        }, activateTask : function (index) {
-            var task = this.get("tasks").at(index)
-            if (task !== undefined && task !== this.get("activeTask")) {
-                task.set({activeTask : true})
-                this.get("activeTask").set({activeTask : false})
-                this.set({activeTask : task})
-                return true
-            }
-            return false
         }, runTest      : function (test, mainMethod, debug) {
+            //TODO: Why are we passing mainMethod by name not the editor ?
             var localFunctions = this.get("list")
-            var task = new TaskModel(test, mainMethod, debug, localFunctions);
-            this.get("tasks").add(task)
-            if (!this.has("activeTask")) {
-                this.set({activeTask : task})
-                task.set({activeTask : true})
-                return true
-            } else if (debug) {
-                task.set({activeTask : true})
-                this.get("activeTask").set({activeTask : false})
+            var globalVariables = this.get("functions")
+            var task = new TaskModel(test, mainMethod, debug, localFunctions, globalVariables);
+            test.start(task)
+            if (!this.has("activeTask") || debug) {
                 this.set({activeTask : task})
                 return true
             }

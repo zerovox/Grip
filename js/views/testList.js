@@ -2,8 +2,8 @@ define([
     'backbone',
     'mustache',
     'libs/text!templates/testList.m',
-    'channels'
-], function (Backbone, Mustache, TestListTemplate, channels) {
+    'alertify'
+], function (Backbone, Mustache, TestListTemplate, alertify) {
 
     return Backbone.View.extend({
             el             : '#testModal',
@@ -12,23 +12,26 @@ define([
                 "click #addTestCase" : "newTestCase",
                 "click .run"         : "run",
                 "click .debug"       : "debug",
-                "click .recurse"     : "recurse"
+                "click .stop"     : "stop"
             },
-            initialize            : function (testCollection) {
-                this.tests = testCollection;
+            initialize     : function (m) {
+                this.tests = m.tests;
+                this.scenario = m.scenario;
+                this.tests.on("change", this.render, this)
                 this.render();
             },
             render         : function () {
                 //TODO: Move this logic inside the test model
+                console.log(this.tests)
                 var tests = this.tests === undefined ? undefined : this.tests.toJSON()
                 var total = 0;
                 var passing = 0;
 
                 //TODO: Convert this to a mustache template, render this first
-                var inputMap = function(inputs, index){
+                var inputMap = function (inputs, index) {
                     var str = ""
-                    _.each(inputs, function(a,b,c){
-                        str += b + ' &rarr; <a href="#" class="edit" data-pk="'+index+'" data-type="text" data-name="'+b+'" data-original-title="Enter '+b+'">' + a + "</a><br \\>"
+                    _.each(inputs, function (a, b, c) {
+                        str += b + ' &rarr; <a href="#" class="edit" data-pk="' + index + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
                     })
                     return str
                 }
@@ -47,14 +50,14 @@ define([
 
                 var that = this;
                 $('.edit').editable({
-                    url : function(params){
+                    url : function (params) {
                         console.log(params)
                         var d = new $.Deferred
-                        if(that.tests !== undefined){
+                        if (that.tests !== undefined) {
                             console.log(that.tests)
-                            if(isFinite(parseFloat(params.value)))
+                            if (isFinite(parseFloat(params.value)))
                                 params.value = parseFloat(params.value)
-                            if(params.name === "")
+                            if (params.name === "")
                                 that.tests.at(params.pk).set("output", params.value)
                             else
                                 that.tests.at(params.pk).get("inputs")[params.name] = params.value
@@ -68,20 +71,38 @@ define([
                 });
 
             }, runAll      : function (e) {
-                channels.tests.trigger("runall")
+                var editor = this.scenario.get("activeEditor");
+                var that = this
+                this.tests.forEach(function (test) {
+                    that.scenario.runTest(test, editor.get("name"), false);
+                    alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
+                })
                 e.preventDefault()
             }, newTestCase : function () {
                 this.tests.newEmptyCase()
                 this.render()
             }, run         : function (e) {
-                channels.tests.trigger("run", $(e.target).data("index"))
+                var number = $(e.target).data("index")
+                var editor = this.scenario.get("activeEditor");
+                var test = this.tests.at(number)
+                this.scenario.runTest(test, editor.get("name"), false);
+                alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
                 e.preventDefault()
             }, debug       : function (e) {
-                channels.tests.trigger("debug", $(e.target).data("index"))
+                var number = $(e.target).data("index")
+                var editor = this.scenario.get("activeEditor");
+                var test = this.tests.at(number)
+                this.scenario.runTest(test, editor.get("name"), true)
+                alertify.log("Started debugging on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
                 e.preventDefault()
-            }, recurse     : function (e) {
-                channels.tests.trigger("recurse", $(e.target).data("index"))
-                e.preventDefault()
+            }, stop    : function (e) {
+                var test = this.tests.at($(e.target).data("index"))
+                //TODO: convert to test
+                if (task.isRunning()){
+                    task.failed("Task Terminated")
+                    this.render()
+                    //TODO: Is this needed?
+                }
             }
         }
 

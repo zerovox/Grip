@@ -49,9 +49,10 @@ define([
             }
         },
         newInput    : function () {
+            var that = this;
             alertify.prompt("Chose a name for the new input:", function (e, str) {
                 if (e) {
-                    this.editorMap.addInput(str);
+                    that.editorMap.addInput(str);
                 }
             })
         },

@@ -1,7 +1,7 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/modalBar.m'
+    'libs/text!templates/editorModalBar.m'
 ], function (Backbone, Mustache, ModalBar) {
 
     return Backbone.View.extend({

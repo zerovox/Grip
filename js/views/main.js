@@ -103,11 +103,19 @@ define([
 
             //Listen for the enable debug mode command, and if we have debug data and we aren't already in debug mode, enter debug mode
             channels.debug.on("enable", function () {
-                if (this.scenarios.get("activeScenario").has("activeTask") && !this.debug) {
+                if (this.scenarios.get("activeScenario").has("activeTask")) {
                     this.enableDebug()
                     this.updateDebug()
+                } else {
+                    //TODO: bit of a hack
+                    this.modalBar.editor()
                 }
             }, this)
+            channels.debug.on("disable", function () {
+                    this.disableDebug()
+                    this.updateEditor()
+            }, this)
+
 
             channels.tasks.on("update", function () {
                     this.updateDebug()
@@ -122,6 +130,9 @@ define([
 
                 this.editorView.remove()
                 this.editorView = new Editor(this.scenarios.get("activeScenario"))
+
+                this.scenarioList.remove()
+                this.scenarioList = new ScenarioList(this.scenarios)
             }
         },
         enableDebug            : function () {
@@ -131,6 +142,7 @@ define([
                 this.debugView = new Debug(this.scenarios.get("activeScenario"))
 
                 this.editorView.remove()
+                this.scenarioList.remove()
             }
         }, updateScenario      : function () {
             this.updateTasks()

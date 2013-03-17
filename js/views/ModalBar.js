@@ -1,24 +1,37 @@
 define([
     'backbone',
     'mustache',
-    'libs/text!templates/editorModalBar.m'
-], function (Backbone, Mustache, ModalBar) {
+    'channels',
+    'libs/text!templates/modalBar.m'
+], function (Backbone, Mustache, channels, ModalBar) {
 
     return Backbone.View.extend({
         el         : '#modalBar',
-        events : {
+        events     : {
             "click #testModalButton" : "test",
-            "click #taskModalButton" : "task"
+            "click #taskModalButton" : "task",
+            "click #editorButton"    : "editor",
+            "click #debugButton"     : "debug"
         },
-        initialize : function(){
+        initialize : function () {
+            this.render()
+            this.dbg = false;
+        },
+        debug      : function () {
+            this.dbg = true
+            channels.debug.trigger("enable")
+            this.render()
+        }, editor  : function () {
+            this.dbg = false
+            channels.debug.trigger("disable")
             this.render()
         },
-        test : function(){
+        test       : function () {
             $("#testModal").reveal()
-        }, task : function(){
+        }, task    : function () {
             $("#taskModal").reveal()
-        }, render : function(){
-            var html = Mustache.render(ModalBar, {});
+        }, render  : function () {
+            var html = Mustache.render(ModalBar, {debug : this.dbg});
             this.$el.html(html);
         }
     });

@@ -6,9 +6,6 @@ define(['backbone','underscore'], function (Backbone, _) {
     return {
         scenarios : newChannel(),
         editors   : newChannel(),
-        tests     : newChannel(),
-        map       : newChannel(),
-        tasks     : newChannel(),
         debug     : newChannel()
     }
 });

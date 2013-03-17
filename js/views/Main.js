@@ -10,7 +10,7 @@ define([
 ], function (Backbone, ScenarioList, Editor, Debug, ModalBar, ScenariosModel, ScenariosJSON, channels) {
 
     return Backbone.View.extend({
-        initialize             : function () {
+        initialize   : function () {
             //Create our ScenarioCollection from our JSON file describing the scenarios and the list of build in primitives
             this.scenarios = new ScenariosModel(JSON.parse(ScenariosJSON));
 
@@ -23,20 +23,15 @@ define([
             this.debugView = {remove : function () {}};
             $("#debugMap").parent().hide()
 
-            this.attachChannelListeners()
-        },
-        attachChannelListeners : function () {
-
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
-                this.disableDebug()
                 this.scenarios.swap(name, this.scenarios)
-                this.updateScenario();
+                this.scenarioList.remove()
+                this.scenarioList = new ScenarioList(this.scenarios)
             }, this);
 
             //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
-                this.disableDebug()
                 this.scenarios.get("activeScenario").swap(name, this.scenarios)
                 this.updateEditor();
             }, this);
@@ -52,54 +47,37 @@ define([
 
             //Listen for the enable debug mode command, and if we have debug data enter debug mode
             channels.debug.on("enable", function () {
-                if (this.scenarios.get("activeScenario").has("activeTask")) {
-                    this.enableDebug()
-                    this.updateDebug()
+                if (this.scenarios.get("activeScenario").has("activeTask") && !this.debug) {
+                    this.debug = true
+                    this.editorView.remove()
+                    this.scenarioList.remove()
+                    this.modalBar.enableDebug()
+                    this.debugView.remove()
+                    this.debugView = new Debug({task : this.scenarios.get("activeScenario").get("activeTask")})
                 }
             }, this)
             channels.debug.on("disable", function () {
-                    this.disableDebug()
-                    this.updateEditor()
+                if (this.debug) {
+                    this.debug = false
+                    this.debugView.remove()
+
+                    this.editorView.remove()
+                    this.editorView = new Editor(this.scenarios.get("activeScenario"))
+
+                    this.scenarioList.remove()
+                    this.scenarioList = new ScenarioList(this.scenarios)
+
+                    this.modalBar.disableDebug()
+                    if ($("#testModal").reveal)
+                        $("#testModal").reveal()
+                    else
+                        console.log($("#testModal").reveal)
+                }
+                this.updateEditor()
             }, this)
 
         },
-        disableDebug           : function () {
-            if (this.debug) {
-                this.debug = false
-                this.debugView.remove()
-
-                this.editorView.remove()
-                this.editorView = new Editor(this.scenarios.get("activeScenario"))
-
-                this.scenarioList.remove()
-                this.scenarioList = new ScenarioList(this.scenarios)
-
-                this.modalBar.disableDebug()
-                if ($("#testModal").reveal)
-                    $("#testModal").reveal()
-                else
-                    console.log($("#testModal").reveal)
-            }
-        },
-        enableDebug            : function () {
-            if (!this.debug) {
-                this.debug = true
-                this.editorView.remove()
-                this.scenarioList.remove()
-                this.modalBar.enableDebug()
-                this.updateDebug()
-            }
-        }, updateScenario      : function () {
-            this.updateEditor()
-
-            this.scenarioList.remove()
-            this.scenarioList = new ScenarioList(this.scenarios)
-        }, updateDebug         : function () {
-            if (this.debug) {
-                this.debugView.remove()
-                this.debugView = new Debug({task : this.scenarios.get("activeScenario").get("activeTask")})
-            }
-        }, updateEditor        : function () {
+        updateEditor : function () {
             if (!this.debug) {
                 this.editorView.remove()
                 this.editorView = new Editor(this.scenarios.get("activeScenario"))

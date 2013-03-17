@@ -55,19 +55,10 @@ define([
                 if (this.scenarios.get("activeScenario").has("activeTask")) {
                     this.enableDebug()
                     this.updateDebug()
-                } else {
-                    //TODO: bit of a hack
-                    this.modalBar.editor()
                 }
             }, this)
             channels.debug.on("disable", function () {
                     this.disableDebug()
-                    this.updateEditor()
-            }, this)
-
-
-            channels.tasks.on("update", function () {
-                    this.updateDebug()
                     this.updateEditor()
             }, this)
 

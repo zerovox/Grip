@@ -67,9 +67,7 @@ define([
                     wire.set({strokeDashArray : [5, 5, 3]})
                 }
             } else {
-                //We always request the output
-                //TODO: Check this doesn't break recursives
-                //TODO: We need more information on this, on finish we should show this as a
+                //TODO: We need more information on this, on finish we should show this as a green line, this info should be passed from worker
                 wire.stroke = "rgb(192,15,19)"
                 wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});
             }

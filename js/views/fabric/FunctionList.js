@@ -94,7 +94,8 @@ define([
             this.canvas.clear()
         },
         show       : function () {
-            this.$el.parent().show();
+            if(this.$el)
+                this.$el.parent().show();
             this.resize()
         }, remove : function(){
             this.hide();

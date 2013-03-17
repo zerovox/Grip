@@ -1,7 +1,6 @@
 define([
-    'backbone',
-    'channels'
-], function (Backbone, channels) {
+    'backbone'
+], function (Backbone) {
 
     return Backbone.Model.extend({
         step             : function () {
@@ -48,19 +47,16 @@ define([
             this.set("result", result)
             this.set("running", false)
             this.get("test").complete(result)
-            channels.tasks.trigger("succeeded", this)
         },
         failed           : function (failMsg) {
             this.get("worker").terminate();
             this.set("failMsg", failMsg)
             this.set("running", false)
             this.get("test").fail(failMsg)
-            channels.tasks.trigger("failed", this)
         },
         update           : function (editor) {
             this.set("stackTrace", editor)
             this.set("level", editor.length - 1)
-            channels.tasks.trigger("update", this)
         }, getActiveMap  : function () {
             return this.get("stackTrace")[this.get("level")];
         }, setLevel      : function (level) {
@@ -76,7 +72,6 @@ define([
             var editor = this.get("stackTrace")
             editor[this.get("level")] = map
             editor.splice(this.get("level")+1, editor.length-this.get("level")-1)
-            channels.tasks.trigger("update", this)
         }
 
     })

@@ -22,19 +22,9 @@ define([
                 this.render();
             },
             render         : function () {
-                //TODO: Move this logic inside the test model
                 var tests = this.tests === undefined ? undefined : this.tests.toJSON()
                 var total = 0;
                 var passing = 0;
-
-                //TODO: Convert this to a mustache template, render this first
-                var inputMap = function (inputs, index) {
-                    var str = ""
-                    _.each(inputs, function (a, b, c) {
-                        str += b + ' &rarr; <a href="#" class="edit" data-pk="' + index + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
-                    })
-                    return str
-                }
 
                 _.each(tests, function (test, index) {
                     test.index = index;
@@ -42,7 +32,11 @@ define([
                         passing++
                     total++
 
-                    test.inputMap = inputMap(test.inputs, index)
+                    test.inputMap = "";
+                    _.each(test.inputs, function (a, b) {
+                        test.inputMap += b + ' &rarr; <a href="#" class="edit" data-pk="' + index + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
+                    })
+
                 })
 
                 var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : (passing / total) * 100});
@@ -51,10 +45,8 @@ define([
                 var that = this;
                 $('.edit').editable({
                     url : function (params) {
-                        console.log(params)
                         var d = new $.Deferred
                         if (that.tests !== undefined) {
-                            console.log(that.tests)
                             if (isFinite(parseFloat(params.value)))
                                 params.value = parseFloat(params.value)
                             if (params.name === "")

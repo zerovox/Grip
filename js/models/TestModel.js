@@ -26,6 +26,11 @@ define([
         start       : function(task){
             this.task = task;
             this.set("running", true)
+        },
+        isRunning : function(){
+            if(this.task)
+                return this.task.isRunning()
+            return false;
         }
     });
 

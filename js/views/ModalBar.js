@@ -6,33 +6,34 @@ define([
 ], function (Backbone, Mustache, channels, ModalBar) {
 
     return Backbone.View.extend({
-        el         : '#modalBar',
-        events     : {
+        el              : '#modalBar',
+        events          : {
             "click #testModalButton" : "test",
-            "click #editorButton"    : "editor",
-            "click #debugButton"     : "debug"
+            "click #editorButton"    : "editor"
         },
-        initialize : function () {
+        initialize      : function () {
             this.render()
             this.dbg = false;
         },
-        debug      : function () {
-            this.dbg = true
+        debug           : function () {
             channels.debug.trigger("enable")
-            this.render()
-        }, editor  : function () {
-            this.dbg = false
+        }, editor       : function () {
             channels.debug.trigger("disable")
-            this.render()
         },
-        test       : function () {
+        test            : function () {
             if ($("#testModal").reveal)
                 $("#testModal").reveal()
             else
                 console.log($("#testModal").reveal)
-        }, render  : function () {
+        }, render       : function () {
             var html = Mustache.render(ModalBar, {debug : this.dbg});
             this.$el.html(html);
+        }, enableDebug  : function () {
+            this.dbg = true
+            this.render()
+        }, disableDebug : function () {
+            this.dbg = false
+            this.render()
         }
     });
 

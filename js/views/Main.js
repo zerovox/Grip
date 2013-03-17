@@ -82,6 +82,12 @@ define([
 
                 this.scenarioList.remove()
                 this.scenarioList = new ScenarioList(this.scenarios)
+
+                this.modalBar.disableDebug()
+                if ($("#testModal").reveal)
+                    $("#testModal").reveal()
+                else
+                    console.log($("#testModal").reveal)
             }
         },
         enableDebug            : function () {
@@ -89,6 +95,7 @@ define([
                 this.debug = true
                 this.editorView.remove()
                 this.scenarioList.remove()
+                this.modalBar.enableDebug()
                 this.updateDebug()
             }
         }, updateScenario      : function () {
@@ -99,7 +106,6 @@ define([
         }, updateDebug         : function () {
             if (this.debug) {
                 this.debugView.remove()
-                console.log(this.scenarios.get("activeScenario").get("activeTask"))
                 this.debugView = new Debug({task : this.scenarios.get("activeScenario").get("activeTask")})
             }
         }, updateEditor        : function () {

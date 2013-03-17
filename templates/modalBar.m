@@ -1,10 +1,10 @@
-<ul class="button-group even two-up">
-    {{#debug}}
-        <li><a href="#" class="button" id="taskModalButton">Task Manager</a></li>
+{{#debug}}
+    <ul class="button-group">
         <li><a href="#" class="button" id="editorButton">Back to Editor</a></li>
-    {{/debug}}
-    {{^debug}}
-        <li><a href="#" class="button" id="testModalButton">Test Cases</a></li>
-        <li><a href="#" class="button" id="debugButton">Switch to Debug</a></li>
-    {{/debug}}
-</ul>
+    </ul>
+{{/debug}}
+{{^debug}}
+    <ul class="button-group">
+        <li><a href="#" class="secondary button" id="testModalButton">Tests</a></li>
+    </ul>
+{{/debug}}

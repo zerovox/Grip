@@ -2,8 +2,9 @@ define([
     'backbone',
     'mustache',
     'libs/text!templates/testList.m',
-    'alertify'
-], function (Backbone, Mustache, TestListTemplate, alertify) {
+    'alertify',
+    'channels'
+], function (Backbone, Mustache, TestListTemplate, alertify, channels) {
 
     return Backbone.View.extend({
             el             : '#testModal',
@@ -12,7 +13,7 @@ define([
                 "click #addTestCase" : "newTestCase",
                 "click .run"         : "run",
                 "click .debug"       : "debug",
-                "click .stop"     : "stop"
+                "click .stop"        : "stop"
             },
             initialize     : function (m) {
                 this.tests = m.tests;
@@ -93,14 +94,13 @@ define([
                 var test = this.tests.at(number)
                 this.scenario.runTest(test, editor.get("name"), true)
                 alertify.log("Started debugging on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
+                channels.debug.trigger("enable")
+                this.$el.trigger('reveal:close');
                 e.preventDefault()
-            }, stop    : function (e) {
+            }, stop        : function (e) {
                 var test = this.tests.at($(e.target).data("index"))
-                //TODO: convert to test
-                if (task.isRunning()){
-                    task.failed("Task Terminated")
-                    this.render()
-                    //TODO: Is this needed?
+                if (test.isRunning()) {
+                    test.failed("Task Terminated")
                 }
             }
         }

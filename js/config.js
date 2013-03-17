@@ -1,5 +1,5 @@
 var require = {
-    baseUrl : "/js",
+    baseUrl : "js",
     paths   : {
         underscore       : 'libs/lodash.min',
         jquery           : 'libs/jquery.min',

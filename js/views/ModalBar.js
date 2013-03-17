@@ -9,7 +9,6 @@ define([
         el         : '#modalBar',
         events     : {
             "click #testModalButton" : "test",
-            "click #taskModalButton" : "task",
             "click #editorButton"    : "editor",
             "click #debugButton"     : "debug"
         },
@@ -27,9 +26,10 @@ define([
             this.render()
         },
         test       : function () {
-            $("#testModal").reveal()
-        }, task    : function () {
-            $("#taskModal").reveal()
+            if ($("#testModal").reveal)
+                $("#testModal").reveal()
+            else
+                console.log($("#testModal").reveal)
         }, render  : function () {
             var html = Mustache.render(ModalBar, {debug : this.dbg});
             this.$el.html(html);

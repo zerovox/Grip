@@ -2,7 +2,7 @@ require([
     'underscore',
     'backbone',
     'router',
-    'views/Main',
+    'views/main',
     'foundation.app'
 ], function (_, Backbone, Router, MainView, FoundationApp) {
     $.fn.editable.defaults.mode = 'inline';

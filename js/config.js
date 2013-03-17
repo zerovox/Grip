@@ -23,6 +23,9 @@ var require = {
         'foundation.app' : {
             deps : ['modernizr', 'jquery', 'foundation', 'libs/jquery-editable-poshytip.min']
         },
+        'libs/jquery-editable-poshytip.min' : {
+            deps : ['jquery']
+        },
         'mocha'         : {
            exports : 'mocha'
         }

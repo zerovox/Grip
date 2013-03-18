@@ -31,7 +31,7 @@
                     {{/running}}
                 {{/hadError}}</td>
             <td> {{^hadError}}
-                {{#result}}{{result}}{{/result}}
+                {{result}}
             {{/hadError}}</td>
             <td>
                 <ul class="button-group">

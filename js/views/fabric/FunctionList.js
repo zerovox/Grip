@@ -91,7 +91,6 @@ define([
         },
         hide       : function () {
             this.$el.parent().hide();
-            this.canvas.clear()
         },
         show       : function () {
             this.$el.parent().show();

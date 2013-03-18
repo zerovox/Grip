@@ -41,8 +41,9 @@ define([
                 this.listView.set(this.list.where({group : this.name}))
         },
         removeChildren : function () {
+            var that = this;
             this.groupView.remove()
-            this.listView.remove()
+            setTimeout(function(){that.listView.remove()}, 0)
         }
     });
 

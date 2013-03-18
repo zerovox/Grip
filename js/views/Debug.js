@@ -10,7 +10,8 @@ define([
         initialize        : function (task) {
             this.task = task.task;
             this.debugMap = DebugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
-            this.listenTo(task, "change", this.updateDebug)
+            var that = this;
+            this.listenTo(this.task, "change", function(){that.updateDebug()})
 
             this.debugBar = new DebugBar(this.task);
             this.stackTrace = new StackTrace(this.task);

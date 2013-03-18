@@ -26,6 +26,7 @@ define([
             //We only need to do this for the initial draw when the browser is busy.
             var that = this
             setTimeout(function(){that.listView.show()}, 0)
+
         },
         makeActive     : function (name) {
             _.find(this.groups,function (obj) {return obj.active}).active = false;

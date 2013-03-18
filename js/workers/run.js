@@ -87,7 +87,7 @@ function cont(ft, retVal) {
                 ar = input(e(ft, {input : inp.wired}))
             return cont(e(ft, {cont : response.cont}), ar)
         } else {
-            return fail("Unwired function exception")
+            return fail("Unwired argument '" +response.need+ "' on function '" + ft.func.function+ "'")
         }
     }
 }

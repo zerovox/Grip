@@ -157,7 +157,7 @@ function step(env) {
                     } else
                         env.stack.push(e(ft, {action : "i", input : inp.wired, using : inp}))
                 } else {
-                    fail("Unwired function exception")
+                    fail("Unwired argument '" +response.need+ "' on function '" + ft.func.function+ "'")
                 }
             }
             break

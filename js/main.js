@@ -3,8 +3,9 @@ require([
     'backbone',
     'router',
     'views/Main',
-    'foundation.app'
-], function (_, Backbone, Router, MainView, FoundationApp) {
+    'foundation.app',
+    'intro'
+], function (_, Backbone, Router, MainView, FoundationApp, introJs) {
     $.fn.editable.defaults.mode = 'inline';
 
     _.extend(Backbone.View.prototype, {
@@ -27,4 +28,5 @@ require([
 
     Router.initialize();
 
+    introJs().start()
 });

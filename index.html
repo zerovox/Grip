@@ -34,24 +34,25 @@
  </div>-->
 <br/>
 
+<div data-intro='Welcome to Grip! Grip is a visual functional programming environment, designed as an easy introduction to functional programming. This tour will give a quick overview of the interface, you can use the arrow keys to navigate forward and backwards, or use the buttons below.' data-step='0'></div>
 <div class="row">
-    <div class="two columns">
-        <div id="scenarioMenu"></div>
-        <div id="modalBar"></div>
+    <div class="three columns">
+        <div id="scenarioMenu" data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select the Sandbox." data-step='1'></div>
+        <div id="modalBar" data-intro="This opens the test case dialogue. Here you will be able to run tests against your functions to check if you've defined it correctly. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the test passes, you should see the row for that test go green. Try to get all tests to pass before you move on to the next task!" data-step='7'></div>
         <ul class="button-group even three-up alert small" id="controlBar"></ul>
         <ul class="button-group even three-up alert small" id="debugBar"></ul>
 
-        <div id="editorInfo" class="panel"></div>
+        <div id="editorInfo" class="panel" data-intro="The instructions for each task will appear here." data-step='2'></div>
 
         <div id="stackTrace"></div>
 
     </div>
 
-    <div class="ten columns">
-        <div id="editorMenu"></div>
+    <div class="nine columns">
+        <div id="editorMenu" data-intro="Here you can look through the different tasks in the current lesson. You'll want to complete these in order, we suggest only moving on to the next task once you've completed all the previous ones." data-step='6'></div>
 
 
-        <div class="canvasContainer">
+        <div class="canvasContainer" data-intro="This is the editor, this represents a function. As you can see, on the left side there is a grey box with the label 'argument'. This is the input to the function.  On the right hand side, there is a light grey dome. This is the function output. A function simply describes a way of transforming one or more input values into an output value. Right now, all we can do with the input is link it directly to the output. We do this by clicking on the light grey output and then clicking on the light grey circle next to the input. This describes the simplest function, the function that doesn't alter the input values at all. In order to trasnform the data, we need to pass it to some intermediate functions." data-step='3'>
             <canvas id="editorMap" resize="false"></canvas>
         </div>
         <div class="canvasContainer">
@@ -62,11 +63,11 @@
 </div>
 
 <div class="row">
-    <div class="two columns">
-        <ul class="nav-bar vertical" id="functionMenu"></ul>
+    <div class="three columns">
+        <ul class="nav-bar vertical" id="functionMenu" data-intro="Functions are organised in to various packages, currently we have the Mathematical functions visible. Clicking on these allows us to see other functions. Local Functions are the functions we are currently editing, the lessons will explain more about how we can use our own functions to define new functions."  data-step='5'></ul>
     </div>
-    <div class="ten columns">
-        <div class="canvasContainer">
+    <div class="nine columns">
+        <div class="canvasContainer" data-intro="This is the function list, clicking on any of these functions will add it to the editor above, allowing us to transform the data. We'll look at this further in the first lesson."  data-step='4'>
             <canvas id="functionList" resize="false"></canvas>
         </div>
     </div>

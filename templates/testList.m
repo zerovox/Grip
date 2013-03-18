@@ -15,7 +15,7 @@
     </thead>
     <tbody id="testTableBody">
         {{#tests}}
-        <tr>
+        <tr class="{{#passed}}pass{{/passed}}{{^passed}}fail{{/passed}}">
             <td>{{{inputMap}}}</td>
             <td><a href="#" class="edit" data-pk="{{index}}" data-type="text"
                    data-original-title="Enter output">{{output}}</a></td>
@@ -25,8 +25,7 @@
                     {{^running}}
                         {{#passed}}Test passed{{/passed}}
                         {{^passed}}
-                            {{^result}} Not yet run{{/result}}
-                            {{#result}}Test failed{{/result}}
+                            {{^result}}Test has not passed{{/result}}
                         {{/passed}}
                     {{/running}}
                 {{/hadError}}</td>

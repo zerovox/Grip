@@ -10,17 +10,18 @@ define([
         initialize        : function (task) {
             this.task = task.task;
             this.debugMap = DebugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
-            var that = this;
-            this.listenTo(this.task, "change", function(){that.updateDebug()})
-
+            this.debugMap.failMessage(this.task.getFailMessage())
             this.debugBar = new DebugBar(this.task);
             this.stackTrace = new StackTrace(this.task);
 
             //Make sure the debug map is visible and correctly positioned
             this.debugMap.show()
+            var that = this;
+            this.listenTo(this.task, "change", function(){that.updateDebug()})
         },
         updateDebug       : function () {
             this.debugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
+            this.debugMap.failMessage(this.task.getFailMessage())
             this.stackTrace.remove()
             this.stackTrace = new StackTrace(this.task);
         }, removeChildren : function () {

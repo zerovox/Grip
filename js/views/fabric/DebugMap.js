@@ -90,6 +90,21 @@ define([
             if ("envEditor" in func) {
                 this.boxes.push({box : box, func : func})
             }
+        }, failMessage      : function (msg) {
+            if (typeof msg !== "undefined") {
+                var text = new fabric.Text("Error: " + msg, {
+                    fontSize     : 16,
+                    left         : 2,
+                    top          : 8,
+                    lineHeight   : 1,
+                    fontFamily   : 'Helvetica',
+                    fontWeight   : 'bold',
+                    'text-align' : 'left'
+                });
+                text.left = text.left + (text.width / 2)
+                this.canvas.add(text);
+            }
+
         }
 
     })));

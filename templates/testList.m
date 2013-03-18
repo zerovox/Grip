@@ -7,22 +7,49 @@
     <thead>
     <tr>
         <th>Inputs</th>
-        <th>Output</th>
-        <th>Pass?</th>
-        <th>Run</th>
+        <th>Expected Output</th>
+        <th>Status</th>
+        <th>Last Output</th>
+        <th>Controls</th>
     </tr>
     </thead>
     <tbody id="testTableBody">
         {{#tests}}
         <tr>
             <td>{{{inputMap}}}</td>
-            <td><a href="#" class="edit" data-pk="{{index}}" data-type="text" data-original-title="Enter output">{{output}}</a></td>
-            <td>{{#running}}Test Running{{/running}}{{^running}}{{#passed}}Test passed{{/passed}}{{^passed}}{{^lastResult}}Not yet run{{/lastResult}}{{#lastResult}}Test failed with output {{lastResult}}{{/lastResult}}{{/passed}}{{/running}}</td>
+            <td><a href="#" class="edit" data-pk="{{index}}" data-type="text"
+                   data-original-title="Enter output">{{output}}</a></td>
+            <td>{{#hadError}}Error : {{failMsg}}{{/hadError}}
+                {{^hadError}}
+                    {{#running}}Test Running{{/running}}
+                    {{^running}}
+                        {{#passed}}Test passed{{/passed}}
+                        {{^passed}}
+                            {{^result}} Not yet run{{/result}}
+                            {{#result}}Test failed{{/result}}
+                        {{/passed}}
+                    {{/running}}
+                {{/hadError}}</td>
+            <td> {{^hadError}}
+                {{#result}}{{result}}{{/result}}
+            {{/hadError}}</td>
             <td>
                 <ul class="button-group">
-                    <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>
-                    <li><a href="#" class="button small alert debug" data-index="{{index}}">Debug</a></li>
-                    <li><a href="#" class="button small alert stop" data-index="{{index}}">Stop</a></li>
+                    {{^running}}
+                        <li><a href="#" class="button small alert run" data-index="{{index}}">Run</a></li>
+                        <li><a href="#" class="button small alert debug" data-index="{{index}}">Run in debug mode</a></li>
+                    {{/running}}
+                    {{#running}}
+                        <li><a href="#" class="button small alert run" data-index="{{index}}">Restart</a></li>
+                        <li><a href="#" class="button small alert debug" data-index="{{index}}">Restart in debug
+                            mode</a></li>
+                        {{#debug}}
+                            <li><a href="#" class="button small alert resumedebug" data-index="{{index}}">Resume debugging</a></li>
+                        {{/debug}}
+                    {{/running}}
+                    {{#running}}
+                        <li><a href="#" class="button small alert stop" data-index="{{index}}">Stop</a></li>
+                    {{/running}}
                 </ul>
             </td>
         </tr>

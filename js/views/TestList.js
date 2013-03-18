@@ -13,7 +13,8 @@ define([
                 "click #addTestCase" : "newTestCase",
                 "click .run"         : "run",
                 "click .debug"       : "debug",
-                "click .stop"        : "stop"
+                "click .stop"        : "stop",
+                "click .resumedebug" : "resumedebug"
             },
             initialize     : function (m) {
                 this.tests = m.tests;
@@ -22,22 +23,24 @@ define([
                 this.render();
             },
             render         : function () {
-                var tests = this.tests === undefined ? undefined : this.tests.toJSON()
                 var total = 0;
                 var passing = 0;
 
-                _.each(tests, function (test, index) {
-                    test.index = index;
-                    if (test.passed)
-                        passing++
-                    total++
+                if (typeof this.tests !== "undefined") {
+                    var tests = this.tests.reduce(function (memo, test) {
+                        var t = {index : total, passed : test.passed(), failMsg : test.getFailMessage(), hadError : test.hadError(), result : test.getLastResult(), running : test.isRunning(), inputMap : "", debug : test.isDebugging()}
 
-                    test.inputMap = "";
-                    _.each(test.inputs, function (a, b) {
-                        test.inputMap += b + ' &rarr; <a href="#" class="edit" data-pk="' + index + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
-                    })
+                        _.each(test.get("inputs"), function (a, b) {
+                            t.inputMap += b + ' &rarr; <a href="#" class="edit" data-pk="' + total + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
+                        })
 
-                })
+                        memo.push(t)
+                        if (test.passed())
+                            passing++
+                        total++;
+                        return memo
+                    }, [])
+                }
 
                 var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : (passing / total) * 100});
                 this.$el.html(html);
@@ -92,8 +95,15 @@ define([
             }, stop        : function (e) {
                 var test = this.tests.at($(e.target).data("index"))
                 if (test.isRunning()) {
-                    test.failed("Task Terminated")
+                    test.kill()
                 }
+            }, resumedebug       : function (e) {
+                var number = $(e.target).data("index")
+                var test = this.tests.at(number)
+                this.scenario.swapActiveDebug(test)
+                channels.debug.trigger("enable")
+                this.$el.trigger('reveal:close');
+                e.preventDefault()
             }
         }
 

@@ -7,12 +7,12 @@ define([
 ], function (Backbone, TaskModel, TestCollection, EditorCollection, FunctionCollection) {
 
     return Backbone.Model.extend({
-        initialize      : function (scenario) {
+        initialize   : function (scenario) {
             this.set({name : scenario.name, list : new EditorCollection(scenario.editors), functions : new FunctionCollection(scenario.functions)})
             this.set("activeEditor", this.get("list").first())
             this.get("list").first().set({activeEditor : true})
         },
-        swap            : function (to) {
+        swap         : function (to) {
             var matchingEditors = this.get("list").where({name : to});
             if (_.size(matchingEditors) === 1) {
                 var match = _.first(matchingEditors)
@@ -26,7 +26,7 @@ define([
                 console.log("No matching editor, or duplicate scenario names", matchingEditors);
             }
             return false;
-        }, runTest      : function (test, mainMethod, debug) {
+        }, runTest   : function (test, mainMethod, debug) {
             //TODO: Why are we passing mainMethod by name not the editor ?
             var localFunctions = this.get("list")
             var globalVariables = this.get("functions")
@@ -37,9 +37,10 @@ define([
                 return true
             }
             return false
-
-        }, newEditor : function(name){
-            var newEditor  = new (this.get("list").model)({name : name})
+        }, swapActiveDebug     : function (test) {
+            this.set({activeTask : test.get("task")})
+        }, newEditor : function (name) {
+            var newEditor = new (this.get("list").model)({name : name})
             this.get("list").add(newEditor)
         }
     });

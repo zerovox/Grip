@@ -4,33 +4,43 @@ define([
 ], function (Backbone, alertify) {
 
     return Backbone.Model.extend({
-        initialize : function () {
-            this.set({running:false, passed:false})
-        },
-        complete   : function (result) {
+        complete       : function (result) {
             if (this.get("output") === result) {
-                this.set("passed", true)
                 alertify.success("Test passed!")
             } else {
-                this.set("passed", false)
                 alertify.error("Test failed!")
             }
-            this.set("running", false)
-            this.set("lastResult", ""+result)
         },
-        fail       : function (failMsg) {
-            this.set("passed", false)
-            this.set("running", false)
-            this.set("lastResult", "Error: " + failMsg)
+        start          : function (task) {
+            if (this.has("task") && this.get("task").isRunning()) {
+                this.get("task").terminate()
+            }
+            this.set("task", task);
+            this.listenTo(task, "change", _.bind(this.trigger, this, "change"))
         },
-        start       : function(task){
-            this.task = task;
-            this.set("running", true)
-        },
-        isRunning : function(){
-            if(this.task)
-                return this.task.isRunning()
+        isRunning      : function () {
+            if (this.has("task"))
+                return this.get("task").isRunning()
             return false;
+        },
+        passed         : function () {
+            return this.has("task") ? (this.get("output") === this.get("task").get("result")) : false
+        },
+        hadError       : function () {
+            return this.has("task") ? this.get("task").failed() : false;
+        },
+        getLastResult  : function () {
+            return this.has("task") ? this.get("task").getResult() : null;
+        },
+        getFailMessage : function () {
+            return this.has("task") ? this.get("task").getFailMessage() : null;
+        },
+        isDebugging : function(){
+            return this.has("task") ? this.get("task").isDebugging() : false;
+        },
+        kill : function(){
+            if (this.has("task"))
+                this.get("task").terminate()
         }
     });
 

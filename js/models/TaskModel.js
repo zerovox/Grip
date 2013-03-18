@@ -3,13 +3,13 @@ define([
 ], function (Backbone) {
 
     return Backbone.Model.extend({
-        step             : function () {
+        step              : function () {
             this.get("worker").postMessage({step : true})
         },
-        stepOver         : function () {
+        stepOver          : function () {
             this.get("worker").postMessage({stepOver : true})
         },
-        initialize       : function (test, mainMethod, debug, localFunctions, globalFunctions) {
+        initialize        : function (test, mainMethod, debug, localFunctions, globalFunctions) {
             var that = this;
             var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
             var inputs = test.get("inputs")
@@ -20,7 +20,7 @@ define([
                 } else if (result.data.result !== undefined) {
                     that.finished(result.data.result)
                 } else if (result.data.fail !== undefined) {
-                    that.failed(result.data.fail)
+                    that.fail(result.data.fail)
                 } else if (result.data.need !== undefined) {
                     worker.postMessage({input : result.data.need, value : inputs[result.data.need]})
                 } else {
@@ -40,38 +40,52 @@ define([
             this.set("stackTrace", [s])
             this.set("globalFunctions", globalFunctions)
             this.set("localFunctions", localFunctions)
+            this.set("debug", debug)
 
         },
-        finished         : function (result) {
+        finished          : function (result) {
             this.get("worker").terminate();
             this.set("result", result)
             this.set("running", false)
             this.get("test").complete(result)
+            this.set("failed", false)
         },
-        failed           : function (failMsg) {
+        fail              : function (failMsg) {
             this.get("worker").terminate();
             this.set("failMsg", failMsg)
             this.set("running", false)
-            this.get("test").fail(failMsg)
+            this.set("failed", true)
         },
-        update           : function (editor) {
+        update            : function (editor) {
             this.set("stackTrace", editor)
             this.set("level", editor.length - 1)
-        }, getActiveMap  : function () {
+        }, getActiveMap   : function () {
             return this.get("stackTrace")[this.get("level")];
-        }, setLevel      : function (level) {
+        }, setLevel       : function (level) {
             this.set("level", level)
-        }, getStackTrace : function () {
+        }, getStackTrace  : function () {
             return this.get("stackTrace")
-        }, getLevel      : function () {
+        }, getLevel       : function () {
             return this.get("level")
-        }, isRunning     : function () {
+        }, isRunning      : function () {
             return this.get("running")
-        }, extend        : function (map) {
-            this.set("level", this.get("level")+1)
+        }, extend         : function (map) {
+            this.set("level", this.get("level") + 1)
             var editor = this.get("stackTrace")
             editor[this.get("level")] = map
-            editor.splice(this.get("level")+1, editor.length-this.get("level")-1)
+            editor.splice(this.get("level") + 1, editor.length - this.get("level") - 1)
+        }, getFailMessage : function () {
+            return this.get("failMsg")
+        }, terminate      : function () {
+            this.fail("Task Terminated")
+        }, failed         : function () {
+            if (this.has("failed"))
+                return this.get("failed")
+            else return false
+        }, getResult      : function () {
+            return this.get("result")
+        }, isDebugging    : function () {
+            return this.get("debug")
         }
 
     })

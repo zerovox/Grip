@@ -8,7 +8,7 @@ define([
             if (this.get("output") === result) {
                 alertify.success("Test passed!")
             } else {
-                alertify.error("Test failed!")  &rarr;
+                alertify.error("Test failed!")
             }
         },
         fail       : function (failMsg) {

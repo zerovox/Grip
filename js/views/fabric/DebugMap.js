@@ -8,11 +8,10 @@ define([
         maxHeightPercentage : 1,
         onInit              : function (canvas) {
             this.boxes = []
-            var that = this;
             var animated = false;
-            canvas.on('mouse:down', function (e) {
+            canvas.on('mouse:down', _.bind(function (e) {
                 if (!animated) {
-                    _.each(that.boxes, function (b) {
+                    _.each(this.boxes, function (b) {
                         var box = b.box
                         if (e.e.layerX >= (box.left - (box.width / 2)) && e.e.layerX < (box.left + (box.width / 2)) && e.e.layerY >= (box.top - box.height / 2) && e.e.layerY < (box.top + (box.height / 2))) {
                             animated = true;
@@ -27,14 +26,14 @@ define([
                                 onChange   : canvas.renderAll.bind(canvas),
                                 onComplete : function () {
                                     animated = false;
-                                    that.editorModel.get("task").extend(b.func.envEditor)
+                                    this.editorModel.get("task").extend(b.func.envEditor)
                                 }
                             });
 
                         }
                     })
                 }
-            })
+            }), this)
         },
         beforeRender        : function () {
             this.boxes = []

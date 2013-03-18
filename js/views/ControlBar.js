@@ -49,12 +49,11 @@ define([
             }
         },
         newInput    : function () {
-            var that = this;
-            alertify.prompt("Chose a name for the new input:", function (e, str) {
+            alertify.prompt("Chose a name for the new input:", _.bind(this, function (e, str) {
                 if (e) {
-                    that.editorMap.addInput(str);
+                    this.editorMap.addInput(str);
                 }
-            })
+            }))
         },
         newFunction : function () {
             alertify.prompt("Chose a name for the new function:", function (e, str) {

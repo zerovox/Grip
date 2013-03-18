@@ -16,8 +16,7 @@ define([
 
             //Make sure the debug map is visible and correctly positioned
             this.debugMap.show()
-            var that = this;
-            this.listenTo(this.task, "change", function(){that.updateDebug()})
+            this.listenTo(this.task, "change", _.bind(this.updateDebug, this))
         },
         updateDebug       : function () {
             this.debugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))

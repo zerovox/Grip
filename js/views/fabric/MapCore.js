@@ -19,15 +19,14 @@ define([
     return function () {
         return {
             initialize          : function () {
-                var that = this;
                 this.full = false;
                 //Define a canvas, disable selection
                 var canvas = this.canvas = new fabric.Canvas(this.el, {selection : false});
                 //Add our window resize triggers
-                $(window).resize(function () {
-                    that.resize()
-                    that.render()
-                });
+                $(window).resize(_.bind(function () {
+                    this.resize()
+                    this.render()
+                }, this));
                 //Make sure the canvas is the correct size
                 this.resize()
 

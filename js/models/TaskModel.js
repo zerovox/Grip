@@ -10,24 +10,24 @@ define([
             this.get("worker").postMessage({stepOver : true})
         },
         initialize        : function (test, mainMethod, debug, localFunctions, globalFunctions) {
-            var that = this;
             var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
             var inputs = test.get("inputs")
             this.set({inputs : inputs, test : test, output : test.get("output"), worker : worker, running : true, name : mainMethod})
-            worker.onmessage = function (result) {
+            var on = function (result) {
                 if (result.data.log !== undefined) {
                     console.log(result.data.log)
                 } else if (result.data.result !== undefined) {
-                    that.finished(result.data.result)
+                    this.finished(result.data.result)
                 } else if (result.data.fail !== undefined) {
-                    that.fail(result.data.fail)
+                    this.fail(result.data.fail)
                 } else if (result.data.need !== undefined) {
                     worker.postMessage({input : result.data.need, value : inputs[result.data.need]})
                 } else {
                     if (debug)
-                        that.update(result.data.debug)
+                        this.update(result.data.debug)
                 }
             }
+            worker.onmessage = _.bind(on, this)
             //reduce is essentially foldl provided by underscore.js
             var locals = localFunctions.reduce(function (memo, value) {
                 memo[value.get("name")] = value.get("map")

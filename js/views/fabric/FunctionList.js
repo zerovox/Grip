@@ -37,8 +37,7 @@ define([
                     //Or pass in the current map, and add it ourselves, then let the view for the map listen to changes and redraw apropriately
                 }
             }});
-            var that = this;
-            $(window).resize(function () {that.resize()});
+            $(window).resize(_.bind(this.resize, this));
         },
         set        : function (functionsCollection) {
             this.funcs = functionsCollection;

@@ -5,10 +5,10 @@ define([
 ], function (Backbone, fabric, MapCore) {
     return new (Backbone.View.extend(_.extend(new MapCore(), {
         onInit              : function (canvas) {
-            var that = this;
+
 
             //TODO: Refactor next two event handlers
-            canvas.on('object:over', function (e) {
+            canvas.on('object:over', _.bind(function (e) {
                 var target = e.target
                 target.oldfill = target.getFill()
                 if (target.type !== undefined) {
@@ -30,7 +30,7 @@ define([
                             fontWeight   : 'bold',
                             'text-align' : 'right'
                         });
-                        that.canvas.add(target.hoverText);
+                        this.canvas.add(target.hoverText);
                         target.hoverText.left = target.hoverText.left - (target.hoverText.width / 2) - 14
                     }
 
@@ -49,7 +49,7 @@ define([
 
                     canvas.renderAll();
                 }
-            });
+            }, this));
 
             canvas.on('object:out', function (e) {
                 var target = e.target
@@ -82,7 +82,7 @@ define([
 
             function wireInModel(source, target, editorModel) {
                 if (target.func !== source.func) {
-                    that.wireUp(target.func, source.func, target, source);
+                    this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
                         if (source.func.type === "functionInput")
                             editorModel.linkOutput(source.func.inputName)
@@ -117,7 +117,7 @@ define([
                 if (target !== undefined && target.type === "functionOutput") {
                     canvas.remove(wire);
                     if (fromInput) {
-                        wireInModel(target, source, that.editorModel)
+                        wireInModel(target, source, this.editorModel)
                     } else {
                         fromOutput = true;
                         wire = addWire(e.e);
@@ -127,7 +127,7 @@ define([
                 } else if (target !== undefined && (target.type === "input" || target.type === "output")) {
                     canvas.remove(wire);
                     if (fromOutput) {
-                        wireInModel(source, target, that.editorModel)
+                        wireInModel(source, target, this.editorModel)
                     } else {
                         fromInput = true;
                         wire = addWire(e.e);
@@ -137,11 +137,11 @@ define([
                     /*} else if (target !== undefined && target.type === "wire") {
                      console.log("remove wire")*/
                 } else if (target !== undefined && target.type === "function") {
-                    that.showEdges()
+                    this.showEdges()
                     dragging = true;
                 } else if (target !== undefined && target.type === "ex") {
-                    that.editorModel.removeInput(target.input)
-                    that.render()
+                    this.editorModel.removeInput(target.input)
+                    this.render()
                 } else {
                     fromOutput = fromInput = false;
                     canvas.remove(wire);
@@ -150,10 +150,10 @@ define([
 
             canvas.on({'mouse:up' : function (e) {
                 dragging = false;
-                that.hideEdges()
+                this.hideEdges()
                 if (removeFunction && e.target !== undefined) {
-                    that.editorModel.removeFunction(e.target.modelId)
-                    that.render()
+                    this.editorModel.removeFunction(e.target.modelId)
+                    this.render()
                 }
 
                 removeFunction = false;
@@ -176,10 +176,10 @@ define([
                 }
                 if (dragging) {
                     if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20) {
-                        that.edges.setFill(that.edges.selectedFill)
+                        this.edges.setFill(this.edges.selectedFill)
                         removeFunction = true;
                     } else {
-                        that.edges.setFill(that.edges.unselectedFill)
+                        this.edges.setFill(this.edges.unselectedFill)
                         removeFunction = false;
                     }
                 }
@@ -203,17 +203,11 @@ define([
             this.edges.selectedFill = "rgba(198, 15, 19, .9)"
             this.edges.setFill(this.edges.unselectedFill)
         }, onNewFunction    : function (funcModel, funcImpl, box) {
-            var that = this;
-
-            function updateModel(box) {
-                that.editorModel.move(box.modelId, box.getLeft(), box.getTop())
-            }
-
             box.modelId = funcImpl.name
 
-            box.on('moving', function () {
-                updateModel(box)
-            })
+            box.on('moving', _.bind(function () {
+                this.editorModel.move(box.modelId, box.getLeft(), box.getTop())
+            }, this))
 
             this.canvas.renderAll()
 

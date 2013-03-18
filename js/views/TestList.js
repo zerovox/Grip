@@ -44,24 +44,23 @@ define([
                 var html = Mustache.render(TestListTemplate, {tests : tests, total : total, passing : passing, percent : (passing / total) * 100});
                 this.$el.html(html);
 
-                var that = this;
                 $('.edit').editable({
-                    url : function (params) {
+                    url : _.bind(function (params) {
                         var d = new $.Deferred
-                        if (that.tests !== undefined) {
+                        if (this.tests !== undefined) {
                             if (isFinite(parseFloat(params.value)))
                                 params.value = parseFloat(params.value)
                             if (params.name === "")
-                                that.tests.at(params.pk).set("output", params.value)
+                                this.tests.at(params.pk).set("output", params.value)
                             else
-                                that.tests.at(params.pk).get("inputs")[params.name] = params.value
+                                this.tests.at(params.pk).get("inputs")[params.name] = params.value
                             d.resolve()
-                            that.render()
+                            this.render()
                             return d.promise()
                         } else {
                             return d.reject('No test found')
                         }
-                    }
+                    }, this)
                 });
 
             }, runAll      : function (e) {

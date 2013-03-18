@@ -46,7 +46,7 @@ define([
         },
         resize     : function () {
             var h = Math.max(120, ($(window).height() - 100) * 0.20);
-            var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 30 : $(window).width() - 30;
+            var w = $(window).width() > 999 ? $(window).width() * 9 / 12 - 30 : $(window).width() - 30;
             this.canvas.setHeight(h);
             this.canvas.setWidth(w);
             this.render()

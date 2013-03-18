@@ -307,7 +307,7 @@ define([
                 if (!this.full) {
                     var canvas = this.canvas;
                     var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
-                    var w = $(window).width() > 999 ? $(window).width() * 10 / 12 - 30 : $(window).width() - 30;
+                    var w = $(window).width() > 999 ? $(window).width() * 9 / 12 - 30 : $(window).width() - 30;
                     canvas.setHeight(h);
                     canvas.setWidth(w);
                     if (this.onResize)

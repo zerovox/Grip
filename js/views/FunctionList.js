@@ -24,7 +24,7 @@ define([
             //Hack: This lets us wait till the DOM has finished loading before re-drawing the canvas.
             //The images will be correct without this line, but the onClick handlers might not be calibrated to the page offset correctly.
             //We only need to do this for the initial draw when the browser is busy.
-            setTimeout(_.bind(this.listView.show, this), 0)
+            setTimeout(_.bind(this.listView.show, this.listView), 0)
 
         },
         makeActive     : function (name) {
@@ -42,7 +42,7 @@ define([
         },
         removeChildren : function () {
             this.groupView.remove()
-            setTimeout(_.bind(this.listView.show, this), 0)
+            setTimeout(_.bind(this.listView.hide, this.listView), 0)
         }
     });
 

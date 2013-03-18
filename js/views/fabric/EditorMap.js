@@ -80,7 +80,7 @@ define([
             var dragging = false;
             var removeFunction = false;
 
-            function wireInModel(source, target, editorModel) {
+            var wireInModel = function(source, target, editorModel) {
                 if (target.func !== source.func) {
                     this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
@@ -94,6 +94,7 @@ define([
                         editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)
                 }
             }
+            wireInModel = _.bind(wireInModel, this)
 
             //TODO: Replace all colours with some backbone model/view/something holding names of colours. Based on CSS instead?
             function addWire(fabricEvent) {
@@ -112,7 +113,7 @@ define([
             }
 
             //TODO: Refactor out fromInput/fromOutput
-            canvas.on({'mouse:down' : function (e) {
+            canvas.on({'mouse:down' : _.bind(function (e) {
                 var target = e.target
                 if (target !== undefined && target.type === "functionOutput") {
                     canvas.remove(wire);
@@ -146,9 +147,9 @@ define([
                     fromOutput = fromInput = false;
                     canvas.remove(wire);
                 }
-            }});
+            }, this)});
 
-            canvas.on({'mouse:up' : function (e) {
+            canvas.on({'mouse:up' : _.bind(function (e) {
                 dragging = false;
                 this.hideEdges()
                 if (removeFunction && e.target !== undefined) {
@@ -157,9 +158,9 @@ define([
                 }
 
                 removeFunction = false;
-            }})
+            },this)})
 
-            canvas.on({'mouse:move' : function (e) {
+            canvas.on({'mouse:move' : _.bind(function (e) {
                 if (fromOutput || fromInput) {
                     var x = wire.path[0][1]
                     var y = wire.path[0][2]
@@ -183,7 +184,7 @@ define([
                         removeFunction = false;
                     }
                 }
-            }})
+            },this)})
         },
         el                  : "#editorMap",
         maxHeightPercentage : 0.8,

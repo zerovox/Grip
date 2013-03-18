@@ -54,6 +54,7 @@ define([
             this.get("worker").terminate();
             this.set("failMsg", failMsg)
             this.set("running", false)
+            this.get("test").fail(failMsg)
             this.set("failed", true)
         },
         update            : function (editor) {

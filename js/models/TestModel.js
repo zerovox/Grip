@@ -8,14 +8,21 @@ define([
             if (this.get("output") === result) {
                 alertify.success("Test passed!")
             } else {
-                alertify.error("Test failed!")
+                alertify.error("Test failed!")  &rarr;
             }
+        },
+        fail       : function (failMsg) {
+                alertify.error("Test failed with error : "  +failMsg)
         },
         start          : function (task) {
             if (this.has("task") && this.get("task").isRunning()) {
                 this.get("task").terminate()
             }
             this.set("task", task);
+            alertify.log("Running test with: " + _.reduce(this.get("inputs"), function(memo, value, key){
+                memo += "<br />&emsp;" + key + " &rarr; " + value
+                return memo
+            }, ""))
             this.listenTo(task, "change", _.bind(this.trigger, this, "change"))
         },
         isRunning      : function () {

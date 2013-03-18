@@ -2,9 +2,8 @@ define([
     'backbone',
     'mustache',
     'libs/text!templates/testList.m',
-    'alertify',
     'channels'
-], function (Backbone, Mustache, TestListTemplate, alertify, channels) {
+], function (Backbone, Mustache, TestListTemplate, channels) {
 
     return Backbone.View.extend({
             el             : '#testModal',
@@ -28,7 +27,7 @@ define([
 
                 if (typeof this.tests !== "undefined") {
                     var tests = this.tests.reduce(function (memo, test) {
-                        var t = {index : total, passed : test.passed(), failMsg : test.getFailMessage(), hadError : test.hadError(), result : test.getLastResult(), running : test.isRunning(), inputMap : "", debug : test.isDebugging()}
+                        var t = {output : test.get("output"), index : total, passed : test.passed(), failMsg : test.getFailMessage(), hadError : test.hadError(), result : test.getLastResult(), running : test.isRunning(), inputMap : "", debug : test.isDebugging()}
 
                         _.each(test.get("inputs"), function (a, b) {
                             t.inputMap += b + ' &rarr; <a href="#" class="edit" data-pk="' + total + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
@@ -66,30 +65,23 @@ define([
                 });
 
             }, runAll      : function (e) {
-                var editor = this.scenario.get("activeEditor");
-                var that = this
+                var name = this.scenario.get("activeEditor").get("name");
                 this.tests.forEach(function (test) {
-                    that.scenario.runTest(test, editor.get("name"), false);
-                    alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
-                })
+                    this.scenario.runTest(test, name, false);
+                }, this)
                 e.preventDefault()
             }, newTestCase : function () {
                 this.tests.newEmptyCase()
                 this.render()
             }, run         : function (e) {
                 var number = $(e.target).data("index")
-                var editor = this.scenario.get("activeEditor");
-                var test = this.tests.at(number)
-                this.scenario.runTest(test, editor.get("name"), false);
-                alertify.log("Started test on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
+                this.scenario.runTest(this.tests.at(number), this.scenario.get("activeEditor").get("name"), false);
                 e.preventDefault()
             }, debug       : function (e) {
                 var number = $(e.target).data("index")
-                var editor = this.scenario.get("activeEditor");
-                var test = this.tests.at(number)
-                this.scenario.runTest(test, editor.get("name"), true)
-                alertify.log("Started debugging on " + editor.get("name") + " with inputs " + JSON.stringify(test.get("inputs")))
+                this.scenario.runTest(this.tests.at(number), this.scenario.get("activeEditor").get("name"), true)
                 channels.debug.trigger("enable")
+                //TODO: This doesn't belong
                 this.$el.trigger('reveal:close');
                 e.preventDefault()
             }, stop        : function (e) {

@@ -15,25 +15,35 @@ define([
                         var box = b.box
                         if (e.e.layerX >= (box.left - (box.width / 2)) && e.e.layerX < (box.left + (box.width / 2)) && e.e.layerY >= (box.top - box.height / 2) && e.e.layerY < (box.top + (box.height / 2))) {
                             animated = true;
-                            box.bringToFront()
-                            box.opacity = 0.7
+                            canvas.clear()
+                            canvas.add(box)
+                            box.animate('opacity', 0, {
+                                duration : 700,
+                                onChange   : canvas.renderAll.bind(canvas),
+                                onComplete : _.bind(function () {
+                                    animated = false;
+                                    this.editorModel.get("task").extend(b.func.envEditor)
+                                }, this)
+                            });
+
                             box.animate('width', canvas.getWidth() * 2, {
+                                duration : 500
+                            });
+                            box.animate('top', canvas.getHeight() / 2, {
+                                duration : 500
+                            });
+                            box.animate('left', canvas.getWidth() / 2, {
                                 duration : 500
                             });
 
                             box.animate('height', canvas.getHeight() * 2, {
-                                duration   : 500,
-                                onChange   : canvas.renderAll.bind(canvas),
-                                onComplete : function () {
-                                    animated = false;
-                                    this.editorModel.get("task").extend(b.func.envEditor)
-                                }
+                                duration   : 500
                             });
 
                         }
-                    })
+                    }, this)
                 }
-            }), this)
+            }, this))
         },
         beforeRender        : function () {
             this.boxes = []
@@ -56,8 +66,10 @@ define([
                             fontWeight   : 'bold',
                             'text-align' : 'right'
                         });
-                        this.canvas.add(text);
+                        text.lockMovementX = text.lockMovementY = true;
                         text.left = text.left - (text.width / 2) - 14
+                        text.hasControls = text.hasBorders = false;
+                        this.canvas.add(text);
                     } else {
                         wire.stroke = "rgb(192,15,19)"
                         wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});
@@ -83,11 +95,14 @@ define([
                     fontFamily : 'Helvetica',
                     fontWeight : 'bold'
                 });
+                text.lockMovementX = text.lockMovementY = true;
+                text.hasControls = text.hasBorders = false;
                 this.canvas.add(text);
             }
 
             if ("envEditor" in func) {
                 this.boxes.push({box : box, func : func})
+                box.shadow = new fabric.Shadow({ color : 'rgba(0,0,0,0.7)', blur : 35});
             }
         }, failMessage      : function (msg) {
             if (typeof msg !== "undefined") {
@@ -101,10 +116,12 @@ define([
                     'text-align' : 'left'
                 });
                 text.left = text.left + (text.width / 2)
+                text.lockMovementX = text.lockMovementY = true;
+                text.hasControls = text.hasBorders = false;
                 this.canvas.add(text);
             }
 
-        }
+        }, moving           : false
 
     })));
 });

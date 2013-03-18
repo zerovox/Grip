@@ -73,6 +73,7 @@ function debug(env) {
 function debugArray(env) {
     if (env !== undefined) {
         var a = debugArray(env.callee)
+        if(env.editor)
         env.editor.name = env.name;
         a.push(env.editor)
         return a
@@ -99,7 +100,6 @@ function newEnv(editor, inputs, name) {
 
 function step(env) {
     var ft = env.stack.pop();
-    env.previousState = ft
     switch (ft.action) {
         case "e" :
             //Check cache for a result to the ft.func call, if not found, pass the 'real' implemented function on to the "r" action to run
@@ -112,10 +112,10 @@ function step(env) {
                 if (ft.func.function in localFunctions) {
                     var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
                     ft.func.envEditor = editor;
+                    editor.name = ft.func.function
                     env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))
                     //We don't use the extend here, as we want to create a fresh stack frame
                     var func = editor.functions[editor.output]
-                    log(editor)
                     if (func === undefined)
                         env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
                     else
@@ -180,6 +180,7 @@ function step(env) {
         case "o":
             return false
     }
+    env.previousState = ft
     return true
 }
 

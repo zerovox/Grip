@@ -19,9 +19,13 @@ define([
             var stack = _.clone(this.stackTrace, true)
             var level = this.level;
             _.each(stack, function (item, index) {
+                if(typeof item !== "undefined"){
                 item.index = index
                 if (index === level)
                     item.active = true;
+                } else {
+                    item = {}
+                }
             })
             var html = Mustache.render(StackTraceTemplate, {stack : stack});
             this.$el.html(html);

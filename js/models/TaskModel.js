@@ -58,6 +58,7 @@ define([
             this.set("failed", true)
         },
         update            : function (editor) {
+            console.log(editor)
             this.set("stackTrace", editor)
             this.set("level", editor.length - 1)
         }, getActiveMap   : function () {
@@ -75,6 +76,8 @@ define([
             var editor = this.get("stackTrace")
             editor[this.get("level")] = map
             editor.splice(this.get("level") + 1, editor.length - this.get("level") - 1)
+            console.log(map)
+            this.trigger("change")
         }, getFailMessage : function () {
             return this.get("failMsg")
         }, terminate      : function () {

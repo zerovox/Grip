@@ -241,6 +241,6 @@ define([
 
             input.ex = ex
             this.canvas.add(ex)
-        }
+        }, moving : true
     })));
 });

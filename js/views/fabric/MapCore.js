@@ -158,8 +158,10 @@ define([
                 wire.type = "wire"
                 inp.wire = wire
 
+                canvas.add(wire)
+
                 function rewire(inp) {
-                    if(typeof inp !== "undefined" && "wire" in inp && inp.wire == wire){
+                    if (typeof inp !== "undefined" && "wire" in inp && inp.wire == wire) {
                         var context = canvas.getContext();
                         var controlMid = ((out.getLeft() + inp.getLeft()) / 2)
                         wire.path[0][1] = inp.getLeft()
@@ -175,17 +177,16 @@ define([
                     }
                 }
 
-                if (func !== undefined) {
-                    func.on('moving', function(){rewire(inp)})
+                if (this.moving) {
+                    if (func !== undefined) {
+                        func.on('moving', function () {rewire(inp)})
+                    }
+                    if (func2 !== undefined) {
+                        func2.on('moving', function () {rewire(inp)})
+                    }
                 }
-                if (func2 !== undefined) {
-                    func2.on('moving', function(){rewire(inp)})
-                }
-
                 if (this.onWired)
                     this.onWired(inp, out, wire)
-
-                canvas.add(wire)
                 rewire(inp)
                 return wire;
             },
@@ -222,31 +223,36 @@ define([
 
                 box.inputs = {}
                 _.each(funcReal.inputs, function (name, index) {
-                    var input = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
-                    input.hasControls = input.hasBorders = false;
-                    input.lockMovementX = input.lockMovementY = true;
-                    input.type = "input";
-                    canvas.add(input)
+                        var input = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
+                        input.hasControls = input.hasBorders = false;
+                        input.lockMovementX = input.lockMovementY = true;
+                        input.type = "input";
+                        canvas.add(input)
 
-                    function positionInput(box) {
-                        input.setTop(box.getTop() - height / 2 + ((index + 1) / (funcReal.inputs.length + 1)) * height).setCoords();
-                        input.setLeft(box.getLeft() - width / 2).setCoords();
-                        input.render(canvas.getContext())
-                    }
+                        if (func.inputs !== undefined) {
+                            var inp = func.inputs[name]
+                            if (inp !== undefined)
+                                input.wireTo = inp.wired;
+                        }
+                        input.func = box;
+                        input.name = name;
+                        box.inputs[name] = input
 
-                    box.on('moving', function () {
-                        positionInput(box)
-                    })
-                    positionInput(box);
-                    if (func.inputs !== undefined) {
-                        var inp = func.inputs[name]
-                        if (inp !== undefined)
-                            input.wireTo = inp.wired;
-                    }
-                    input.func = box;
-                    input.name = name;
-                    box.inputs[name] = input
-                })
+                        function positionInput(box) {
+                            input.setTop(box.getTop() - height / 2 + ((index + 1) / (funcReal.inputs.length + 1)) * height).setCoords();
+                            input.setLeft(box.getLeft() - width / 2).setCoords();
+                            input.render(canvas.getContext())
+                        }
+
+                        if (this.moving) {
+                            box.on('moving', function () {
+                                positionInput(box)
+                            })
+                        }
+
+                        positionInput(box);
+                    }, this
+                )
 
                 var output = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
                 output.hasControls = output.hasBorders = false;
@@ -254,26 +260,24 @@ define([
 
                 output.type = "functionOutput";
                 output.func = box;
+                box.type = "function"
                 box.output = output;
+
+                canvas.add(output)
 
                 function positionOutput(box) {
                     output.setTop(box.getTop()).setCoords();
                     output.setLeft(box.getLeft() + width / 2).setCoords();
                     output.render(canvas.getContext())
                 }
-
-                box.on('moving', function () {
-                    positionOutput(box)
-                })
-
-                box.type = "function"
-
+                if (this.moving) {
+                    box.on('moving', function () {
+                        positionOutput(box)
+                    })
+                }
+                positionOutput(box);
                 if (this.onNewFunction)
                     this.onNewFunction(funcReal, func, box)
-
-                canvas.add(output)
-                positionOutput(box);
-
                 return box;
             },
             newOutput           : function () {
@@ -319,15 +323,19 @@ define([
                     var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                     return v.toString(16);
                 });
-            }, hide             : function () {
+            },
+            hide                : function () {
                 this.$el.parent().hide();
-            }, show             : function () {
+            },
+            show                : function () {
                 this.$el.parent().show();
                 this.resize()
-            }, remove : function(){
+            },
+            remove              : function () {
                 this.hide();
             }
         }
     }
 
-});
+})
+;

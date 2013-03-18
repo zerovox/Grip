@@ -25,7 +25,7 @@
                     {{^running}}
                         {{#passed}}Test passed{{/passed}}
                         {{^passed}}
-                            {{^result}}Test has not passed{{/result}}
+                            Test has not passed
                         {{/passed}}
                     {{/running}}
                 {{/hadError}}</td>

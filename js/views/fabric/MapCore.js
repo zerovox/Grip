@@ -71,14 +71,15 @@ define([
             render              : function () {
                 if (this.beforeRender)
                     this.beforeRender()
+                console.log(this)
                 var canvas = this.canvas
+                if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
                 var map = this.editorModel.get("map")
                 //Clear the canvas
                 canvas.clear()
                 //Add find target events
                 this.addFindTargetEvents(canvas)
                 //Check we have a map to render
-                if (typeof map !== "undefined") {
 
                     //Store an ordered list of functions. Ordering is the same as the original model. Used to wire up the view.
                     var functions = {}

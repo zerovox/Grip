@@ -25,7 +25,7 @@ define([
 
             this.functionList = new FunctionList(scen.get("functions"), scen.get("list"));
 
-            this.listenTo(scen, "change", function(){this.update(scen);})
+            this.listenTo(scen, "change", _.bind(this.update, this, scen))
         },
         update : function(scen){
             this.editorInfo.remove()

@@ -11,15 +11,12 @@ define([
             canvas.on('object:over', _.bind(function (e) {
                 var target = e.target
                 target.oldfill = target.getFill()
-                if (target.type !== undefined) {
+                switch (target.type) {
                     //If hover over wires or functions
-
-                    if (target.type === "wire") {
+                    case("wire"):
                         target.oldfill = target.getStroke();
-                        //target.setStroke('rgb(77,77,77)');
-                    }
-
-                    if (target.type === "input") {
+                        break;
+                    case("input"):
                         target.setFill('rgb(77,77,77)');
                         target.hoverText = new fabric.Text(target.name, {
                             fontSize     : 16,
@@ -32,42 +29,46 @@ define([
                         });
                         this.canvas.add(target.hoverText);
                         target.hoverText.left = target.hoverText.left - (target.hoverText.width / 2) - 14
-                    }
-
-                    if (target.type === "output" || target.type === "functionOutput") {
+                        break;
+                    case("output"):
+                    case("functionOutput"):
                         target.setFill('rgb(77,77,77)');
-                    }
-
-                    if (target.type === "functionInput") {
+                        break;
+                    case("functionInput"):
                         target.ex.setFill(target.ex.hoverFill)
-                    }
-
-                    if (target.type === "ex") {
+                        break;
+                    case("ex"):
                         target.setFill(target.fullFill)
                         target.hovered = true
-                    }
-
-                    canvas.renderAll();
+                        break;
+                    default:
+                        break;
                 }
+
+                canvas.renderAll();
             }, this));
 
             canvas.on('object:out', function (e) {
                 var target = e.target
-                if (target.type !== undefined && target.type === "wire") {
-                    target.setStroke(target.oldfill);
-                } else {
-                    if (target.type !== undefined && target.type === "functionInput" && !target.ex.hovered) {
-                        target.ex.setFill(target.ex.noFill)
-                    }
-                    if (target.hoverText !== undefined) {
-                        canvas.remove(target.hoverText)
-                        delete target.hoverText
-                    }
-                    if (target.type !== undefined && target.type === "ex") {
+                switch (target.type) {
+                    case("wire"):
+                        target.setStroke(target.oldfill);
+                        break;
+                    case ("functionInput"):
+                        if (!target.ex.hovered)
+                            target.ex.setFill(target.ex.noFill)
+                        break;
+                    case ("ex"):
                         target.hovered = false
-                    }
-                    target.setFill(target.oldfill);
+                    default :
+                        target.setFill(target.oldfill);
+                        break;
                 }
+                if (target.hoverText !== undefined) {
+                    canvas.remove(target.hoverText)
+                    delete target.hoverText
+                }
+
                 delete target.oldfill;
                 canvas.renderAll();
             });
@@ -80,7 +81,7 @@ define([
             var dragging = false;
             var removeFunction = false;
 
-            var wireInModel = function(source, target, editorModel) {
+            var wireInModel = function (source, target, editorModel) {
                 if (target.func !== source.func) {
                     this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
@@ -115,39 +116,50 @@ define([
             //TODO: Refactor out fromInput/fromOutput
             canvas.on({'mouse:down' : _.bind(function (e) {
                 var target = e.target
-                if (target !== undefined && target.type === "functionOutput") {
-                    canvas.remove(wire);
-                    if (fromInput) {
-                        wireInModel(target, source, this.editorModel)
-                    } else {
-                        fromOutput = true;
-                        wire = addWire(e.e);
-                        source = target;
+                if (typeof target !== "undefined") {
+                    switch (target.type) {
+                        case("functionOutput"):
+                            canvas.remove(wire);
+                            if (fromInput) {
+                                wireInModel(target, source, this.editorModel)
+                            } else {
+                                fromOutput = true;
+                                wire = addWire(e.e);
+                                source = target;
+                            }
+                            fromInput = false;
+                            break;
+                        case("input"):
+                        case("output"):
+                            canvas.remove(wire);
+                            if (fromOutput) {
+                                wireInModel(source, target, this.editorModel)
+                            } else {
+                                fromInput = true;
+                                wire = addWire(e.e);
+                                source = target;
+                            }
+                            fromOutput = false;
+                            break;
+                        case("function"):
+                            this.showEdges()
+                            dragging = true;
+                            break;
+                        case("ex"):
+                            this.editorModel.removeInput(target.input)
+                            this.render()
+                            break;
+                        default:
+                            break;
+
                     }
-                    fromInput = false;
-                } else if (target !== undefined && (target.type === "input" || target.type === "output")) {
-                    canvas.remove(wire);
-                    if (fromOutput) {
-                        wireInModel(source, target, this.editorModel)
-                    } else {
-                        fromInput = true;
-                        wire = addWire(e.e);
-                        source = target;
-                    }
-                    fromOutput = false;
-                    /*} else if (target !== undefined && target.type === "wire") {
-                     console.log("remove wire")*/
-                } else if (target !== undefined && target.type === "function") {
-                    this.showEdges()
-                    dragging = true;
-                } else if (target !== undefined && target.type === "ex") {
-                    this.editorModel.removeInput(target.input)
-                    this.render()
                 } else {
                     fromOutput = fromInput = false;
                     canvas.remove(wire);
                 }
-            }, this)});
+
+            }, this)
+            });
 
             canvas.on({'mouse:up' : _.bind(function (e) {
                 dragging = false;
@@ -158,7 +170,7 @@ define([
                 }
 
                 removeFunction = false;
-            },this)})
+            }, this)})
 
             canvas.on({'mouse:move' : _.bind(function (e) {
                 if (fromOutput || fromInput) {
@@ -184,16 +196,18 @@ define([
                         removeFunction = false;
                     }
                 }
-            },this)})
+            }, this)})
         },
         el                  : "#editorMap",
         maxHeightPercentage : 0.8,
         showEdges           : function () {
             this.canvas.add(this.edges)
             this.edges.setFill(this.edges.unselectedFill)
-        }, hideEdges        : function () {
+        },
+        hideEdges           : function () {
             this.canvas.remove(this.edges)
-        }, onResize         : function (h, w) {
+        },
+        onResize            : function (h, w) {
             var left = new fabric.Rect({left : 10, top : h / 2, width : 20, height : h});
             var right = new fabric.Rect({left : w - 10, top : h / 2, width : 20, height : h});
             var top = new fabric.Rect({left : w / 2, top : 10, width : w - 40, height : 20})
@@ -203,7 +217,8 @@ define([
             this.edges.unselectedFill = "rgba(198, 15, 19, .2)"
             this.edges.selectedFill = "rgba(198, 15, 19, .9)"
             this.edges.setFill(this.edges.unselectedFill)
-        }, onNewFunction    : function (funcModel, funcImpl, box) {
+        },
+        onNewFunction       : function (funcModel, funcImpl, box) {
             box.modelId = funcImpl.name
 
             box.on('moving', _.bind(function () {
@@ -212,7 +227,8 @@ define([
 
             this.canvas.renderAll()
 
-        }, addFunction      : function (func) {
+        },
+        addFunction         : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
             this.editorModel.addFunction(funcModel)
@@ -241,6 +257,9 @@ define([
 
             input.ex = ex
             this.canvas.add(ex)
-        }, moving : true
-    })));
-});
+        },
+        moving              : true
+    })))
+        ;
+})
+;

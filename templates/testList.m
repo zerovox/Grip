@@ -11,14 +11,15 @@
         <th>Status</th>
         <th>Last Output</th>
         <th>Controls</th>
+        <th>Remove Test</th>
     </tr>
     </thead>
     <tbody id="testTableBody">
         {{#tests}}
         <tr class="{{#passed}}pass{{/passed}}{{^passed}}fail{{/passed}}">
             <td>{{{inputMap}}}</td>
-            <td><a href="#" class="edit" data-pk="{{index}}" data-type="text"
-                   data-original-title="Enter output">{{output}}</a></td>
+            <td><{{#readonly}}div{{/readonly}}{{^readonly}}a href="#" class="edit"{{/readonly}} data-pk="{{index}}" data-type="text"
+                   data-original-title="Enter output">{{output}}</{{#readonly}}div{{/readonly}}{{^readonly}}a{{/readonly}}></td>
             <td>{{#hadError}}Error : {{failMsg}}{{/hadError}}
                 {{^hadError}}
                     {{#running}}Test Running{{/running}}
@@ -50,6 +51,9 @@
                         <li><a href="#" class="button small alert stop" data-index="{{index}}">Stop</a></li>
                     {{/running}}
                 </ul>
+            </td>
+            <td>
+                {{#readonly}}Fixed Test (No cheating!){{/readonly}}{{^readonly}}<a href="#" class="button small alert remove" data-index="{{index}}">Remove</a>{{/readonly}}
             </td>
         </tr>
         {{/tests}}

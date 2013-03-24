@@ -13,7 +13,8 @@ define([
                 "click .run"         : "run",
                 "click .debug"       : "debug",
                 "click .stop"        : "stop",
-                "click .resumedebug" : "resumedebug"
+                "click .resumedebug" : "resumedebug",
+                "click .remove"  : "removeTest"
             },
             initialize     : function (m) {
                 this.tests = m.tests;
@@ -27,10 +28,9 @@ define([
 
                 if (typeof this.tests !== "undefined") {
                     var tests = this.tests.reduce(function (memo, test) {
-                        var t = {output : test.get("output"), index : total, passed : test.passed(), failMsg : test.getFailMessage(), hadError : test.hadError(), result : test.getLastResult(), running : test.isRunning(), inputMap : "", debug : test.isDebugging()}
-
+                        var t = {output : test.get("output"), index : total, readonly : test.get("readonly"), passed : test.passed(), failMsg : test.getFailMessage(), hadError : test.hadError(), result : test.getLastResult(), running : test.isRunning(), inputMap : "", debug : test.isDebugging()}
                         _.each(test.get("inputs"), function (a, b) {
-                            t.inputMap += b + ' &rarr; <a href="#" class="edit" data-pk="' + total + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + "</a><br \\>"
+                            t.inputMap += b + ' &rarr; <' +(t.readonly ? "div" : 'a class="edit" href="#"') + 'data-pk="' +  total + '" data-type="text" data-name="' + b + '" data-original-title="Enter ' + b + '">' + a + '</' +(t.readonly ? "div" : 'a') + '><br \\>'
                         })
 
                         memo.push(t)
@@ -88,12 +88,18 @@ define([
                 if (test.isRunning()) {
                     test.kill()
                 }
+                e.preventDefault()
             }, resumedebug       : function (e) {
                 var number = $(e.target).data("index")
                 var test = this.tests.at(number)
                 this.scenario.swapActiveDebug(test)
                 channels.debug.trigger("enable")
                 this.$el.trigger('reveal:close');
+                e.preventDefault()
+            }, removeTest        : function (e) {
+                var number = $(e.target).data("index")
+                this.tests.remove(this.tests.at(number));
+                this.render()
                 e.preventDefault()
             }
         }

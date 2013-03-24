@@ -14,7 +14,6 @@ define([
             "click #extras"    : "extras"
         },
         initialize      : function (i) {
-            console.log(i)
             this.scen = i.scen;
             this.render()
             this.dbg = false;
@@ -27,8 +26,6 @@ define([
         test            : function () {
             if ($("#testModal").reveal)
                 $("#testModal").reveal()
-            else
-                console.log($("#testModal").reveal)
         }, render       : function () {
             var html = Mustache.render(ModalBar, {debug : this.dbg});
             this.$el.html(html);

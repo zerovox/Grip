@@ -43,7 +43,6 @@ define([
                 canvas.findTarget = (function (originalFn) {
                     return function () {
                         var target = originalFn.apply(this, arguments);
-                        //console.log(target, arguments)
                         if (target) {
                             if (this._hoveredTarget !== target) {
                                 canvas.fire('object:over', { target : target });
@@ -71,7 +70,6 @@ define([
             render              : function () {
                 if (this.beforeRender)
                     this.beforeRender()
-                console.log(this)
                 var canvas = this.canvas
                 if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
                 var map = this.editorModel.get("map")
@@ -297,7 +295,6 @@ define([
                 var canvas = this.canvas;
                 var h = window.screen.height
                 var w = window.screen.width
-                console.log(h, w)
                 canvas.setHeight(h);
                 canvas.setWidth(w);
                 if (this.onResize)

@@ -14,23 +14,23 @@ var require = {
         modernizr        : "libs/foundation.modernizr",
         mocha            : "libs/mocha",
         chai             : "libs/chai",
-        "intro"         : "libs/intro.min"
+        intro            : "libs/intro.min"
     },
     shim    : {
-        'backbone'       : {
+        'backbone'                          : {
             deps    : ['underscore', 'jquery'],
             exports : 'Backbone'
-        },
-        'foundation.app' : {
-            deps : ['modernizr', 'jquery', 'foundation', 'libs/jquery-editable-poshytip.min', 'intro']
         },
         'libs/jquery-editable-poshytip.min' : {
             deps : ['jquery']
         },
-        'mocha'         : {
-           exports : 'mocha'
+        'foundation.app'                    : {
+            deps : ['modernizr', 'jquery', 'foundation', 'libs/jquery-editable-poshytip.min', 'intro']
         },
-        'intro' : {
+        'mocha'                             : {
+            exports : 'mocha'
+        },
+        'intro'                             : {
             exports : 'introJs'
         }
     }};

@@ -4,10 +4,16 @@ var primitives = (function () {
             name  : "number",
             group : "Mathematical",
             arg   : true,
+            toHaskell : function(inputs, arg){
+                return arg
+            },
             'new' : function (arg) {
                 return {
                     name   : "number",
                     inputs : [],
+                    toHaskell : function(inputs){
+                        return arg
+                    },
                     arg    : arg,
                     apply  : function () {
                         return {result : arg, debug : "Constant"};
@@ -18,6 +24,9 @@ var primitives = (function () {
         {
             name   : "multiply",
             group  : "Mathematical",
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " * " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : parseFloat(a) * parseFloat(b), debug : "Calculated " + a + " * " + b}}}
@@ -29,6 +38,9 @@ var primitives = (function () {
             name   : "plus",
             group  : "Mathematical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " + " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : parseFloat(a) + parseFloat(b), debug : "Calculated " + a + " + " + b}}}
@@ -39,6 +51,9 @@ var primitives = (function () {
             name   : "equals",
             group  : "Logical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " == " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : a == b, debug : "Calculated " + a + " == " + b}}}
@@ -49,6 +64,9 @@ var primitives = (function () {
             name   : "minus",
             group  : "Mathematical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " - " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : parseFloat(a) - parseFloat(b), debug : "Calculated " + a + " - " + b}}}
@@ -56,15 +74,18 @@ var primitives = (function () {
             }
         },
         {
-            inputs : ["test", "then", "els"],
+            inputs : ["test", "then", "else"],
             group  : "Logical",
             name   : "if",
+            toHaskell : function(inputs){
+                return "( if" + inputs.test + " then " + inputs.then + " else " + inputs.else + " )"
+            },
             apply  : function () {
                 return {need : "test", cont : function (test) {
                     if (/true/i.test(test))
                         return {need : "then", cont : function (then) {return {result : then}}}
                     else
-                        return {need : "els", cont : function (els) {return {result : els}}}
+                        return {need : "else", cont : function (els) {return {result : els}}}
                 }}
             }
         },
@@ -72,6 +93,9 @@ var primitives = (function () {
             group  : "Logical",
             inputs : [],
             name   : "true",
+            toHaskell : function(inputs){
+                return "True"
+            },
             apply  : function () {
                 return {result : true}
             }
@@ -80,6 +104,9 @@ var primitives = (function () {
             group  : "Logical",
             inputs : [],
             name   : "false",
+            toHaskell : function(inputs){
+                return "False"
+            },
             apply  : function () {
                 return {result : false}
             }
@@ -88,6 +115,9 @@ var primitives = (function () {
             name   : "successor",
             group  : "Mathematical",
             inputs : ["a"],
+            toHaskell : function(inputs){
+                return "(succ " + inputs.a + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {result : parseFloat(a) + 1, debug : "Calculated " + a + " + 1"}
@@ -98,6 +128,9 @@ var primitives = (function () {
             name   : "predecessor",
             group  : "Mathematical",
             inputs : ["a"],
+            toHaskell : function(inputs){
+                return "(pred " + inputs.a + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {result : parseFloat(a) - 1, debug : "Calculated " + a + " - 1"}
@@ -108,6 +141,9 @@ var primitives = (function () {
             name   : "is zero",
             group  : "Mathematical",
             inputs : ["a"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " == 0)"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {result : parseFloat(a) === 0, debug : "Calculated (" + a + " = 0)?"}
@@ -118,6 +154,9 @@ var primitives = (function () {
             name   : "or",
             group  : "Logical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " || " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : a || b, debug : "Calculated " + a + " or " + b}}}
@@ -128,6 +167,9 @@ var primitives = (function () {
             name   : "and",
             group  : "Logical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " && " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : a && b, debug : "Calculated " + a + " and " + b}}}
@@ -137,7 +179,10 @@ var primitives = (function () {
         {
             name   : "not",
             group  : "Logical",
-            inputs : ["a", "b"],
+            inputs : ["a"],
+            toHaskell : function(inputs){
+                return "(not " + inputs.a + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {result : !a, debug : "Calculated not " + a}
@@ -148,6 +193,9 @@ var primitives = (function () {
             name   : "join",
             group  : "String",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " ++ " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : a + b, debug : "Calculated " + a + b}}}
@@ -158,6 +206,9 @@ var primitives = (function () {
             name   : "length",
             group  : "String",
             inputs : ["string"],
+            toHaskell : function(inputs){
+                return "(len " + inputs.string +")"
+            },
             apply  : function () {
                 return {need : "string", cont : function (a) {
                     return {result : a.length, debug : "Calculated length of " + a}
@@ -168,6 +219,9 @@ var primitives = (function () {
             name   : "take",
             group  : "String",
             inputs : ["string", "n"],
+            toHaskell : function(inputs){
+                return "(take " + inputs.n + " " + inputs.string + ")"
+            },
             apply  : function () {
                 return {need : "string", cont : function (a) {
                     return {need : "n", cont : function (b) {return {result : a.substr(0, b), debug : "Took first " + b + " characters from " + a}}}
@@ -178,6 +232,9 @@ var primitives = (function () {
             name   : "drop",
             group  : "String",
             inputs : ["string", "n"],
+            toHaskell : function(inputs){
+                return "(drop " + inputs.n + " " + inputs.string + ")"
+            },
             apply  : function () {
                 return {need : "string", cont : function (a) {
                     return {need : "n", cont : function (b) {return {result : a.substr(b, a.length - b), debug : "Dropped first " + b + " characters from " + a}}}
@@ -188,6 +245,9 @@ var primitives = (function () {
             name   : "less than",
             group  : "Mathematical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " < " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : parseFloat(a) < parseFloat(b), debug : "Calculated " + a + " + " + b}}}
@@ -198,6 +258,9 @@ var primitives = (function () {
             name   : "greater than",
             group  : "Mathematical",
             inputs : ["a", "b"],
+            toHaskell : function(inputs){
+                return "(" + inputs.a + " > " + inputs.b + ")"
+            },
             apply  : function () {
                 return {need : "a", cont : function (a) {
                     return {need : "b", cont : function (b) {return {result : parseFloat(a) > parseFloat(b), debug : "Calculated " + a + " + " + b}}}

@@ -31,13 +31,13 @@
                 "info"  : "Now write another very simple function to test if an number is equal to zero. You should only need one function and one number for this, don't over think it! Run all the test cases to continue."
             }, {
                 "name"  : "tax",
-                "map"   : { "inputs" : { "cost" : {}, "tax" : {} }, "functions" : { } },
+                "map"   : { "inputs" : { "cost" : {}, "tx" : {} }, "functions" : { } },
                 "tests" : [
-                    { "inputs" : { "cost" : 16, "tax" : 0 }, "output" : 16 },
-                    { "inputs" : { "cost" : 20, "tax" : 0.1 }, "output" : 22 },
-                    { "inputs" : { "cost" : 700, "tax" : 0.175 }, "output" : 822.5 }
+                    { "inputs" : { "cost" : 16, "tx" : 0 }, "output" : 16 },
+                    { "inputs" : { "cost" : 20, "tx" : 0.1 }, "output" : 22 },
+                    { "inputs" : { "cost" : 700, "tx" : 0.175 }, "output" : 822.5 }
                 ],
-                "info"  : "Imagine you're writing the software behind a online shop and you need to caculate the total of an order after tax has been applied. There are two inputs to this calculation, 'cost' which will contain the cost of items and 'tax' which will contain a decimal such as 0.25 meaning the rate of tax is 25%. Write a function to output the total cost after tax. "
+                "info"  : "Imagine you're writing the software behind a online shop and you need to caculate the total of an order after tax has been applied. There are two inputs to this calculation, 'cost' which will contain the cost of items and 'tx' which will contain a decimal such as 0.25 meaning the rate of tax is 25%. Write a function to output the total cost after tax. "
             }],
         "functions" : [ "number", "multiply", "equals", "minus", "plus" ]
     }, {

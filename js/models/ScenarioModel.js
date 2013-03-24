@@ -42,6 +42,11 @@ define([
         }, newEditor : function (name) {
             var newEditor = new (this.get("list").model)({name : name})
             this.get("list").add(newEditor)
+        }, toHaskell : function(header){
+            header = typeof header === "undefined"? true : header;
+            return this.get("list").reduce(function(memo, model){
+                return memo + model.toHaskell(this.get("functions")) + "\n\n"
+            }, (header ? "import System.Environment\n\nmain = do\n&nbsp;&nbsp;&nbsp;&nbsp;args <- getArgs\n&nbsp;&nbsp;&nbsp;&nbsp;" +this.get("activeEditor").get("name")+" args\n\n": ""), this)
         }
     });
 

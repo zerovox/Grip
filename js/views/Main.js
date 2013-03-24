@@ -17,7 +17,7 @@ define([
             //Create a view for each UI component
             this.scenarioList = new ScenarioList(this.scenarios)
             this.editorView = new Editor(this.scenarios.get("activeScenario"))
-            this.modalBar = new ModalBar()
+            this.modalBar = new ModalBar({scen : this.scenarios.get("activeScenario")})
 
             //TODO: Clean up this
             this.debugView = {remove : function () {}};

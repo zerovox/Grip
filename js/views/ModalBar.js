@@ -2,16 +2,20 @@ define([
     'backbone',
     'mustache',
     'channels',
-    'libs/text!templates/modalBar.m'
-], function (Backbone, Mustache, channels, ModalBar) {
+    'libs/text!templates/modalBar.m',
+    'views/ExtraModal'
+], function (Backbone, Mustache, channels, ModalBar, ExtraModal) {
 
     return Backbone.View.extend({
         el              : '#modalBar',
         events          : {
             "click #testModalButton" : "test",
-            "click #editorButton"    : "editor"
+            "click #editorButton"    : "editor",
+            "click #extras"    : "extras"
         },
-        initialize      : function () {
+        initialize      : function (i) {
+            console.log(i)
+            this.scen = i.scen;
             this.render()
             this.dbg = false;
         },
@@ -34,6 +38,11 @@ define([
         }, disableDebug : function () {
             this.dbg = false
             this.render()
+        }, extras : function(){
+            if(typeof this.extraModal !== "undefined")
+                this.extraModal.remove()
+            this.extraModal = new ExtraModal({scen : this.scen});
+            $("#extraModal").reveal()
         }
     });
 

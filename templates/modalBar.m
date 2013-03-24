@@ -6,5 +6,6 @@
 {{^debug}}
     <ul class="button-group">
         <li><a href="#" class="secondary button" id="testModalButton">Tests Cases</a></li>
+        <li><a href="#" class="secondary button" id="extras">Extra Tools</a></li>
     </ul>
 {{/debug}}

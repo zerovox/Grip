@@ -6,6 +6,8 @@ require([
     should = chai.should();
     expect = chai.expect;
 
+    chai.Assertion.includeStack = true;
+
     mocha.setup('bdd')
 
     require(['tests/run'], function(){

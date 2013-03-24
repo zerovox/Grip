@@ -42,6 +42,7 @@ define([
         }, newEditor : function (name) {
             var newEditor = new (this.get("list").model)({name : name})
             this.get("list").add(newEditor)
+            this.trigger("change")
         }, toHaskell : function(header){
             header = typeof header === "undefined"? true : header;
             return this.get("list").reduce(function(memo, model){

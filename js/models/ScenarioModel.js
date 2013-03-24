@@ -39,6 +39,14 @@ define([
             return false
         }, swapActiveDebug     : function (test) {
             this.set({activeTask : test.get("task")})
+        }, newEditorFromJson : function(json){
+            var models = this.get("list").where({name : json.name});
+            if(models.length > 0)
+                this.get("list").remove(models)
+            var newEditor = new (this.get("list").model)(json)
+            this.get("list").add(newEditor)
+            this.swap(newEditor.get("name"))
+            this.trigger("change")
         }, newEditor : function (name) {
             var newEditor = new (this.get("list").model)({name : name})
             this.get("list").add(newEditor)

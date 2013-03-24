@@ -10,7 +10,8 @@ define([
             el         : '#extraModal',
             events     : {
                 "click #intro"  : "intro",
-                "click #export" : "export"
+                "click #export" : "export",
+                "click #link" : "linkTo"
             },
             initialize : function (i) {
                 this.scen = i.scen;
@@ -27,6 +28,11 @@ define([
             }, intro   : function () {
                 this.$el.trigger('reveal:close');
                 introJs().start()
+            }, linkTo  : function () {
+                if (typeof this.modal !== "undefined")
+                    this.modal.remove()
+                this.modal = new ExportModal({code : 'http://' + window.location.hostname +(window.location.port ? ':'+window.location.port: '') + window.location.pathname + "#/shared/" + JSON.stringify(this.scen.get("activeEditor").toJSON())});
+                $("#exportModal").reveal()
             }
         }
 

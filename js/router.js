@@ -7,6 +7,7 @@ define([
             'editor/:name'        : "switchEditor",
             'scenario/:name'      : "switchScenario",
             'functionGroup/:name' : "switchGroup",
+            'shared/:json'        : "sharedLink",
             '*actions'            : 'defaultAction'
         }
     });
@@ -22,6 +23,9 @@ define([
         })
         app_router.on('route:switchGroup', function (name) {
             channels.editors.trigger("switchFunctionGroup", name)
+        })
+        app_router.on('route:sharedLink', function (json) {
+            channels.editors.trigger("shared", json)
         })
         app_router.on('route:defaultAction', function (actions) {
         })

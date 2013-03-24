@@ -47,6 +47,9 @@ define([
             channels.editors.on("new", function (name) {
                 this.scenarios.get("activeScenario").newEditor(name);
             }, this);
+            channels.editors.on("shared", function (jsonstring) {
+                this.scenarios.get("activeScenario").newEditorFromJson(JSON.parse(jsonstring));
+            }, this);
 
             //Listen for the enable debug mode command, and if we have debug data enter debug mode
             channels.debug.on("enable", function () {

@@ -13,7 +13,7 @@ define([
             _.each(_.uniq(functionsCollection.pluck("group")), function (name) {
                 this.groups.push({name : name, active : false})
             }, this);
-            this.groups.push({name : "LocalFunctions", active : false})
+            this.groups.push({name : "Local Functions", active : false})
             _.first(this.groups).active = true
             this.list = functionsCollection
             this.locals = editorCollection
@@ -35,7 +35,7 @@ define([
             this.render()
         },
         render         : function () {
-            if (this.name === "LocalFunctions")
+            if (this.name === "Local Functions")
                 this.listView.set(this.locals)
             else
                 this.listView.set(this.list.where({group : this.name}))

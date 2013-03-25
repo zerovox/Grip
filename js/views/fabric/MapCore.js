@@ -30,10 +30,10 @@ define([
                 //Make sure the canvas is the correct size
                 this.resize()
 
-                //Record a pointer to the original findTarget method
+                //Record a pointer to the original findTarget method, allowing us to refer to it after we overwrite the original
                 this.ft = canvas.findTarget;
 
-                //Call onInit if defined
+                //If present, call onInit
                 if (this.onInit)
                     this.onInit(canvas)
             },
@@ -68,54 +68,56 @@ define([
                 return this; //Allow set to be chained
             },
             render              : function () {
+                //If present, call the beforeRender handler.
                 if (this.beforeRender)
                     this.beforeRender()
+                //Alias the canvas for simplicity
                 var canvas = this.canvas
-                if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
-                var map = this.editorModel.get("map")
-                //Clear the canvas
-                canvas.clear()
-                //Add find target events
-                this.addFindTargetEvents(canvas)
                 //Check we have a map to render
-
-                    //Store an ordered list of functions. Ordering is the same as the original model. Used to wire up the view.
+                if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
+                    //Get the editor we wish to draw
+                    var map = this.editorModel.get("map")
+                    //Clear the canvas
+                    canvas.clear()
+                    //Add find target events
+                    this.addFindTargetEvents(canvas)
+                    //Initialise mapping to hold all the functions in this editor. This will be used to wire up the view.
                     var functions = {}
-                    //For each function, add to canvas then add to list above.
+                    //Add each function to the canvas
                     _.each(map.functions, function (func, name) {
-                        //Find the 'real' function that corresponds to this functionModel
+                        //Find the primitive function model that corresponds to this function instance
                         var fullFunction = this.functions.find(function (funcp) {
                             return funcp.get("func").name === func.function;
                         })
-                        var ff;
                         if (typeof fullFunction !== "undefined") {
-                            //If the function is found, grab the actual function model from the backbone model container
+                            //If the primitive model was found, we need to grab the primitive function itself.
                             func.name = name;
                             if (func.arg !== undefined) {
-                                //Instantiate a new copy of the function, like for constants with an argument.
-                                ff = fullFunction.get("func")['new'](func.arg);
+                                //If an argument was found(like in the case of a constant), we instantiate a new copy of the function with this argument, then add it to the view
+                                functions[name] = this.newFunction(fullFunction.get("func")['new'](func.arg), func);
                             } else {
-                                ff = fullFunction.get("func");
+                                //Otherwise, we just grab the pre-existing primitive and add this instance to the view
+                                functions[name] = this.newFunction(fullFunction.get("func"), func);
                             }
                         } else {
-                            //Check for a local function with this name instead
+                            //If no primitive was found, it will be a local function. Find the local function with this name.
                             var editor = this.editors.find(function (ed) {
                                 return ed.get("name") === func.function
                             })
-                            var inputs = []
-                            _.each(editor.get("map").inputs, function (map, name) {
-                                inputs.push(name)
-                            })
-                            ff = {name : func.function, inputs : inputs}
+                            //Create an array of input names for this local function
+                            var inputs = _.reduce(editor.get("map").inputs, function (memo, map, name) {
+                                memo.push(name)
+                                return memo;
+                            }, [])
+                            //Add the local function to the view
+                            functions[name] = this.newFunction({name : func.function, inputs : inputs}, func);
                         }
-                        functions[name] = this.newFunction(ff, func);
 
                     }, this)
 
-                    //Add out inputs to the list of functions. Used to wire up the view.
-                    //For each input, add to canvas and then add to the mapping above
+                    //For each input to the function, add a new input box to the canvas and then add to the mapping above
                     var index = 0;
-                    _.each(map.inputs, function (input, name) {
+                    _.each(map.inputs, function (input, name, i, ii) {
                         functions[name] = this.newInput(name, index, _.size(map.inputs));
                         index++
                     }, this);
@@ -123,22 +125,21 @@ define([
                     //For each function, add a wire from any inputs to their targets
                     _.each(functions, function (func) {
                         _.each(func.inputs, function (inp) {
-                            if (inp.wireTo !== undefined && functions[inp.wireTo] !== undefined) {
+                            if (typeof inp.wireTo !== "undefined" && typeof functions[inp.wireTo] !== "undefined") {
                                 this.wireUp(func, functions[inp.wireTo], inp, functions[inp.wireTo].output)
                             }
                         }, this);
                     }, this)
 
-                    //Add the function output to the view and wire it up
+                    //Finally, add to the function to the view and wire it
                     var out = this.newOutput();
-                    if (map.output !== undefined) {
+                    if (typeof map.output !== "undefined") {
                         this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
                     }
                 }
-                //Call the render callback if defined
+                //If present, call the post-render callback
                 if (this.onRender)
                     this.onRender()
-
             },
             wireUp              : function (func, func2, inp, out) {
                 var canvas = this.canvas;
@@ -269,6 +270,7 @@ define([
                     output.setLeft(box.getLeft() + width / 2).setCoords();
                     output.render(canvas.getContext())
                 }
+
                 if (this.moving) {
                     box.on('moving', function () {
                         positionOutput(box)

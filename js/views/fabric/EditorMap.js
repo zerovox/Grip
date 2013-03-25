@@ -5,9 +5,6 @@ define([
 ], function (Backbone, fabric, MapCore) {
     return new (Backbone.View.extend(_.extend(new MapCore(), {
         onInit              : function (canvas) {
-
-
-            //TODO: Refactor next two event handlers
             canvas.on('object:over', _.bind(function (e) {
                 var target = e.target
                 target.oldfill = target.getFill()

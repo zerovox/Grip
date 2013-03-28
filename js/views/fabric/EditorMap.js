@@ -110,7 +110,6 @@ define([
                 return wire;
             }
 
-            //TODO: Refactor out fromInput/fromOutput
             canvas.on({'mouse:down' : _.bind(function (e) {
                 var target = e.target
                 if (typeof target !== "undefined") {
@@ -217,13 +216,9 @@ define([
         },
         onNewFunction       : function (funcModel, funcImpl, box) {
             box.modelId = funcImpl.name
-
             box.on('moving', _.bind(function () {
                 this.editorModel.move(box.modelId, box.getLeft(), box.getTop())
             }, this))
-
-            this.canvas.renderAll()
-
         },
         addFunction         : function (func) {
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};

@@ -25,7 +25,6 @@ define([
                                     this.editorModel.get("task").extend(b.func.envEditor)
                                 }, this)
                             });
-
                             box.animate('width', canvas.getWidth() * 2, {
                                 duration : 500
                             });
@@ -35,11 +34,9 @@ define([
                             box.animate('left', canvas.getWidth() / 2, {
                                 duration : 500
                             });
-
                             box.animate('height', canvas.getHeight() * 2, {
                                 duration   : 500
                             });
-
                         }
                     }, this)
                 }
@@ -120,7 +117,6 @@ define([
                 text.hasControls = text.hasBorders = false;
                 this.canvas.add(text);
             }
-
         }, moving           : false
 
     })));

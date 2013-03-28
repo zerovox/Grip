@@ -53,7 +53,7 @@
                 </ul>
             </td>
             <td>
-                {{#readonly}}Fixed Test (No cheating!){{/readonly}}{{^readonly}}<a href="#" class="button small alert remove" data-index="{{index}}">Remove</a>{{/readonly}}
+                {{#readonly}}Read Only{{/readonly}}{{^readonly}}<a href="#" class="button small alert remove" data-index="{{index}}">Remove</a>{{/readonly}}
             </td>
         </tr>
         {{/tests}}

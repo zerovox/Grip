@@ -1,10 +1,8 @@
 //This gives us access to the variable primitives, the array of primitive functions
 importScripts('../data/primitives.js', '../libs/lodash.min.js')
 
-var resultCaching = true
 var env
 var localFunctions
-var LocalFunctionsFresh
 var prims = {}
 _.each(primitives, function (prim) {
     prims[prim.name] = prim
@@ -12,9 +10,8 @@ _.each(primitives, function (prim) {
 
 onmessage = function (event) {
     if ("main" in event.data) {
-        env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs, event.data.main);
         localFunctions = event.data.localFunctions
-        LocalFunctionsFresh = _.clone(localFunctions, true)
+        env = newEnv(_.clone(event.data.localFunctions[event.data.main], true), event.data.inputs, event.data.main);
         debug(env)
     } else if ("step" in event.data) {
         if (env === undefined) {
@@ -103,14 +100,14 @@ function step(env) {
     switch (ft.action) {
         case "e" :
             //Check cache for a result to the ft.func call, if not found, pass the 'real' implemented function on to the "r" action to run
-            if (resultCaching && "result" in ft.func && ft.func.result !== undefined) {
+            if ("result" in ft.func && ft.func.result !== undefined) {
                 env.returnVal = ft.func.result
                 ft.using.result = env.returnVal
                 ft.using.responded = true
             } else {
                 ft.func.result = undefined;
                 if (ft.func.function in localFunctions) {
-                    var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
+                    var editor = _.clone(localFunctions[ft.func.function], true)
                     ft.func.envEditor = editor;
                     editor.name = ft.func.function
                     env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))

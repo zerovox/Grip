@@ -28,6 +28,8 @@ define([
                 this.scenarioList = new ScenarioList(this.scenarios)
                 this.editorView.remove()
                 this.editorView = new Editor(this.scenarios.get("activeScenario"))
+                this.modalBar.remove()
+                this.modalBar = new ModalBar({scen : this.scenarios.get("activeScenario")})
             }, this)
 
             //Listen for scenario change events, and switch the active scenario accordingly.

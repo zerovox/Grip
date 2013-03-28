@@ -74,11 +74,11 @@ var primitives = (function () {
             }
         },
         {
+            name   : "if",
             inputs : ["test", "then", "else"],
             group  : "Logical",
-            name   : "if",
             toHaskell : function(inputs){
-                return "( if" + inputs.test + " then " + inputs.then + " else " + inputs.else + " )"
+                return "(if " + inputs.test + " then " + inputs.then + " else " + inputs.else + ")"
             },
             apply  : function () {
                 return {need : "test", cont : function (test) {

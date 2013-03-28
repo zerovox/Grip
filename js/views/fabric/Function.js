@@ -31,7 +31,7 @@ define([
             ctx.roundRect(-this.width / 2, -this.height / 2, this.width, this.height, 4).stroke();
             ctx.fillStyle = "#fff"
             ctx.textAlign = 'center'
-            ctx.font = "11pt 'Helvetica Neue' Calibri"
+            ctx.font = "16pt 'Franklin Gothic Medium' 'Helvetica Neue' Calibri"
             ctx.textBaseline = "middle"
             if (this.arg !== undefined)
                 ctx.fillText(this.arg, 0, 0, this.width - 20);

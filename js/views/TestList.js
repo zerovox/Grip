@@ -19,7 +19,7 @@ define([
             initialize     : function (m) {
                 this.tests = m.tests;
                 this.scenario = m.scenario;
-                this.tests.on("change", this.render, this)
+                this.listenTo(this.tests, "change", this.render, this)
                 this.render();
             },
             render         : function () {

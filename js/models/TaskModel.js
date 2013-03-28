@@ -20,28 +20,19 @@ define([
                     this.finished(result.data.result)
                 } else if (result.data.fail !== undefined) {
                     this.fail(result.data.fail)
-                } else if (result.data.need !== undefined) {
-                    worker.postMessage({input : result.data.need, value : inputs[result.data.need]})
                 } else {
-                    if (debug)
-                        this.update(result.data.debug)
+                    this.update(result.data.debug)
                 }
             }
             worker.onmessage = _.bind(on, this)
-            //reduce is essentially foldl provided by underscore.js
             var locals = localFunctions.reduce(function (memo, value) {
-                memo[value.get("name")] = value.get("map")
+                var name = value.get("name")
+                memo[name] = value.get("map")
+                memo[name].name = name
                 return memo
             }, {})
             worker.postMessage({main : mainMethod, localFunctions : locals, inputs : inputs});
-
-            var s = locals[mainMethod]
-            s.name = mainMethod
-            this.set("stackTrace", [s])
-            this.set("globalFunctions", globalFunctions)
-            this.set("localFunctions", localFunctions)
-            this.set("debug", debug)
-
+            this.set({stackTrace : [locals[mainMethod]], globalFunctions : globalFunctions, localFunctions : localFunctions, debug : debug});
         },
         finished          : function (result) {
             this.get("worker").terminate();

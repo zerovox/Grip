@@ -78,6 +78,8 @@ function cont(ft, retVal) {
         if ("func" in ft)
             ft.func.result = response.result
         return response.result
+    } else if ("fail" in response){
+        return fail("Primitive function error:'" + response.fail + "' on function '" + ft.func.function + "'")
     } else {
         if (response.need in ft.func.inputs) {
             var inp = ft.func.inputs[response.need]

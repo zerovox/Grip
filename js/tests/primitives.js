@@ -35,7 +35,7 @@ define(['models/EditorModel'], function (EditorModel) {
         }, this)
         editor.linkOutput(plus.name)
 
-        var worker = new Worker('js/workers/run.js');
+        var worker = new Worker('js/workers/run2.js');
         var on = newCb(output, worker, done)
         worker.onmessage = _.bind(on, this)
         worker.postMessage({main : "func", localFunctions : {"func" : editor.get("map")}, inputs : inputs});

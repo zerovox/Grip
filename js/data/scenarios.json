@@ -19,7 +19,7 @@
                     { "inputs" : { "argument" : 1 }, "readonly" : true, "output" : 0 },
                     { "inputs" : { "argument" : 1 }, "readonly" : true, "output" : 0 }
                 ],
-                "info"  : "What was the point to the previous exersize? As you saw, incrementing a number took two functions. If you click Locak Functions in the function list below, you should see we now have successor avalible to us. This means every time we want to add one to a number, we can just use the function we just created instead, and recreating the same code. This is called abstraction, where we take a commonly used idea, and abstract the implementation away. For this task, write a function that decreses a numbers value by one. The definition should be very similar to the previous one. Make sure you run the tests to continue to the next exersize."
+                "info"  : "What was the point to the previous exercise? As you saw, incrementing a number took two functions. If you click Local Functions in the function list below, you should see we now have successor available to us. This means every time we want to add one to a number, we can just use the function we just created instead, and recreating the same code. This is called abstraction, where we take a commonly used idea, and abstract the implementation away. For this task, write a function that decreases a numbers value by one. The definition should be very similar to the previous one. Make sure you run the tests to continue to the next exercise."
             }, {
                 "name"  : "is zero",
                 "map"   : { "inputs" : { "argument" : {} }, "functions" : { } },
@@ -37,7 +37,7 @@
                     { "inputs" : { "cost" : 20, "tx" : 0.1 }, "readonly" : true, "output" : 22 },
                     { "inputs" : { "cost" : 700, "tx" : 0.175 }, "readonly" : true, "output" : 822.5 }
                 ],
-                "info"  : "Imagine you're writing the software behind a online shop and you need to caculate the total of an order after tax has been applied. There are two inputs to this calculation, 'cost' which will contain the cost of items and 'tx' which will contain a decimal such as 0.25 meaning the rate of tax is 25%. Write a function to output the total cost after tax. "
+                "info"  : "Imagine you're writing the software behind a online shop and you need to calculate the total of an order after tax has been applied. There are two inputs to this calculation, 'cost' which will contain the cost of items and 'tx' which will contain a decimal such as 0.25 meaning the rate of tax is 25%. Write a function to output the total cost after tax. "
             }],
         "functions" : [ "number", "multiply", "equals", "minus", "plus" ]
     }, {
@@ -81,7 +81,7 @@
                     { "inputs" : { "a" : false}, "readonly" : true, "output" : true },
                     { "inputs" : { "a" : true}, "readonly" : true, "output" : false }
                 ],
-                "info"  : "We'll keep building up our logical function toolbox, this time defining the very simple function 'not', which returns the opposite of the input. You might find it interesting that this appears slightly more complicated than the definiton for both 'and' and 'or'. The smallest function that computes 'not' is one function larger than the smallest definiton for both 'and' and 'or'. What is iteresting about the 'not' function that yeilds this property?"
+                "info"  : "We'll keep building up our logical function toolbox, this time defining the very simple function 'not', which returns the opposite of the input. You might find it interesting that this appears slightly more complicated than the definition for both 'and' and 'or'. The smallest function that computes 'not' is one function larger than the smallest definition for both 'and' and 'or'. What is interesting about the 'not' function that yields this property?"
             }, {
                 "name"  : "xor",
                 "map"   : { "inputs" : { "a" : {}, "b" : {} }, "functions" : { } },
@@ -102,7 +102,7 @@
                     { "inputs" : { "a" : true, "b" : false, "c" : true}, "readonly" : true, "output" : true },
                     { "inputs" : { "a" : true, "b" : true, "c" : true}, "readonly" : true, "output" : false }
                 ],
-                "info"  : "Next see if you can define a function that returns true if an even number of inputs its three inputs is true. Try to use the 'xor' function we defined in the pervious exercize."
+                "info"  : "Next see if you can define a function that returns true if an even number of inputs its three inputs is true. Try to use the 'xor' function we defined in the previous exercise."
             }, {
                 "name"  : "4-even",
                 "map"   : { "inputs" : { "a" : {}, "b" : {}, "c" : {}, "d" : {}}, "functions" : { } },
@@ -113,7 +113,7 @@
                     { "inputs" : { "a" : true, "b" : false, "c" : true, "d" : true}, "readonly" : true, "output" : false },
                     { "inputs" : { "a" : true, "b" : true, "c" : true, "d" : true}, "readonly" : true, "output" : true }
                 ],
-                "info"  : "Your last exercize on logical functions is to define a very similar function to the previous one, except this time there are 4 arguments. How can you use the function created last time to help define this one? How is the similiar to the solution you came up with for the last one? How would this extend to more than 4 inputs? In the next section we are going to look at generalising this pattern."
+                "info"  : "Your last exercise on logical functions is to define a very similar function to the previous one, except this time there are 4 arguments. How can you use the function created last time to help define this one? How is the similar to the solution you came up with for the last one? How would this extend to more than 4 inputs? In the next section we are going to look at generalising this pattern."
             }],
         "functions" : ["if", "equals", "true", "false" ]
     }, {
@@ -128,7 +128,7 @@
             { "inputs" : { "str" : "empty string!"}, "readonly" : true, "output" : false },
             { "inputs" : { "str" : " "}, "readonly" : true, "output" : false }
         ],
-        "info"  : "You'll see for this set of exercises we've made a bunch of functions from the previous exercises avalible to you. You'll also notice some new functions in the String category. These are all operations over strings of characters. We have the join function, which takes two strings and joins them together to form a longer string, the length function, which returns the length of a string, and the take and drop functions, which either take the first n characters of a string, or remove them. To get started, let's create a convenience function for deciding if a string is the empty string. The empty string always has length 0."
+        "info"  : "You'll see for this set of exercises we've made a bunch of functions from the previous exercises available to you. You'll also notice some new functions in the String category. These are all operations over strings of characters. We have the join function, which takes two strings and joins them together to form a longer string, the length function, which returns the length of a string, and the take and drop functions, which either take the first n characters of a string, or remove them. To get started, let's create a convenience function for deciding if a string is the empty string. The empty string always has length 0."
     }],
     "functions" : ["number", "multiply", "if", "equals", "minus", "plus", "true", "false", "and", "or", "not", "successor", "predecessor", "is zero", "join", "length", "drop", "take" ]
 },{

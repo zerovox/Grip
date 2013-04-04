@@ -25,7 +25,7 @@ var primitives = (function () {
             name   : "multiply",
             group  : "Mathematical",
             toHaskell : function(inputs){
-                return "(" + inputs.a + " * " + inputs.b + ")"
+                return "(" + inputs.a + " ** " + inputs.b + ")"
             },
             apply  : function () {
                 return {need : "a", cont : function (a) {

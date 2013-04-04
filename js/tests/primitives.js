@@ -1,6 +1,6 @@
 define(['models/EditorModel'], function (EditorModel) {
     //The number of tests per primitive to perform
-    var tests = 20;
+    var tests = 5;
 
     function createGUID() {
         //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a built in function
@@ -16,6 +16,7 @@ define(['models/EditorModel'], function (EditorModel) {
 
     function newCb(out, worker, done) {
         return function (result) {
+            should.not.exist(result.data.fail)
             if (result.data.result !== undefined) {
                 result.data.result.should.equal(out)
                 worker.terminate()
@@ -40,93 +41,95 @@ define(['models/EditorModel'], function (EditorModel) {
         worker.postMessage({main : "func", localFunctions : {"func" : editor.get("map")}, inputs : inputs});
     }
 
-    describe('Run worker - Arithmetical Primitives', function () {
-        for (var k = 0; k < tests; k++) {
-            (function () {
-                var i = Math.random() * Math.pow(2, k)
-                var j = Math.random() * Math.pow(2, (tests - 10) - k)
-                var result = i + j;
-                it('should correctly perform ' + i + ' + ' + j + ' = ' + result, function (done) {
-                    new simpleWorker("plus", {a : i, b : j}, result, done)
-                });
-            }());
-        }
-        for (var k = 0; k < tests; k++) {
-            (function () {
-                var i = Math.random() * Math.pow(2, k)
-                var j = Math.random() * Math.pow(2, tests / 2 - k)
-                var result = i * j;
-                it('should correctly perform ' + i + ' * ' + j + ' = ' + result, function (done) {
-                    new simpleWorker("multiply", {a : i, b : j}, result, done)
-                });
-            }());
-        }
-        for (var k = 0; k < tests; k++) {
-            (function () {
-                var i = Math.random() * Math.pow(2, k)
-                var j = Math.random() * Math.pow(2, (tests - 10) - k)
-                var result = i - j;
-                it('should correctly perform ' + i + ' - ' + j + ' = ' + result, function (done) {
-                    new simpleWorker("minus", {a : i, b : j}, result, done)
-                });
-            }());
-        }
+    describe('Primitives (in run interpreter)', function () {
+        describe('Arithmetical', function () {
+            for (var k = 0; k < tests; k++) {
+                (function () {
+                    var i = Math.random() * Math.pow(2, k)
+                    var j = Math.random() * Math.pow(2, (tests - 10) - k)
+                    var result = i + j;
+                    it('should correctly perform ' + i + ' + ' + j + ' = ' + result, function (done) {
+                        new simpleWorker("plus", {a : i, b : j}, result, done)
+                    });
+                }());
+            }
+            for (var k = 0; k < tests; k++) {
+                (function () {
+                    var i = Math.random() * Math.pow(2, k)
+                    var j = Math.random() * Math.pow(2, tests / 2 - k)
+                    var result = i * j;
+                    it('should correctly perform ' + i + ' * ' + j + ' = ' + result, function (done) {
+                        new simpleWorker("multiply", {a : i, b : j}, result, done)
+                    });
+                }());
+            }
+            for (var k = 0; k < tests; k++) {
+                (function () {
+                    var i = Math.random() * Math.pow(2, k)
+                    var j = Math.random() * Math.pow(2, (tests - 10) - k)
+                    var result = i - j;
+                    it('should correctly perform ' + i + ' - ' + j + ' = ' + result, function (done) {
+                        new simpleWorker("minus", {a : i, b : j}, result, done)
+                    });
+                }());
+            }
+        });
+        describe('Comparison', function () {
+            for (var k = 0; k < tests; k++) {
+                (function () {
+                    var i = Math.random() * Math.pow(2, k)
+                    var j = Math.random() * Math.pow(2, k)
+                    var result = i < j;
+                    it('should correctly perform ' + i + ' < ' + j + ' = ' + result, function (done) {
+                        new simpleWorker("less than", {a : i, b : j}, result, done)
+                    });
+                }());
+            }
+            for (var k = 0; k < tests; k++) {
+                (function () {
+                    var i = Math.random() * Math.pow(2, k)
+                    var j = Math.random() * Math.pow(2, k)
+                    var result = i > j;
+                    it('should correctly perform ' + i + ' > ' + j + ' = ' + result, function (done) {
+                        new simpleWorker("greater than", {a : i, b : j}, result, done)
+                    });
+                }());
+            }
+        });
+        describe('Equality', function () {
+            it('should correctly perform equality between different values', function (done) {
+                simpleWorker("equals", {a : 0, b : 1}, false, done)
+            });
+            it('should correctly perform equality between integers and strings', function (done) {
+                simpleWorker("equals", {a : 0, b : "0"}, false, done)
+            });
+            it('should correctly perform equality', function (done) {
+                simpleWorker("equals", {a : 0, b : "zero"}, false, done)
+            });
+            it('should correctly perform equality when things are equal', function (done) {
+                simpleWorker("equals", {a : 0, b : 0}, true, done)
+            });
+            it('should correctly perform \'is zero\' on zero', function (done) {
+                simpleWorker("is zero", {a : 0}, true, done)
+            });
+            it('should correctly perform \'is zero\' on some value that\'s not-zero', function (done) {
+                simpleWorker("is zero", {a : 1 + Math.random()}, false, done)
+            });
+            it('should correctly perform \'is zero\' on the string \"0\"', function (done) {
+                simpleWorker("is zero", {a : "0"}, false, done)
+            });
+            it('should correctly perform "is zero" on other strings ("zero")', function (done) {
+                simpleWorker("is zero", {a : "zero"}, false, done)
+            });
+        });
+        describe('Other', function () {
+            it('should correctly perform if/then/else');
+            it('should correctly perform or');
+            it('should correctly perform and');
+            it('should correctly perform join');
+            it('should correctly perform length');
+            it('should correctly perform take');
+            it('should correctly perform drop');
+        });
     });
-
-    describe('Run worker - Comparison Primitives', function () {
-        for (var k = 0; k < tests; k++) {
-            (function () {
-                var i = Math.random() * Math.pow(2, k)
-                var j = Math.random() * Math.pow(2, k)
-                var result = i < j;
-                it('should correctly perform ' + i + ' < ' + j + ' = ' + result, function (done) {
-                    new simpleWorker("less than", {a : i, b : j}, result, done)
-                });
-            }());
-        }
-        for (var k = 0; k < tests; k++) {
-            (function () {
-                var i = Math.random() * Math.pow(2, k)
-                var j = Math.random() * Math.pow(2, k)
-                var result = i > j;
-                it('should correctly perform ' + i + ' > ' + j + ' = ' + result, function (done) {
-                    new simpleWorker("greater than", {a : i, b : j}, result, done)
-                });
-            }());
-        }
-    });
-
-    describe('Run worker - Equality primitives', function () {
-        it('should correctly perform equality between different values', function (done) {
-            simpleWorker("equals", {a : 0, b : 1}, false, done)
-        });
-        it('should correctly perform equality between integers and strings', function (done) {
-            simpleWorker("equals", {a : 0, b : "0"}, false, done)
-        });
-        it('should correctly perform equality', function (done) {
-            simpleWorker("equals", {a : 0, b : "zero"}, false, done)
-        });
-        it('should correctly perform equality when things are equal', function (done) {
-            simpleWorker("equals", {a : 0, b : 0}, true, done)
-        });
-        it('should correctly perform \'is zero\' on some value that\'s not-zero', function (done) {
-            simpleWorker("is zero", {a : 1 + Math.random()}, false, done)
-        });
-        it('should correctly perform \'is zero\' on the string \"0\"', function (done) {
-            simpleWorker("is zero", {a : "0"}, false, done)
-        });
-        it('should correctly perform \'is zero\' on other strings', function (done) {
-            simpleWorker("equals", {a : "zero"}, false, done)
-        });
-    });
-    describe('Run worker - Other Primitives', function () {
-        it('should correctly perform if/then/else');
-        it('should correctly perform or');
-        it('should correctly perform and');
-        it('should correctly perform join');
-        it('should correctly perform length');
-        it('should correctly perform take');
-        it('should correctly perform drop');
-    });
-
 });

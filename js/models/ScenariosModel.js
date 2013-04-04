@@ -28,12 +28,12 @@ define([
                 }
             }, this)
         },
-        swap : function (to, scenariosModel) {
-            var matchingScenarios = scenariosModel.get("all").where({name : to});
+        swap : function (to) {
+            var matchingScenarios = this.get("all").where({name : to});
             if (_.size(matchingScenarios) === 1) {
                 //Avoid repeated re-rendering
                 var match = _.first(matchingScenarios)
-                if (match !== scenariosModel.get("activeScenario")) {
+                if (match !== this.get("activeScenario")) {
                     match.set({activeScenario : true})
                     this.get("activeScenario").set({activeScenario : false});
                     this.set({activeScenario : match});

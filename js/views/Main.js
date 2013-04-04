@@ -34,12 +34,12 @@ define([
 
             //Listen for scenario change events, and switch the active scenario accordingly.
             channels.scenarios.on("switch", function (name) {
-                this.scenarios.swap(name, this.scenarios)
+                this.scenarios.swap(name)
             }, this);
 
             //Listen for editor change events, and switch the active editor accordingly
             channels.editors.on("switch", function (name) {
-                this.scenarios.get("activeScenario").swap(name, this.scenarios)
+                this.scenarios.get("activeScenario").swap(name)
             }, this);
 
             channels.editors.on("switchFunctionGroup", function (name) {

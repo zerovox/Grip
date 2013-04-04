@@ -1,33 +1,24 @@
 //This gives us access to the variable primitives, the array of primitive functions
 importScripts('../data/primitives.js', '../libs/lodash.min.js')
 
-var resultCaching = true
 var env
 var localFunctions
-var LocalFunctionsFresh
-var prims = {}
-_.each(primitives, function (prim) {
-    prims[prim.name] = prim
-})
+var prims = _.reduce(primitives, function (memo, prim) {
+    memo[prim.name] = prim
+    return memo;
+}, {})
 
 onmessage = function (event) {
     if ("main" in event.data) {
-        env = newEnv(event.data.localFunctions[event.data.main], event.data.inputs, event.data.main);
         localFunctions = event.data.localFunctions
-        LocalFunctionsFresh = _.clone(localFunctions, true)
-
+        env = newEnv(_.clone(event.data.localFunctions[event.data.main], true), event.data.inputs, event.data.main);
         while (env.stack.length !== 0) {
             step(env)
         }
         success(env.returnVal);
-
     } else {
         fail("No instruction given to worker")
     }
-}
-
-function log(data) {
-    self.postMessage({log : data})
 }
 
 function success(result) {
@@ -39,27 +30,38 @@ function fail(reason) {
 }
 
 function newEnv(editor, inputs, name) {
+    editor.outputDebug = {}
     if (editor.output === undefined)
         fail("No function wired to output")
     else
-        return {
-            stack : [
-                //TODO: Check if editor.functions[editor.output] exists, otherwise use "i" mode
-                {func : editor.functions[editor.output], action : "e", inputs : inputs, editor : editor, name : name}
-            ]
-        }
+        var func = editor.functions[editor.output]
+    if (func === undefined)
+        return {stack : [
+            {action : "i", inputs : inputs, editor : editor, name : name, input : editor.output}
+        ]}
+    else
+        return {stack : [
+            {func : func, action : "e", inputs : inputs, editor : editor, name : name}
+        ]}
 }
 
 function step(env) {
     var ft = env.stack.pop();
     switch (ft.action) {
         case "e" :
-            //Check cache for a result to the ft.func call, if not found, pass the 'real' implemented function on to the "r" action to run
-            if (resultCaching && "result" in ft.func && ft.func.result !== undefined) {
+            if ("result" in ft.func && ft.func.result !== undefined) {
                 env.returnVal = ft.func.result
             } else {
                 ft.func.result = undefined;
-                if (ft.func.function in prims) {
+                if (ft.func.function in localFunctions) {
+                    var editor = _.clone(localFunctions[ft.func.function], true)
+                    env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result, debug : ft.func.function}}}))
+                    var func = editor.functions[editor.output]
+                    if (func === undefined)
+                        env.stack.push({action : "i", editor : editor, callee : ft, name : ft.func.function, input : editor.output})
+                    else
+                        env.stack.push({func : func, action : "e", editor : editor, callee : ft, name : ft.func.function})
+                } else if (ft.func.function in prims) {
                     var functionToApply;
                     if (ft.func.arg !== undefined) {
                         functionToApply = prims[ft.func.function].new(ft.func.arg)
@@ -67,22 +69,19 @@ function step(env) {
                         functionToApply = prims[ft.func.function]
                     }
                     var response = functionToApply.apply
-                    env.stack.push(e(ft, {action : "r", cont : function () {return response.apply()}}))
-                } else if (ft.func.function in localFunctions) {
-                    var editor = _.clone(LocalFunctionsFresh[ft.func.function], true)
-                    env.stack.push(e(ft, {action : "r", cont : function (result) { return {result : result}}}))
-                    //We don't use the extend here, as we want to create a fresh stack frame
-                    env.stack.push({func : editor.functions[editor.output], action : "e", editor : editor, callee : ft, name : ft.func.function})
+                    env.stack.push(e(ft, {action : "r", cont : function () {return response()}}))
                 }
             }
             break
         case "r":
-            //Run the function in ft.cont, then respond according to the need
             var response = ft.cont(env.returnVal)
             if ("result" in response) {
                 env.returnVal = response.result
                 if ("func" in ft)
                     ft.func.result = env.returnVal
+
+            } else if ("fail" in response) {
+                fail("Primitive function error:'" + response.fail + "' on function '" + ft.func.function + "'")
             } else {
                 if (response.need in ft.func.inputs) {
                     var inp = ft.func.inputs[response.need]
@@ -92,12 +91,11 @@ function step(env) {
                     } else
                         env.stack.push(e(ft, {action : "i", input : inp.wired}))
                 } else {
-                    fail("Unwired function exception")
+                    fail("Unwired argument '" + response.need + "' on function '" + ft.func.function + "'")
                 }
             }
             break
         case "i":
-            log("Requesting input " + ft.input + " from " + ft.inputs)
             if (typeof ft.inputs !== "undefined") {
                 env.returnVal = ft.inputs[ft.input]
             } else {
@@ -115,4 +113,3 @@ function step(env) {
 function e(ft, extra) {
     return _.extend({}, ft, extra);
 }
-

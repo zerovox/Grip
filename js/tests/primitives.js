@@ -17,7 +17,6 @@ define(['models/EditorModel'], function (EditorModel) {
     function newCb(out, worker, done) {
         return function (result) {
             if (result.data.result !== undefined) {
-                console.log(result.data.result)
                 result.data.result.should.equal(out)
                 worker.terminate()
                 done()
@@ -122,7 +121,6 @@ define(['models/EditorModel'], function (EditorModel) {
     });
     describe('Run worker - Other Primitives', function () {
         it('should correctly perform if/then/else');
-
         it('should correctly perform or');
         it('should correctly perform and');
         it('should correctly perform join');

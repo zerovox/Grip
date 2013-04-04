@@ -70,8 +70,8 @@ function debug(env) {
 function debugArray(env) {
     if (env !== undefined) {
         var a = debugArray(env.callee)
-        if(env.editor)
-        env.editor.name = env.name;
+        if (env.editor)
+            env.editor.name = env.name;
         a.push(env.editor)
         return a
     } else {
@@ -144,6 +144,8 @@ function step(env) {
                     ft.using.result = env.returnVal
                     ft.using.responded = true
                 }
+            } else if ("fail" in response) {
+                fail("Primitive function error:'" + response.fail + "' on function '" + ft.func.function + "'")
             } else {
                 if (response.need in ft.func.inputs) {
                     var inp = ft.func.inputs[response.need]
@@ -154,7 +156,7 @@ function step(env) {
                     } else
                         env.stack.push(e(ft, {action : "i", input : inp.wired, using : inp}))
                 } else {
-                    fail("Unwired argument '" +response.need+ "' on function '" + ft.func.function+ "'")
+                    fail("Unwired argument '" + response.need + "' on function '" + ft.func.function + "'")
                 }
             }
             break

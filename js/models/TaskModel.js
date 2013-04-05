@@ -10,7 +10,7 @@ define([
             this.get("worker").postMessage({stepOver : true})
         },
         initialize        : function (test, mainMethod, debug, localFunctions, globalFunctions) {
-            var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run.js');
+            var worker = debug ? new Worker('js/workers/debug.js') : new Worker('js/workers/run2.js');
             var inputs = test.get("inputs")
             this.set({inputs : inputs, test : test, output : test.get("output"), worker : worker, running : true, name : mainMethod})
             var on = function (result) {

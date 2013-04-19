@@ -16,6 +16,8 @@ define([
      onNewInput(inputName, inputObject)
      */
 
+    var pds2398 = 'rgb(187,228,238)';
+
     return function () {
         return {
             initialize          : function () {
@@ -136,10 +138,11 @@ define([
                     if (typeof map.output !== "undefined") {
                         this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
                     }
+                    this._out = out;
                 }
                 //If present, call the post-render callback
                 if (this.onRender)
-                    this.onRender()
+                    this.onRender(canvas)
             },
             wireUp              : function (func, func2, inp, out) {
                 var canvas = this.canvas;
@@ -196,7 +199,7 @@ define([
                 var width = 120
                 var options = {top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width / 2};
                 var box = new Function(name, height, width, options);
-                var output = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width, stroke : 1})
+                var output = new fabric.Rect({width : 10, height : height, fill : pds2398, top : options.top, left : width+5, stroke : 0})
 
                 box.hasControls = box.hasBorders = output.hasControls = output.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = output.lockMovementX = output.lockMovementY = true;
@@ -223,7 +226,7 @@ define([
 
                 box.inputs = {}
                 _.each(funcReal.inputs, function (name, index) {
-                        var input = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
+                        var input = new fabric.Rect({width : 20, height : 39, fill : pds2398, stroke : 0})
                         input.hasControls = input.hasBorders = false;
                         input.lockMovementX = input.lockMovementY = true;
                         input.type = "input";
@@ -239,8 +242,8 @@ define([
                         box.inputs[name] = input
 
                         function positionInput(box) {
-                            input.setTop(box.getTop() - height / 2 + ((index + 1) / (funcReal.inputs.length + 1)) * height).setCoords();
-                            input.setLeft(box.getLeft() - width / 2).setCoords();
+                            input.setTop(box.getTop() - height / 2 - ((index-1)*40)+20).setCoords();
+                            input.setLeft(box.getLeft() - width / 2 - 10).setCoords();
                             input.render(canvas.getContext())
                         }
 
@@ -254,20 +257,20 @@ define([
                     }, this
                 )
 
-                var output = new fabric.Circle({radius : 10, fill : 'rgb(230,230,230)', stroke : 1})
+                var output = new fabric.Rect({width : 10, height : height, fill : pds2398, stroke : 0})
                 output.hasControls = output.hasBorders = false;
                 output.lockMovementX = output.lockMovementY = true;
-
                 output.type = "functionOutput";
                 output.func = box;
+                canvas.add(output)
+                output.sendToBack();
+
                 box.type = "function"
                 box.output = output;
 
-                canvas.add(output)
-
                 function positionOutput(box) {
                     output.setTop(box.getTop()).setCoords();
-                    output.setLeft(box.getLeft() + width / 2).setCoords();
+                    output.setLeft(box.getLeft() + 5 + width / 2).setCoords();
                     output.render(canvas.getContext())
                 }
 
@@ -283,7 +286,7 @@ define([
             },
             newOutput           : function () {
                 var canvas = this.canvas;
-                var box = new fabric.Circle({radius : 30, fill : 'rgb(230,230,230)', top : (canvas.height / 2), left : canvas.width, stroke : 1})
+                var box = new fabric.Rect({height : canvas.height, width : 30, fill : pds2398, top : (canvas.height / 2), left : canvas.width-10, stroke : 0})
 
                 box.hasControls = box.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = true;

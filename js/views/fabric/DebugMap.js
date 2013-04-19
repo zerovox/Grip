@@ -1,7 +1,8 @@
 define([
     'backbone',
-    'views/fabric/MapCore'
-], function (Backbone, MapCore) {
+    'views/fabric/MapCore',
+    'fabric'
+], function (Backbone, MapCore, fabric) {
 
     return new (Backbone.View.extend(_.extend(new MapCore(), {
         el                  : "#debugMap",
@@ -45,7 +46,8 @@ define([
         beforeRender        : function () {
             this.boxes = []
         },
-        onRender            : function () {
+        onRender            : function (canvas) {
+            //canvas.add()
         },
         onWired             : function (inp, out, wire) {
             if (typeof inp.func !== "undefined") {

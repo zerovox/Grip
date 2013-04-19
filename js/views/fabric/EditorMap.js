@@ -3,6 +3,8 @@ define([
     'fabric',
     'views/fabric/MapCore'
 ], function (Backbone, fabric, MapCore) {
+    var pds2391 = 'rgb(0,172,205)';
+
     return new (Backbone.View.extend(_.extend(new MapCore(), {
         onInit              : function (canvas) {
             canvas.on('object:over', _.bind(function (e) {
@@ -14,7 +16,7 @@ define([
                         target.oldfill = target.getStroke();
                         break;
                     case("input"):
-                        target.setFill('rgb(77,77,77)');
+                        target.setFill(pds2391);
                         target.hoverText = new fabric.Text(target.name, {
                             fontSize     : 16,
                             left         : target.getLeft(),
@@ -29,7 +31,7 @@ define([
                         break;
                     case("output"):
                     case("functionOutput"):
-                        target.setFill('rgb(77,77,77)');
+                        target.setFill(pds2391);
                         break;
                     case("functionInput"):
                         target.ex.setFill(target.ex.hoverFill)
@@ -138,6 +140,7 @@ define([
                             fromOutput = false;
                             break;
                         case("function"):
+                            this.canvas.remove(this._out)
                             this.showEdges()
                             dragging = true;
                             break;
@@ -159,6 +162,7 @@ define([
 
             canvas.on({'mouse:up' : _.bind(function (e) {
                 dragging = false;
+                this.canvas.add(this._out)
                 this.hideEdges()
                 if (removeFunction && e.target !== undefined) {
                     this.editorModel.removeFunction(e.target.modelId)
@@ -184,7 +188,8 @@ define([
                     canvas.renderAll()
                 }
                 if (dragging) {
-                    if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20) {
+                    console.log()
+                    if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20 || $(e.e.toElement).closest(".canvasContainer").length === 0) {
                         this.edges.setFill(this.edges.selectedFill)
                         removeFunction = true;
                     } else {

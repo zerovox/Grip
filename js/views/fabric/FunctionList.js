@@ -26,9 +26,9 @@ define([
                             EditorMap.addFunction(f.get("func"))
                         }
                     } else {
-                        var inputs = []
+                        var inputs = {}
                         _.each(f.get("map").inputs, function (map, name) {
-                            inputs.push(name)
+                            inputs[name] = {}
                         })
                         EditorMap.addFunction({name : f.get("name"), inputs : inputs})
                     }

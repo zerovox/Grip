@@ -17,6 +17,33 @@ define([
      */
 
     var pds2398 = 'rgb(187,228,238)';
+    var numFill = 'rgb(222,173,193)';
+    var boolFill = 'rgb(232,189,167)';
+    var strFill = 'rgb(200,230,170)';
+    var num = {type : "num"}
+    var bool = {type : "bool"}
+    var str = {type : "string"}
+
+    function getColor(attrs) {
+        if (typeof attrs !== "undefined") {
+            var type;
+            if ("infType" in attrs) {
+                type = attrs.infType;
+            } else if ("type" in attrs) {
+                type = attrs.type;
+            } else {
+                return pds2398;
+            }
+
+            if (_.isEqual(type, num))
+                return numFill
+            if (_.isEqual(type, str))
+                return strFill
+            if (_.isEqual(type, bool))
+                return boolFill
+        }
+        return pds2398;
+    }
 
     return function () {
         return {
@@ -79,8 +106,10 @@ define([
                     this.beforeRender()
                 //Alias the canvas for simplicity
                 var canvas = this.canvas
-                //Check we have an editor to render
+                    //Check we have an editor to render
                 if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
+                    //Infer types for the model, bit of a hack to place it here. Really we want to reinfer when any function changes its type
+                    this.editorModel._infTypes()
                     //Get the editor we wish to draw
                     var map = this.editorModel.get("map")
                     //Clear the canvas
@@ -108,19 +137,19 @@ define([
                             })
                             //Create an array of input names for this local function
                             var inputs = _.reduce(editor.get("map").inputs, function (inputs, map, name) {
-                                inputs.push(name)
+                                inputs[name] = {}
                                 return inputs;
-                            }, [])
+                            }, {})
                             //Add the local function to the view
                             functions[name] = this.newFunction({name : func.function, inputs : inputs}, func);
                         }
                         return functions;
-                    },{}, this)
+                    }, {}, this)
 
                     //For each input to the function, add a new input box to the canvas and then add to the mapping above
                     var index = 0;
                     _.each(map.inputs, function (input, name) {
-                        functions[name] = this.newInput(name, index, _.size(map.inputs));
+                        functions[name] = this.newInput(name, index, _.size(map.inputs), input);
                         index++
                     }, this);
 
@@ -134,7 +163,7 @@ define([
                     }, this)
 
                     //Finally, add the output to the function to the view, and add a wire if necessary.
-                    var out = this.newOutput();
+                    var out = this.newOutput(this.editorModel);
                     if (typeof map.output !== "undefined") {
                         this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
                     }
@@ -148,7 +177,12 @@ define([
                 var canvas = this.canvas;
                 canvas.remove(inp.wire)
                 delete inp.wire
-                var fill = '#2284A1';
+                var fill;
+
+                if (inp.getFill() == out.getFill())
+                    fill = inp.getFill()
+                else
+                    fill = "red"
 
                 var wire = new fabric.Path("M" + inp.getLeft() + "," + inp.getTop() + " C" + ((out.getLeft() + inp.getLeft()) / 2) + "," + inp.getTop() + " " + ((out.getLeft() + inp.getLeft()) / 2) + "," + out.getTop() + " " + out.getLeft() + "," + out.getTop(), {
                     fill        : "",
@@ -193,13 +227,14 @@ define([
                 rewire(inp)
                 return wire;
             },
-            newInput            : function (name, x, y) {
+            newInput            : function (name, x, y, input) {
                 var canvas = this.canvas;
                 var height = 40;
                 var width = 120
                 var options = {top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width / 2};
                 var box = new Function(name, height, width, options);
-                var output = new fabric.Rect({width : 10, height : height, fill : pds2398, top : options.top, left : width+5, stroke : 0})
+                var fill = getColor(input);
+                var output = new fabric.Rect({width : 10, height : height, fill : fill, top : options.top, left : width + 5, stroke : 0})
 
                 box.hasControls = box.hasBorders = output.hasControls = output.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = output.lockMovementX = output.lockMovementY = true;
@@ -217,7 +252,7 @@ define([
             },
             newFunction         : function (funcReal, func) {
                 var canvas = this.canvas;
-                var height = Math.max(40, 40 * funcReal.inputs.length);
+                var height = Math.max(40, 40 * _.size(funcReal.inputs));
                 var width = 140
                 var options = {top : func.y, left : func.x};
                 var box = new Function(funcReal.name, height, width, options, func.arg);
@@ -225,8 +260,16 @@ define([
                 canvas.add(box)
 
                 box.inputs = {}
-                _.each(funcReal.inputs, function (name, index) {
-                        var input = new fabric.Rect({width : 20, height : 39, fill : pds2398, stroke : 0})
+                var index = 0;
+                _.each(funcReal.inputs, function (attrs, name) {
+                        var i = index;
+                        var fill;
+                        if (func.inputs !== undefined && name in func.inputs)
+                            fill = getColor(func.inputs[name])
+                        else
+                            fill = getColor(attrs)
+
+                        var input = new fabric.Rect({width : 20, height : 39, fill : fill, stroke : 0})
                         input.hasControls = input.hasBorders = false;
                         input.lockMovementX = input.lockMovementY = true;
                         input.type = "input";
@@ -242,7 +285,7 @@ define([
                         box.inputs[name] = input
 
                         function positionInput(box) {
-                            input.setTop(box.getTop() - height / 2 - ((index-1)*40)+20).setCoords();
+                            input.setTop(box.getTop() + ((i) * 40) - height / 2 + 20).setCoords();
                             input.setLeft(box.getLeft() - width / 2 - 10).setCoords();
                             input.render(canvas.getContext())
                         }
@@ -254,10 +297,16 @@ define([
                         }
 
                         positionInput(box);
+                        index++;
                     }, this
                 )
+                var fill;
+                if (typeof func.output !== "undefined" && "infType" in func.output)
+                    fill = getColor(func.output)
+                else
+                    fill = getColor(funcReal.output)
 
-                var output = new fabric.Rect({width : 10, height : height, fill : pds2398, stroke : 0})
+                var output = new fabric.Rect({width : 10, height : height, fill : fill, stroke : 0})
                 output.hasControls = output.hasBorders = false;
                 output.lockMovementX = output.lockMovementY = true;
                 output.type = "functionOutput";
@@ -284,9 +333,14 @@ define([
                     this.onNewFunction(funcReal, func, box)
                 return box;
             },
-            newOutput           : function () {
+            newOutput           : function (model) {
+                var fill;
+                if ("output" in model)
+                    fill = getColor(model.output)
+                else
+                    fill = pds2398;
                 var canvas = this.canvas;
-                var box = new fabric.Rect({height : canvas.height, width : 30, fill : pds2398, top : (canvas.height / 2), left : canvas.width-10, stroke : 0})
+                var box = new fabric.Rect({height : canvas.height, width : 30, fill : fill, top : (canvas.height / 2), left : canvas.width - 10, stroke : 0})
 
                 box.hasControls = box.hasBorders = false;
                 box.lockMovementX = box.lockMovementY = true;

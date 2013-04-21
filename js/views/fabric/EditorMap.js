@@ -82,7 +82,7 @@ define([
 
             var wireInModel = function (source, target, editorModel) {
                 if (target.func !== source.func) {
-                    this.wireUp(target.func, source.func, target, source);
+                    //this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
                         if (source.func.type === "functionInput")
                             editorModel.linkOutput(source.func.inputName)
@@ -92,6 +92,7 @@ define([
                         editorModel.linkInput(target.func.modelId, target.name, source.func.modelId)
                     else
                         editorModel.linkInput(target.func.modelId, target.name, source.func.inputName)
+                    this.render();
                 }
             }
             wireInModel = _.bind(wireInModel, this)
@@ -188,7 +189,6 @@ define([
                     canvas.renderAll()
                 }
                 if (dragging) {
-                    console.log()
                     if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20 || $(e.e.toElement).closest(".canvasContainer").length === 0) {
                         this.edges.setFill(this.edges.selectedFill)
                         removeFunction = true;
@@ -229,7 +229,7 @@ define([
             var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
             this.newFunction(func, funcModel)
             this.editorModel.addFunction(funcModel)
-            this.canvas.renderAll()
+            this.render()
         },
         addInput            : function (name) {
             if (this.editorModel.addInput(name))
@@ -256,7 +256,6 @@ define([
             this.canvas.add(ex)
         },
         moving              : true
-    })))
-        ;
+    })));
 })
 ;

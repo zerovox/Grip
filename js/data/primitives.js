@@ -34,6 +34,13 @@ var need = function (name, type, cont) {
     }
 }
 
+var num = {type : "num"}
+var bool = {type : "bool"}
+var string = {type : "string"}
+function local(id){
+    return {type : "local", name : id}
+}
+
 //arguments is an object. Javascript is crazy.
 function toArray(as){
     var len = as.length
@@ -50,13 +57,16 @@ var primitives = (function () {
             name      : "number",
             group     : "Mathematical",
             arg       : true,
+            inputs    : {},
+            output    : {type : num},
             toHaskell : function (inputs, arg) {
                 return arg
             },
             'new'     : function (arg) {
                 return {
                     name      : "number",
-                    inputs    : [],
+                    inputs    : {},
+                    output    : {type : num},
                     toHaskell : function (inputs) {
                         return arg
                     },
@@ -70,7 +80,8 @@ var primitives = (function () {
         {
             name      : "multiply",
             group     : "Mathematical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : num}, b : {type : num}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " * " + inputs.b + ")"
             },
@@ -83,7 +94,8 @@ var primitives = (function () {
         {
             name      : "plus",
             group     : "Mathematical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : num}, b : {type : num}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " + " + inputs.b + ")"
             },
@@ -96,7 +108,8 @@ var primitives = (function () {
         {
             name      : "equals",
             group     : "Logical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : local("alpha")}, b : {type : local("alpha")}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " == " + inputs.b + ")"
             },
@@ -112,7 +125,8 @@ var primitives = (function () {
         {
             name      : "minus",
             group     : "Mathematical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : num}, b : {type : num}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " - " + inputs.b + ")"
             },
@@ -125,6 +139,8 @@ var primitives = (function () {
         {
             name      : "if",
             inputs    : ["test", "then", "else"],
+            inputs    : {test : {type : bool}, then : {type : local("alpha")}, else : {type : local("alpha")}},
+            output    : {type : local("alpha")},
             group     : "Logical",
             toHaskell : function (inputs) {
                 return "(if " + inputs.test + " then " + inputs.then + " else " + inputs.else + ")"
@@ -140,7 +156,8 @@ var primitives = (function () {
         },
         {
             group     : "Logical",
-            inputs    : [],
+            inputs    : {},
+            output    : {type : bool},
             name      : "true",
             toHaskell : function (inputs) {
                 return "True"
@@ -151,7 +168,8 @@ var primitives = (function () {
         },
         {
             group     : "Logical",
-            inputs    : [],
+            inputs    : {},
+            output    : {type : bool},
             name      : "false",
             toHaskell : function (inputs) {
                 return "False"
@@ -163,7 +181,8 @@ var primitives = (function () {
         {
             name      : "successor",
             group     : "Mathematical",
-            inputs    : ["a"],
+            inputs    : {a : {type : num}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(succ " + inputs.a + ")"
             },
@@ -176,7 +195,8 @@ var primitives = (function () {
         {
             name      : "predecessor",
             group     : "Mathematical",
-            inputs    : ["a"],
+            inputs    : {a : {type : num}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(pred " + inputs.a + ")"
             },
@@ -189,7 +209,8 @@ var primitives = (function () {
         {
             name      : "is zero",
             group     : "Mathematical",
-            inputs    : ["a"],
+            inputs    : {a : {type : num}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " == 0)"
             },
@@ -204,7 +225,8 @@ var primitives = (function () {
         {
             name      : "or",
             group     : "Logical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : bool}, b : {type : bool}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " || " + inputs.b + ")"
             },
@@ -217,7 +239,8 @@ var primitives = (function () {
         {
             name      : "and",
             group     : "Logical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : bool}, b : {type : bool}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " && " + inputs.b + ")"
             },
@@ -230,7 +253,8 @@ var primitives = (function () {
         {
             name      : "not",
             group     : "Logical",
-            inputs    : ["a"],
+            inputs    : {a : {type : bool}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(not " + inputs.a + ")"
             },
@@ -242,7 +266,8 @@ var primitives = (function () {
         {
             name      : "join",
             group     : "String",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : string}, b : {type : string}},
+            output    : {type : string},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " ++ " + inputs.b + ")"
             },
@@ -255,7 +280,8 @@ var primitives = (function () {
         {
             name      : "length",
             group     : "String",
-            inputs    : ["string"],
+            inputs    : {string : {type : string}},
+            output    : {type : num},
             toHaskell : function (inputs) {
                 return "(len " + inputs.string + ")"
             },
@@ -268,7 +294,8 @@ var primitives = (function () {
         {
             name      : "take",
             group     : "String",
-            inputs    : ["string", "n"],
+            inputs    : {string : {type : string}, n : {type : num}},
+            output    : {type : string},
             toHaskell : function (inputs) {
                 return "(take " + inputs.n + " " + inputs.string + ")"
             },
@@ -281,7 +308,8 @@ var primitives = (function () {
         {
             name      : "drop",
             group     : "String",
-            inputs    : ["string", "n"],
+            inputs    : {string : {type : string}, n : {type : num}},
+            output    : {type : string},
             toHaskell : function (inputs) {
                 return "(drop " + inputs.n + " " + inputs.string + ")"
             },
@@ -294,7 +322,8 @@ var primitives = (function () {
         {
             name      : "less than",
             group     : "Mathematical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : num}, b : {type : num}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " < " + inputs.b + ")"
             },
@@ -307,7 +336,8 @@ var primitives = (function () {
         {
             name      : "greater than",
             group     : "Mathematical",
-            inputs    : ["a", "b"],
+            inputs    : {a : {type : num}, b : {type : num}},
+            output    : {type : bool},
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " > " + inputs.b + ")"
             },

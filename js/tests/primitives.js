@@ -1,6 +1,7 @@
-define(['models/EditorModel'], function (EditorModel) {
+define(['models/EditorModel', 'collections/Functions'], function (EditorModel, FunctionCollection) {
     //The number of tests per primitive to perform
     var tests = 5;
+    var prims = new FunctionCollection(["number", "multiply", "if", "equals", "minus", "plus", "true", "false", "and", "or", "not", "successor", "predecessor", "is zero", "join", "length", "drop", "take", "less than", "greater than"])
 
     function createGUID() {
         //Snippet to generate a guid from http://stackoverflow.com/a/2117523. Any code with a very high probability of no collisions would work here. I'm surprised Javascript doesn't have generation of GUIDs as a built in function
@@ -26,7 +27,7 @@ define(['models/EditorModel'], function (EditorModel) {
     }
 
     function simpleWorker(name, inputs, output, done) {
-        var editor = new EditorModel({tests : {}});
+        var editor = new EditorModel({tests : {}}, prims);
         var plus = newFunctionModel(name)
         editor.addFunction(plus);
         _.each(inputs, function (value, key) {

@@ -237,7 +237,9 @@
             "join",
             "length",
             "drop",
-            "take"
+            "take",
+            "less than",
+            "greater than"
         ]
     }
 

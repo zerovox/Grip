@@ -254,7 +254,9 @@ define([
                 var canvas = this.canvas;
                 var height = Math.max(40, 40 * _.size(funcReal.inputs));
                 var width = 140
-                var options = {top : func.y, left : func.x};
+                var x = Math.min(func.x, canvas.width)
+                var y = Math.min(func.y, canvas.height)
+                var options = {top : y, left : x};
                 var box = new Function(funcReal.name, height, width, options, func.arg);
                 box.hasControls = box.hasBorders = false;
                 canvas.add(box)

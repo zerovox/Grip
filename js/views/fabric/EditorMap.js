@@ -34,8 +34,8 @@ define([
                     case("functionInput"):
                         target.hoverText = new fabric.Text(target.inputName, {
                             fontSize     : 16,
-                            left         : target.getLeft() + target.width/2 + 5,
-                            top          : target.getTop() - target.height/2 + 16,
+                            left         : target.getLeft() + target.width / 2 + 5,
+                            top          : target.getTop() - target.height / 2 + 16,
                             lineHeight   : 1,
                             fontFamily   : 'Helvetica',
                             fontWeight   : 'bold',
@@ -50,8 +50,8 @@ define([
                     case("ex"):
                         target.hoverText = new fabric.Text("Remove argument " + target.input.inputName, {
                             fontSize     : 16,
-                            left         : target.getLeft() + target.width/2 + 5,
-                            top          : target.getTop() - target.height/2 + 8,
+                            left         : target.getLeft() + target.width / 2 + 5,
+                            top          : target.getTop() - target.height / 2 + 8,
                             lineHeight   : 1,
                             fontFamily   : 'Helvetica',
                             fontWeight   : 'bold',
@@ -64,8 +64,8 @@ define([
                     case("addFunction"):
                         target.hoverText = new fabric.Text("Add a new input", {
                             fontSize     : 16,
-                            left         : target.getLeft() + target.width/2 + 5,
-                            top          : target.getTop() - target.height/2 + 8,
+                            left         : target.getLeft() + target.width / 2 + 5,
+                            top          : target.getTop() - target.height / 2 + 8,
                             lineHeight   : 1,
                             fontFamily   : 'Helvetica',
                             fontWeight   : 'bold',
@@ -111,8 +111,6 @@ define([
 
             var wireInModel = function (source, target, editorModel) {
                 if (target.func !== source.func) {
-                    console.log(source, target)
-                    //this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
                         if (source.func.type === "functionInput")
                             editorModel.linkOutput(source.func.inputName)
@@ -258,15 +256,15 @@ define([
             this.edges.selectedFill = "rgba(198, 15, 19, .9)"
             this.edges.setFill(this.edges.unselectedFill)
         },
-        onRender : function(){
+        onRender            : function () {
             var canvas = this.canvas
             var height = 30
             var width = 20
-            var top = canvas.height - height/2
-            var left = width/2
+            var top = canvas.height - height / 2
+            var left = width / 2
 
             var ex = new fabric.Rect(
-                { top : top, left : left, width : width, height :height, stroke : 0, fill : pds2398}
+                { top : top, left : left, width : width, height : height, stroke : 0, fill : pds2398}
             );
 
             ex.hoverFill = pds2391
@@ -298,12 +296,12 @@ define([
         },
         onNewInput          : function (name, input) {
             var height = 20
-            var top = input.top + input.height/2 + height/2
+            var top = input.top + input.height / 2 + height / 2
             var left = input.left
             var width = input.width
 
             var ex = new fabric.Rect(
-                { top : top, left : left, width : width, height :height, stroke : 0, fill : "rgba(198, 15, 19, .2)"}
+                { top : top, left : left, width : width, height : height, stroke : 0, fill : "rgba(198, 15, 19, .2)"}
             );
 
             ex.hoverFill = "rgba(198, 15, 19, .9)"

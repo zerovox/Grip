@@ -1,8 +1,10 @@
 define([
     'backbone',
     'fabric',
-    'views/fabric/MapCore'
-], function (Backbone, fabric, MapCore) {
+    'views/fabric/MapCore',
+    'alertify'
+], function (Backbone, fabric, MapCore, alertify) {
+    var pds2398 = 'rgb(187,228,238)';
     var pds2391 = 'rgb(0,172,205)';
 
     return new (Backbone.View.extend(_.extend(new MapCore(), {
@@ -29,16 +31,49 @@ define([
                         this.canvas.add(target.hoverText);
                         target.hoverText.left = target.hoverText.left - (target.hoverText.width / 2) - 14
                         break;
+                    case("functionInput"):
+                        target.hoverText = new fabric.Text(target.inputName, {
+                            fontSize     : 16,
+                            left         : target.getLeft() + target.width/2 + 5,
+                            top          : target.getTop() - target.height/2 + 16,
+                            lineHeight   : 1,
+                            fontFamily   : 'Helvetica',
+                            fontWeight   : 'bold',
+                            'text-align' : 'left'
+                        });
+                        target.hoverText.left = target.hoverText.left + (target.hoverText.width / 2)
+                        this.canvas.add(target.hoverText);
                     case("output"):
                     case("functionOutput"):
                         target.setFill(pds2391);
                         break;
-                    case("functionInput"):
-                        target.ex.setFill(target.ex.hoverFill)
-                        break;
                     case("ex"):
-                        target.setFill(target.fullFill)
-                        target.hovered = true
+                        target.hoverText = new fabric.Text("Remove argument " + target.input.inputName, {
+                            fontSize     : 16,
+                            left         : target.getLeft() + target.width/2 + 5,
+                            top          : target.getTop() - target.height/2 + 8,
+                            lineHeight   : 1,
+                            fontFamily   : 'Helvetica',
+                            fontWeight   : 'bold',
+                            'text-align' : 'left'
+                        });
+                        target.hoverText.left = target.hoverText.left + (target.hoverText.width / 2)
+                        this.canvas.add(target.hoverText);
+                        target.setFill(target.hoverFill)
+                        break;
+                    case("addFunction"):
+                        target.hoverText = new fabric.Text("Add a new input", {
+                            fontSize     : 16,
+                            left         : target.getLeft() + target.width/2 + 5,
+                            top          : target.getTop() - target.height/2 + 8,
+                            lineHeight   : 1,
+                            fontFamily   : 'Helvetica',
+                            fontWeight   : 'bold',
+                            'text-align' : 'left'
+                        });
+                        target.hoverText.left = target.hoverText.left + (target.hoverText.width / 2)
+                        this.canvas.add(target.hoverText);
+                        target.setFill(target.hoverFill)
                         break;
                     default:
                         break;
@@ -53,12 +88,6 @@ define([
                     case("wire"):
                         target.setStroke(target.oldfill);
                         break;
-                    case ("functionInput"):
-                        if (!target.ex.hovered)
-                            target.ex.setFill(target.ex.noFill)
-                        break;
-                    case ("ex"):
-                        target.hovered = false
                     default :
                         target.setFill(target.oldfill);
                         break;
@@ -82,6 +111,7 @@ define([
 
             var wireInModel = function (source, target, editorModel) {
                 if (target.func !== source.func) {
+                    console.log(source, target)
                     //this.wireUp(target.func, source.func, target, source);
                     if (target.type === "output") {
                         if (source.func.type === "functionInput")
@@ -117,6 +147,7 @@ define([
                 var target = e.target
                 if (typeof target !== "undefined") {
                     switch (target.type) {
+                        case("functionInput"):
                         case("functionOutput"):
                             canvas.remove(wire);
                             if (fromInput) {
@@ -146,8 +177,16 @@ define([
                             dragging = true;
                             break;
                         case("ex"):
-                            this.editorModel.removeInput(target.input)
+                            this.editorModel.removeInput(target.input.inputName)
                             this.render()
+                            break;
+                        case("addFunction"):
+                            alertify.prompt("Chose a name for the new input:", _.bind(function (e, str) {
+                                if (e) {
+                                    this.editorModel.addInput(str);
+                                    this.render();
+                                }
+                            }, this))
                             break;
                         default:
                             break;
@@ -219,6 +258,25 @@ define([
             this.edges.selectedFill = "rgba(198, 15, 19, .9)"
             this.edges.setFill(this.edges.unselectedFill)
         },
+        onRender : function(){
+            var canvas = this.canvas
+            var height = 30
+            var width = 20
+            var top = canvas.height - height/2
+            var left = width/2
+
+            var ex = new fabric.Rect(
+                { top : top, left : left, width : width, height :height, stroke : 0, fill : pds2398}
+            );
+
+            ex.hoverFill = pds2391
+            ex.type = "addFunction"
+            ex.hovered = false
+            ex.hasControls = ex.hasBorders = false;
+            ex.lockMovementX = ex.lockMovementY = true;
+
+            this.canvas.add(ex)
+        },
         onNewFunction       : function (funcModel, funcImpl, box) {
             box.modelId = funcImpl.name
             box.on('moving', _.bind(function () {
@@ -239,20 +297,23 @@ define([
 
         },
         onNewInput          : function (name, input) {
+            var height = 20
+            var top = input.top + input.height/2 + height/2
+            var left = input.left
+            var width = input.width
+
             var ex = new fabric.Rect(
-                { top : input.top, left : input.left - input.width / 2 + 10, width : 20, height : input.height - 2}
+                { top : top, left : left, width : width, height :height, stroke : 0, fill : "rgba(198, 15, 19, .2)"}
             );
-            ex.hoverFill = "rgba(198, 15, 19, .2)"
-            ex.fullFill = "rgba(198, 15, 19, .9)"
-            ex.noFill = "rgba(0,0,0,0)"
-            ex.setFill(ex.noFill)
+
+            ex.hoverFill = "rgba(198, 15, 19, .9)"
             ex.type = "ex"
             ex.input = name
             ex.hovered = false
             ex.hasControls = ex.hasBorders = false;
             ex.lockMovementX = ex.lockMovementY = true;
 
-            input.ex = ex
+            ex.input = input
             this.canvas.add(ex)
         },
         moving              : true

@@ -106,7 +106,7 @@ define([
                     this.beforeRender()
                 //Alias the canvas for simplicity
                 var canvas = this.canvas
-                    //Check we have an editor to render
+                //Check we have an editor to render
                 if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
                     //Infer types for the model, bit of a hack to place it here. Really we want to reinfer when any function changes its type
                     this.editorModel._infTypes()
@@ -229,23 +229,22 @@ define([
             },
             newInput            : function (name, x, y, input) {
                 var canvas = this.canvas;
-                var height = 40;
-                var width = 120
-                var options = {top : ((x + 1) / (y + 1)) * (canvas.height) + (height / 2), left : width / 2};
-                var box = new Function(name, height, width, options);
+                var nudge = 30;
+                var height = (1/y) * (canvas.height - 40) - nudge
+                var top = (x/y) * (canvas.height - 40) + height/2
+
+                var width = 20;
+                //TODO: Change x and y to be the number of input out of how many
                 var fill = getColor(input);
-                var output = new fabric.Rect({width : 10, height : height, fill : fill, top : options.top, left : width + 5, stroke : 0})
-
-                box.hasControls = box.hasBorders = output.hasControls = output.hasBorders = false;
-                box.lockMovementX = box.lockMovementY = output.lockMovementX = output.lockMovementY = true;
-                output.type = "functionOutput";
-                output.func = box;
-                box.output = output;
+                var box = new fabric.Rect({width : width, height : height, fill : fill, top : top, left : width/2, stroke : 0})
+                box.type = "functionInput";
+                box.func = box;
+                box.output = box;
                 box.inputName = name;
-                box.type = "functionInput"
+                box.hasControls = box.hasBorders = false;
+                box.lockMovementX = box.lockMovementY = true;
+                box.input = input
                 canvas.add(box)
-                canvas.add(output)
-
                 if (this.onNewInput)
                     this.onNewInput(name, box)
                 return box;
@@ -368,7 +367,7 @@ define([
             resize              : function () {
                 if (!this.full) {
                     var canvas = this.canvas;
-                    var h = Math.max(200, ($(window).height() - 100) * this.maxHeightPercentage);
+                    var h = Math.max(200, ($(window).height() * this.maxHeightPercentage) - 145, $("#editorInfo").height());
                     var w = $(window).width() > 999 ? $(window).width() * 9 / 12 - 30 : $(window).width() - 30;
                     canvas.setHeight(h);
                     canvas.setWidth(w);

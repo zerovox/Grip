@@ -2,7 +2,7 @@ var str = function (s) {
     return typeof s == "string"
 }
 
-var bool = function (b) {
+var boole = function (b) {
     return typeof b == "boolean"
 }
 
@@ -137,7 +137,7 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(if " + inputs.test + " then " + inputs.then + " else " + inputs.else + ")"
             },
-            apply     : need("test", bool, function (test) {
+            apply     : need("test", boole, function (test) {
                 if (/true/i.test(test))
                     return {need : "then", cont : function (then) {return {result : then}}}
                 else
@@ -213,7 +213,7 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " || " + inputs.b + ")"
             },
-            apply     : need("a", bool, need("b", bool, function (a, b) {
+            apply     : need("a", boole, need("b", boole, function (a, b) {
                 return {result : a || b, debug : "Calculated " + a + " or " + b}
             }))
         },
@@ -225,7 +225,7 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " && " + inputs.b + ")"
             },
-            apply     : need("a", bool, need("b", bool, function (a, b) {
+            apply     : need("a", boole, need("b", boole, function (a, b) {
                 return {result : a && b, debug : "Calculated " + a + " and " + b}
             }))
         },
@@ -237,7 +237,7 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(not " + inputs.a + ")"
             },
-            apply     : need("a", bool, function (a) {
+            apply     : need("a", boole, function (a) {
                 return {result : !a, debug : "Calculated not " + a}
             })
 

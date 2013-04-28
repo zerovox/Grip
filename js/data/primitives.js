@@ -37,15 +37,15 @@ var need = function (name, type, cont) {
 var num = {type : "num"}
 var bool = {type : "bool"}
 var string = {type : "string"}
-function local(id){
+function local(id) {
     return {type : "local", name : id}
 }
 
 //arguments is an object. Javascript is crazy.
-function toArray(as){
+function toArray(as) {
     var len = as.length
     var newArgs = []
-    for (var i=0; i<len; i++) {
+    for (var i = 0; i < len; i++) {
         newArgs.push(as[i])
     }
     return newArgs;
@@ -73,8 +73,7 @@ var primitives = (function () {
                     arg       : arg,
                     apply     : function () {
                         return {result : arg, debug : "Constant"};
-                    }
-                }
+                    }}
             }
         },
         {
@@ -85,11 +84,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " * " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : parseFloat(a) * parseFloat(b), debug : "Calculated " + a + " * " + b}}}
-                }}
-            }
+            apply     : need("a", dbl, need("b", dbl, function (a, b) {
+                return {result : a * b, debug : "Calculated " + a + " * " + b}
+            }))
         },
         {
             name      : "plus",
@@ -99,11 +96,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " + " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : parseFloat(a) + parseFloat(b), debug : "Calculated " + a + " + " + b}}}
-                }}
-            }
+            apply     : need("a", dbl, need("b", dbl, function (a, b) {
+                return {result : a + b, debug : "Calculated " + a + " + " + b}
+            }))
         },
         {
             name      : "equals",
@@ -113,13 +108,12 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " == " + inputs.b + ")"
             },
-            apply     : need("a", any, need("b", any, function (a, b, c) {
-                    if (same(a)(b))
-                        return {result : a == b, debug : "Calculated " + a + " == " + b}
-                    else
-                        return {result : false, debug : "Inputs of different types"}
-                }
-            ))
+            apply     : need("a", any, need("b", any, function (a, b) {
+                if (same(a)(b))
+                    return {result : a == b, debug : "Calculated " + a + " == " + b}
+                else
+                    return {result : false, debug : "Inputs of different types"} //TODO: {fail : "type error"}
+            }))
 
         },
         {
@@ -130,11 +124,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " - " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : parseFloat(a) - parseFloat(b), debug : "Calculated " + a + " - " + b}}}
-                }}
-            }
+            apply     : need("a", dbl, need("b", dbl, function (a, b) {
+                return {result : a - b, debug : "Calculated " + a + " - " + b}
+            }))
         },
         {
             name      : "if",
@@ -145,14 +137,12 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(if " + inputs.test + " then " + inputs.then + " else " + inputs.else + ")"
             },
-            apply     : function () {
-                return {need : "test", cont : function (test) {
-                    if (/true/i.test(test))
-                        return {need : "then", cont : function (then) {return {result : then}}}
-                    else
-                        return {need : "else", cont : function (els) {return {result : els}}}
-                }}
-            }
+            apply     : need("test", bool, function (test) {
+                if (/true/i.test(test))
+                    return {need : "then", cont : function (then) {return {result : then}}}
+                else
+                    return {need : "else", cont : function (els) {return {result : els}}}
+            })
         },
         {
             group     : "Logical",
@@ -186,11 +176,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(succ " + inputs.a + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {result : parseFloat(a) + 1, debug : "Calculated " + a + " + 1"}
-                }}
-            }
+            apply     : need("a", dbl, function (a) {
+                return {result : a + 1, debug : "Calculated " + a + "+1"}
+            })
         },
         {
             name      : "predecessor",
@@ -200,11 +188,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(pred " + inputs.a + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {result : parseFloat(a) - 1, debug : "Calculated " + a + " - 1"}
-                }}
-            }
+            apply     : need("a", dbl, function (a) {
+                return {result : a - 1, debug : "Calculated " + a + "-1"}
+            })
         },
         {
             name      : "is zero",
@@ -214,11 +200,8 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " == 0)"
             },
-            apply     : need("a", any, function (a) {
-                if (dbl(a))
-                    return {result : a === 0, debug : "Calculated (" + a + " = 0)?"}
-                else
-                    return {result : false, debug : "Not a number"}
+            apply     : need("a", any, function (a) { //TODO: Should be dbl
+                return {result : a === 0, debug : "Calculated (" + a + " = 0)?"}
             })
 
         },
@@ -230,11 +213,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " || " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : a || b, debug : "Calculated " + a + " or " + b}}}
-                }}
-            }
+            apply     : need("a", bool, need("b", bool, function (a, b) {
+                return {result : a || b, debug : "Calculated " + a + " or " + b}
+            }))
         },
         {
             name      : "and",
@@ -244,11 +225,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " && " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : a && b, debug : "Calculated " + a + " and " + b}}}
-                }}
-            }
+            apply     : need("a", bool, need("b", bool, function (a, b) {
+                return {result : a && b, debug : "Calculated " + a + " and " + b}
+            }))
         },
         {
             name      : "not",
@@ -271,11 +250,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " ++ " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : a + b, debug : "Calculated " + a + b}}}
-                }}
-            }
+            apply     : need("a", str, need("b", str, function (a, b) {
+                return {result : a + b, debug : "Calculated " + a + b}
+            }))
         },
         {
             name      : "length",
@@ -299,11 +276,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(take " + inputs.n + " " + inputs.string + ")"
             },
-            apply     : function () {
-                return {need : "string", cont : function (a) {
-                    return {need : "n", cont : function (b) {return {result : a.substr(0, b), debug : "Took first " + b + " characters from " + a}}}
-                }}
-            }
+            apply     : need("string", str, need("n", dbl, function (a, b) {
+                return {result : a.substr(0, b), debug : "Took first " + b + " characters from " + a}
+            }))
         },
         {
             name      : "drop",
@@ -313,11 +288,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(drop " + inputs.n + " " + inputs.string + ")"
             },
-            apply     : function () {
-                return {need : "string", cont : function (a) {
-                    return {need : "n", cont : function (b) {return {result : a.substr(b, a.length - b), debug : "Dropped first " + b + " characters from " + a}}}
-                }}
-            }
+            apply     : need("string", str, need("n", dbl, function (a, b) {
+                return {result : a.substr(b, a.length - b), debug : "Dropped first " + b + " characters from " + a}
+            }))
         },
         {
             name      : "less than",
@@ -327,11 +300,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " < " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : parseFloat(a) < parseFloat(b), debug : "Calculated " + a + " + " + b}}}
-                }}
-            }
+            apply     : need("a", dbl, need("b", dbl, function (a, b) {
+                return {result : a < b, debug : "Calculated " + a + " < " + b}
+            }))
         },
         {
             name      : "greater than",
@@ -341,11 +312,9 @@ var primitives = (function () {
             toHaskell : function (inputs) {
                 return "(" + inputs.a + " > " + inputs.b + ")"
             },
-            apply     : function () {
-                return {need : "a", cont : function (a) {
-                    return {need : "b", cont : function (b) {return {result : parseFloat(a) > parseFloat(b), debug : "Calculated " + a + " + " + b}}}
-                }}
-            }
+            apply     : need("a", dbl, need("b", dbl, function (a, b) {
+                return {result : a > b, debug : "Calculated " + a + " > " + b}
+            }))
         }
     ];
 })();

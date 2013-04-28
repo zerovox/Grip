@@ -13,12 +13,10 @@ define([
             if (editor.map.inputs === undefined)
                 editor.map.inputs = {}
             _.map(editor.map.inputs, function(inp, name){
-                console.log(inp, name)
                 var p = {type : "local", name : name}
                 inp["infType"] = p
                 return inp;
             })
-            console.log(editor.map.inputs)
 
             this.set("map", editor.map)
             this.prims = prims;

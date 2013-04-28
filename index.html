@@ -24,32 +24,52 @@
 
 </head>
 <body>
+<div class="sticky fixed">
+<nav class="top-bar">
+    <ul>
+        <!-- Title Area -->
+        <li class="name">
+            <h1 data-intro='Welcome to Grip! Grip is a visual functional programming environment, designed as an easy introduction to functional programming. This tour will give a quick overview of the interface, you can use the arrow keys to navigate forward and backwards, or use the buttons below.'
+                data-step='0'>
+                <a href="#">
+                    Grip
+                </a>
+            </h1>
+        </li>
+        <li class="toggle-topbar"><a href="#"></a></li>
+    </ul>
 
-<!-- <div class="row">
-   <div class="twelve columns">
-    <h2>Welcome</h2>
-     <p>Welcome to Functional Visual Programming</p>
-     <hr />
-   </div>
- </div>-->
-<br/>
+    <section>
+        <!-- Left Nav Section -->
+        <ul class="left" id="topMenu">
+            <li class="divider"></li>
+            <li class="has-dropdown"
+                data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select the Sandbox."
+                data-step='1' id="scenarioMenu">
 
+            </li>
+            <li id="runEntry"
+                data-intro="This opens the test dialogue where you can run the functions you've written. You can define tests, where you provide inputs and tell it the expected output, and then if you've defined it correctly the function will pass the test. For the lessons, we've provided some useful tests for you. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
+                data-step='6'>
+            </li>
+            <li class="divider show-for-medium-and-up"></li>
+        </ul>
 
+        <!-- Right Nav Section -->
+        <ul class="right">
+            <li class="divider show-for-medium-and-up"></li>
+            <li class="has-dropdown" id="tools">
+            </li>
+        </ul>
+    </section>
+</nav>
+</div>
+<br />
 <div class="row">
     <div class="three columns">
-        <h1 data-intro='Welcome to Grip! Grip is a visual functional programming environment, designed as an easy introduction to functional programming. This tour will give a quick overview of the interface, you can use the arrow keys to navigate forward and backwards, or use the buttons below.'
-            data-step='0'>Grip</h1>
-
-        <div id="scenarioMenu"
-             data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select the Sandbox."
-             data-step='1'></div>
-        <div id="modalBar"
-             data-intro="This opens the test case dialogue. Here you will be able to run tests against your functions to check if you've defined it correctly. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
-             data-step='6'></div>
-        <ul class="button-group even three-up alert small" id="controlBar"></ul>
-        <ul class="button-group even three-up alert small" id="debugBar"></ul>
-
-        <div id="editorInfo" class="panel" data-position="top" data-intro="Finally, the instructions for each task will appear here. Feel free to read these now and have a go at the first task!"
+        <div id="editorInfo"
+             data-position="top"
+             data-intro="Finally, the instructions for each task will appear here. Feel free to read these now and have a go at the first task!"
              data-step='7'></div>
 
         <div id="stackTrace"></div>

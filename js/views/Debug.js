@@ -3,8 +3,9 @@ define([
     'views/fabric/DebugMap',
     'views/DebugBar',
     'views/StackTrace',
+    'views/Return',
     'models/EditorModel'
-], function (Backbone, DebugMap, DebugBar, StackTrace, EditorModel) {
+], function (Backbone, DebugMap, DebugBar, StackTrace, Return, EditorModel) {
 
     return Backbone.View.extend({
         initialize        : function (task) {
@@ -13,6 +14,7 @@ define([
             this.debugMap.failMessage(this.task.getFailMessage())
             this.debugBar = new DebugBar(this.task);
             this.stackTrace = new StackTrace(this.task);
+            this.return = new Return();
 
             //Make sure the debug map is visible and correctly positioned
             this.debugMap.show()
@@ -27,6 +29,7 @@ define([
             this.debugBar.remove()
             this.stackTrace.remove()
             this.debugMap.remove()
+            this.return.remove()
         }
 
     });

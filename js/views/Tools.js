@@ -2,19 +2,19 @@ define([
     'backbone',
     'mustache',
     'views/ExportModal',
-    'libs/text!templates/extraModal.m',
+    'libs/text!templates/tools.m',
     'intro'
 ], function (Backbone, Mustache, ExportModal, ExtraModalTemplate, introJs) {
 
     return Backbone.View.extend({
-            el         : '#extraModal',
+            el         : '#tools',
             events     : {
                 "click #intro"  : "intro",
                 "click #export" : "export",
                 "click #link"   : "linkTo"
             },
-            initialize : function (i) {
-                this.scen = i.scen;
+            initialize : function (scen) {
+                this.scen = scen;
                 this.render();
             },
             render     : function () {
@@ -31,9 +31,9 @@ define([
                 this.modal = new ExportModal(obj);
                 $("#exportModal").reveal()
             }, intro   : function () {
-                this.$el.trigger('reveal:close');
                 introJs().start()
             }, linkTo  : function () {
+                console.log(this.scen.get("activeEditor"))
                 if (typeof this.modal !== "undefined")
                     this.modal.remove()
                 this.modal = new ExportModal({code : 'http://' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname + "#/shared/" + JSON.stringify(this.scen.get("activeEditor").toJSON())});

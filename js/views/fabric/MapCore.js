@@ -169,6 +169,7 @@ define([
                     }
                     this._out = out;
                 }
+                console.log("finish render")
                 //If present, call the post-render callback
                 if (this.onRender)
                     this.onRender(canvas)
@@ -215,10 +216,10 @@ define([
                 }
 
                 if (this.moving) {
-                    if (func !== undefined) {
+                    if (func !== undefined && func.type === "function") {
                         func.on('moving', function () {rewire(inp)})
                     }
-                    if (func2 !== undefined) {
+                    if (func2 !== undefined && func2.type === "function") {
                         func2.on('moving', function () {rewire(inp)})
                     }
                 }

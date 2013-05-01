@@ -45,10 +45,11 @@ define([
                 this.debugView.remove()
                 this.editorView = new Editor(this.scenarios)
 
-                if ($("#testModal").reveal)
-                    $("#testModal").reveal()
+                var modal = $("#testModal")
+                if (modal.reveal)
+                    modal.reveal()
                 else
-                    console.log($("#testModal").reveal)
+                    console.log(modal.reveal)
 
             }
         }, switchScenario : function(name){

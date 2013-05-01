@@ -31,7 +31,5 @@ define([
             this.debugMap.remove()
             this.return.remove()
         }
-
     });
-
 });

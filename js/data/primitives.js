@@ -26,10 +26,10 @@ var need = function (name, type, cont) {
         var args = toArray(arguments);
         return {need : name, cont : function (a) {
             args.push(a)
-            if (type(a))
+            if(type(a))
                 return cont.apply(null, args);
             else
-                return {fail : "type error"}
+                return {fail : "Type error"}
         }}
     }
 }

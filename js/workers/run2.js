@@ -21,6 +21,10 @@ onmessage = function (event) {
     }
 }
 
+function log(data) {
+    self.postMessage({log : data})
+}
+
 function success(result) {
     self.postMessage({result : result})
 }
@@ -81,9 +85,9 @@ function step(env) {
                     ft.func.result = env.returnVal
 
             } else if ("fail" in response) {
-                fail("Primitive function error:'" + response.fail + "' on function '" + ft.func.function + "'")
+                fail(response.fail + " on function '" + ft.func.function + "'")
             } else {
-                if (response.need in ft.func.inputs) {
+                if (response.need in ft.func.inputs && "wired" in ft.func.inputs[response.need]) {
                     var inp = ft.func.inputs[response.need]
                     env.stack.push(e(ft, {action : "r", cont : response.cont}))
                     if (inp.wired in ft.editor.functions) {

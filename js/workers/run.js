@@ -79,9 +79,9 @@ function cont(ft, retVal) {
             ft.func.result = response.result
         return response.result
     } else if ("fail" in response){
-        return fail("Primitive function error:'" + response.fail + "' on function '" + ft.func.function + "'")
+        return fail(response.fail + " on function '" + ft.func.function + "'")
     } else {
-        if (response.need in ft.func.inputs) {
+        if (response.need in ft.func.inputs && "wired" in ft.func.inputs[response.need]) {
             var inp = ft.func.inputs[response.need]
             var ar;
             if (inp.wired in ft.editor.functions)

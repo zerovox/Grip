@@ -289,7 +289,7 @@ define([
             }, this))
         },
         addFunction         : function (func) {
-            if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")){
+            if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
                 var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
                 this.newFunction(func, funcModel)
                 this.editorModel.addFunction(funcModel)
@@ -323,20 +323,22 @@ define([
             ex.input = input
             this.canvas.add(ex)
         },
-        displayAddEditorMsg : function(){
-            var text = new fabric.Text("No function selected, click the Add Local Function button above", {
-                fontSize     : 16,
-                left         : 27,
-                top          : 8,
-                lineHeight   : 1,
-                fontFamily   : 'Helvetica',
-                fontWeight   : 'bold',
-                'text-align' : 'left'
-            });
-            text.left = text.left + (text.width / 2)
-            text.lockMovementX = text.lockMovementY = true;
-            text.hasControls = text.hasBorders = false;
-            this.canvas.add(text);
+        beforeRender        : function () {
+            if (typeof this.editorModel === "undefined" || typeof this.editorModel.has("map") === "undefined") {
+                var text = new fabric.Text("No function selected, click the Add Local Function button above", {
+                    fontSize     : 16,
+                    left         : 27,
+                    top          : 8,
+                    lineHeight   : 1,
+                    fontFamily   : 'Helvetica',
+                    fontWeight   : 'bold',
+                    'text-align' : 'left'
+                });
+                text.left = text.left + (text.width / 2)
+                text.lockMovementX = text.lockMovementY = true;
+                text.hasControls = text.hasBorders = false;
+                this.canvas.add(text);
+            }
         },
         moving              : true
     })));

@@ -6,15 +6,18 @@ define([
 
     return Backbone.View.extend({
         el         : '#editorInfo',
-        initialize : function (editor) {
+        initialize : function (editor, name) {
+            this.scenName = name
             this.editor = editor
             this.render()
         },
         render     : function () {
+            var json = {scenName : this.scenName};
             if (typeof this.editor !== "undefined") {
-                var html = Mustache.render(EditorInfo, this.editor.toJSON());
-                this.$el.html(html);
+                _.extend(json, this.editor.toJSON())
             }
+            var html = Mustache.render(EditorInfo, json);
+            this.$el.html(html);
         }
     });
 

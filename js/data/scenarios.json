@@ -241,34 +241,5 @@
             "less than",
             "greater than"
         ]
-    }/*,{
-    "name"      : "Empty",
-    "category"  : "Basics",
-    "editors"   : [
-
-    ],
-    "functions" : [
-        "number",
-        "multiply",
-        "if",
-        "equals",
-        "minus",
-        "plus",
-        "true",
-        "false",
-        "and",
-        "or",
-        "not",
-        "successor",
-        "predecessor",
-        "is zero",
-        "join",
-        "length",
-        "drop",
-        "take",
-        "less than",
-        "greater than"
-    ]
-}*/
-
+    }
 ]

@@ -15,6 +15,12 @@
 </li>
 {{/categories}}
 <li class="divider"></li>
-<li><label>Sandbox</label></li>
-<li><a href="#">Sandbox</a></li>
+<li><label>Sandboxs</label></li>
+{{#sandboxes}}
+        <li {{#activeScenario}}class="actived"{{/activeScenario}}>
+            <a href="#/scenario/{{name}}">{{name}}</a>
+        </li>
+{{/sandboxes}}
+    <li class="divider"></li>
+    <li><a href="#" id="newSandbox">New Sandbox</a></li>
 </ul>

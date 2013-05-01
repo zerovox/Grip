@@ -101,17 +101,17 @@ define([
                 return this; //Allow set to be chained
             },
             render              : function () {
-                //If present, call the beforeRender handler.
-                if (this.beforeRender)
-                    this.beforeRender()
                 //Alias the canvas for simplicity
                 var canvas = this.canvas
                 //Clear the canvas
                 canvas.clear()
                 //We start with 0 legends
                 this.legends = 0;
+                //If present, call the beforeRender handler.
+                if (this.beforeRender)
+                    this.beforeRender()
                 //Check we have an editor to render
-                if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
+                if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map") !== "undefined") {
                     //Infer types for the model, bit of a hack to place it here. Really we want to reinfer when any function changes its type
                     this.editorModel._infTypes()
                     //Get the editor we wish to draw

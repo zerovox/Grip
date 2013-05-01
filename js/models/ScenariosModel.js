@@ -9,8 +9,8 @@ define([
         constructor : function(scenarios){
             //Call the default constructor with no attribute map to get an empty model
             Backbone.Model.apply(this);
-
             this.set("all", new ScenarioCollection(scenarios))
+            this.set("sandboxes", new ScenarioCollection())
             this.set("activeScenario", this.get("all").first())
             this.get("all").first().set({activeScenario : true})
             this.get("all").forEach(function(element, index, list){
@@ -44,6 +44,45 @@ define([
                 console.log("No matching scenario, or duplicate scenario names", matchingScenarios);
             }
             return false;
-        }});
+        },
+        newSandbox : function(name){
+            if(this.get("all").where({name : name}).length != 0)
+                return false;
+
+            var sbox = new ScenarioModel({
+                "name"      : name,
+                "category"  : "sandboxes",
+                "editors"   : [],
+                "functions" : [
+                    "number",
+                    "multiply",
+                    "if",
+                    "equals",
+                    "minus",
+                    "plus",
+                    "true",
+                    "false",
+                    "and",
+                    "or",
+                    "not",
+                    "successor",
+                    "predecessor",
+                    "is zero",
+                    "join",
+                    "length",
+                    "drop",
+                    "take",
+                    "less than",
+                    "greater than"
+                ]
+            })
+
+            this.get("sandboxes").add(sbox)
+            this.get("all").add(sbox)
+            this.trigger("change")
+            this.swap(name)
+            return true;
+        }
+    });
 
 });

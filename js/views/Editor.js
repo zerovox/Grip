@@ -15,7 +15,7 @@ define([
         initialize      : function (scenarios) {
             var scen = scenarios.get("activeScenario")
             //Create a view for each UI component from top to bottom
-            this.editorInfo = new EditorInfo(scen.get("activeEditor"));
+            this.editorInfo = new EditorInfo(scen.get("activeEditor"), scen.get("name"));
             this.editorList = new EditorList(scen)
 
             //Add elements to top bar
@@ -30,8 +30,6 @@ define([
             if(typeof scen.get("activeEditor") !== "undefined"){
                 this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
                 this.run = new Run();
-            } else {
-                this.editorMap.displayAddEditorMsg()
             }
 
             this.functionList = new FunctionList(scen.get("functions"), scen.get("list"));
@@ -40,7 +38,7 @@ define([
         },
         update : function(scen){
             this.editorInfo.remove()
-            this.editorInfo = new EditorInfo(scen.get("activeEditor"));
+            this.editorInfo = new EditorInfo(scen.get("activeEditor"), scen.get("name"));
 
             this.editorList.remove()
             this.editorList = new EditorList(scen)
@@ -56,8 +54,6 @@ define([
             if(typeof scen.get("activeEditor") !== "undefined"){
                 this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
                 this.run = new Run()
-            } else {
-                this.editorMap.displayAddEditorMsg()
             }
 
             this.functionList.remove()

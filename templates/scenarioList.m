@@ -5,6 +5,7 @@
 <li class="has-dropdown">
     <a href="#" class="">{{categoryName}}</a>
     <ul class="dropdown">
+        <li><label>{{categoryName}}</label></li>
     {{#scenarios}}
         <li {{#activeScenario}}class="actived"{{/activeScenario}}>
             <a href="#/scenario/{{name}}">{{name}}</a>

@@ -17,17 +17,22 @@ define([
             //Create a view for each UI component from top to bottom
             this.editorInfo = new EditorInfo(scen.get("activeEditor"));
             this.editorList = new EditorList(scen)
-            this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
 
             //Add elements to top bar
             this.scenarioList = new ScenarioList(scenarios)
-            this.run = new Run();
             this.tools = new Tools(scen);
 
             //Get the singleton map instance
             this.editorMap = EditorMap.set(scen.get("activeEditor"), scen.get("functions"), scen.get("list"));
             //Make sure map is visible
             this.editorMap.show()
+
+            if(typeof scen.get("activeEditor") !== "undefined"){
+                this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
+                this.run = new Run();
+            } else {
+                this.editorMap.displayAddEditorMsg()
+            }
 
             this.functionList = new FunctionList(scen.get("functions"), scen.get("list"));
 
@@ -40,11 +45,20 @@ define([
             this.editorList.remove()
             this.editorList = new EditorList(scen)
 
-            this.testList.remove()
-            this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
+            if(this.testList)
+                this.testList.remove()
+            if(this.run)
+                this.run.remove()
 
             this.editorMap.set(scen.get("activeEditor"), scen.get("functions"), scen.get("list"));
             this.editorMap.show()
+
+            if(typeof scen.get("activeEditor") !== "undefined"){
+                this.testList = new TestList({tests : scen.get("activeEditor").get("tests"), scenario : scen})
+                this.run = new Run()
+            } else {
+                this.editorMap.displayAddEditorMsg()
+            }
 
             this.functionList.remove()
             this.functionList = new FunctionList(scen.get("functions"), scen.get("list"));
@@ -56,8 +70,10 @@ define([
             this.functionList.remove()
             this.editorMap.remove()
             this.editorList.remove()
-            this.testList.remove()
-            this.run.remove()
+            if(this.testList)
+                this.testList.remove()
+            if(this.run)
+                this.run.remove()
             this.scenarioList.remove()
             this.tools.remove()
         }

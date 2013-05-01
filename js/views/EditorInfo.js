@@ -11,8 +11,10 @@ define([
             this.render()
         },
         render     : function () {
-            var html = Mustache.render(EditorInfo, this.editor.toJSON());
-            this.$el.html(html);
+            if (typeof this.editor !== "undefined") {
+                var html = Mustache.render(EditorInfo, this.editor.toJSON());
+                this.$el.html(html);
+            }
         }
     });
 

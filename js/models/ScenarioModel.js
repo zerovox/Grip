@@ -10,8 +10,8 @@ define([
         initialize   : function (scenario) {
             this.set({name : scenario.name, functions : new FunctionCollection(scenario.functions)})
             this.set({list : new EditorCollection(scenario.editors, this.get("functions"))})
-            this.set("activeEditor", this.get("list").first())
-            this.get("list").first().set({activeEditor : true})
+            if(this.get("list").size() !== 0)
+                this.activateFirst()
         },
         swap         : function (to) {
             var matchingEditors = this.get("list").where({name : to});
@@ -19,7 +19,8 @@ define([
                 var match = _.first(matchingEditors)
                 if (match !== this.get("activeEditor")) {
                     match.set({activeEditor : true})
-                    this.get("activeEditor").set({activeEditor : false});
+                    if(this.get("list").size() !== 0)
+                        this.get("activeEditor").set({activeEditor : false});
                     this.set({activeEditor : match});
                     return true;
                 }
@@ -51,12 +52,17 @@ define([
         }, newEditor : function (name) {
             var newEditor = new (this.get("list").model)({name : name})
             this.get("list").add(newEditor)
+            if(this.get("list").size() === 1)
+                this.activateFirst()
             this.trigger("change")
         }, toHaskell : function(header){
             header = typeof header === "undefined"? true : header;
             return this.get("list").reduce(function(memo, model){
                 return memo + model.toHaskell(this.get("functions")) + "\n\n"
             }, (header ? "import System.Environment\n\nmain = do\n&nbsp;&nbsp;&nbsp;&nbsp;args <- getArgs\n&nbsp;&nbsp;&nbsp;&nbsp;" +this.get("activeEditor").get("name")+" args\n\n": ""), this)
+        }, activateFirst : function(){
+            this.set("activeEditor", this.get("list").first())
+            this.get("list").first().set({activeEditor : true})
         }
     });
 

@@ -23,21 +23,24 @@ define([
             }, export  : function () {
                 if (typeof this.modal !== "undefined")
                     this.modal.remove()
-                try {
-                    var obj = {code : this.scen.toHaskell(false)}
-                } catch (e) {
-                    var obj = {code : "Cannot translate to haskell, please ensure functions are acyclic."}
+                if (typeof this.scen.get("activeEditor") !== "undefined") {
+                    try {
+                        var obj = {code : this.scen.toHaskell(false)}
+                    } catch (e) {
+                        var obj = {code : "Cannot translate to haskell, please ensure functions are acyclic."}
+                    }
+                    this.modal = new ExportModal(obj);
+                    $("#exportModal").reveal()
                 }
-                this.modal = new ExportModal(obj);
-                $("#exportModal").reveal()
             }, intro   : function () {
                 introJs().start()
             }, linkTo  : function () {
-                console.log(this.scen.get("activeEditor"))
                 if (typeof this.modal !== "undefined")
                     this.modal.remove()
-                this.modal = new ExportModal({code : 'http://' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname + "#/shared/" + JSON.stringify(this.scen.get("activeEditor").toJSON())});
-                $("#exportModal").reveal()
+                if (typeof this.scen.get("activeEditor") !== "undefined") {
+                    this.modal = new ExportModal({code : 'http://' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + window.location.pathname + "#/shared/" + JSON.stringify(this.scen.get("activeEditor").toJSON())});
+                    $("#exportModal").reveal()
+                }
             }
         }
 

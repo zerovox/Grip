@@ -72,7 +72,7 @@ var primitives = (function () {
                     },
                     arg       : arg,
                     apply     : function () {
-                        return {result : arg, debug : "Constant"};
+                        return {result : parseFloat(arg), debug : "Constant"};
                     }}
             }
         },

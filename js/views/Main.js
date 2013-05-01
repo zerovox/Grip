@@ -37,7 +37,7 @@ define([
             }, this);
 
             channels.editors.on("new", function (name) {
-                this.scenarios.get("activeScenario").newEditor(name);
+
             }, this);
             channels.editors.on("shared", function (jsonstring) {
                 this.scenarios.get("activeScenario").newEditorFromJson(JSON.parse(jsonstring));

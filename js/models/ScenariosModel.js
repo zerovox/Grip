@@ -76,6 +76,7 @@ define([
                     "greater than"
                 ]
             })
+            sbox.set("sandbox", true)
 
             this.get("sandboxes").add(sbox)
             this.get("all").add(sbox)

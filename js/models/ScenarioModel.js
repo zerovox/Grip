@@ -50,7 +50,7 @@ define([
             this.swap(newEditor.get("name"))
             this.trigger("change")
         }, newEditor : function (name) {
-            var newEditor = new (this.get("list").model)({name : name})
+            var newEditor = new (this.get("list").model)({name : name}, this.get("functions"), this.get("list"))
             this.get("list").add(newEditor)
             if(this.get("list").size() === 1)
                 this.activateFirst()

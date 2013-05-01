@@ -1,7 +1,6 @@
 define([
-    'backbone',
-    'channels'
-], function (Backbone, channels) {
+    'backbone'
+], function (Backbone) {
     var AppRouter = Backbone.Router.extend({
         routes : {
             'editor/:name'        : "switchEditor",
@@ -12,20 +11,20 @@ define([
         }
     });
 
-    var initialize = function () {
+    var initialize = function (main) {
 
         var app_router = new AppRouter
         app_router.on('route:switchScenario', function (name) {
-            channels.scenarios.trigger("switch", name)
+            main.switchScenario(name)
         })
         app_router.on('route:switchEditor', function (name) {
-            channels.editors.trigger("switch", name)
+            main.switchEditor(name)
         })
         app_router.on('route:switchGroup', function (name) {
-            channels.editors.trigger("switchFunctionGroup", name)
+           main.switchFunctionGroup(name)
         })
         app_router.on('route:sharedLink', function (json) {
-            channels.editors.trigger("shared", json)
+            main.sharedLink(json)
         })
         app_router.on('route:defaultAction', function (actions) {
         })

@@ -29,7 +29,8 @@ require([
     var mainView = new MainView()
     mainView.render()
 
-    Router.initialize();
+    Router.initialize(mainView);
+
     $("#lessonButton").click(function () {
         $('#introModal').trigger('reveal:close');
         introJs().start()

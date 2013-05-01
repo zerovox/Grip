@@ -4,8 +4,6 @@ define(['backbone','underscore'], function (Backbone, _) {
     }
 
     return {
-        scenarios : newChannel(),
-        editors   : newChannel(),
         debug     : newChannel()
     }
 });

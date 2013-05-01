@@ -24,33 +24,6 @@ define([
                 this.editorView = new Editor(this.scenarios)
             }, this)
 
-            //Listen for scenario change events, and switch the active scenario accordingly.
-            channels.scenarios.on("switch", function (name) {
-                if (this.debug)
-                    this.disableDebug()
-                this.scenarios.swap(name)
-            }, this);
-
-            //Listen for editor change events, and switch the active editor accordingly
-            channels.editors.on("switch", function (name) {
-                if (this.debug)
-                    this.disableDebug()
-                this.scenarios.get("activeScenario").swap(name)
-
-            }, this);
-
-            channels.editors.on("switchFunctionGroup", function (name) {
-                if (this.debug)
-                    this.disableDebug()
-                this.editorView.makeActive(name)
-            }, this);
-
-            channels.editors.on("shared", function (jsonstring) {
-                if (this.debug)
-                    this.disableDebug()
-                this.scenarios.get("activeScenario").newEditorFromJson(JSON.parse(jsonstring));
-            }, this);
-
             //Listen for the enable debug mode command, and if we have debug data enter debug mode
             channels.debug.on("enable", function () {
                 this.enableDebug()
@@ -78,6 +51,22 @@ define([
                     console.log($("#testModal").reveal)
 
             }
+        }, switchScenario : function(name){
+            if (this.debug)
+                this.disableDebug()
+            this.scenarios.swap(name)
+        }, switchEditor : function(name){
+            if (this.debug)
+                this.disableDebug()
+            this.scenarios.get("activeScenario").swap(name)
+        }, switchFunctionGroup : function(name){
+            if (this.debug)
+                this.disableDebug()
+            this.editorView.makeActive(name)
+        }, sharedLink : function(jsonstring){
+            if (this.debug)
+                this.disableDebug()
+            this.scenarios.get("activeScenario").newEditorFromJson(JSON.parse(jsonstring));
         }
 
     });

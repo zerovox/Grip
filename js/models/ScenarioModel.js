@@ -45,7 +45,7 @@ define([
             var models = this.get("list").where({name : json.name});
             if(models.length > 0)
                 this.get("list").remove(models)
-            var newEditor = new (this.get("list").model)(json)
+            var newEditor = new (this.get("list").model)(json, this.get("functions"), this.get("list"))
             this.get("list").add(newEditor)
             this.swap(newEditor.get("name"))
             this.trigger("change")

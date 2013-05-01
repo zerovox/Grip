@@ -10,7 +10,7 @@ define([
     return Backbone.View.extend({
         initialize        : function (task) {
             this.task = task.task;
-            this.debugMap = DebugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}), this.task.get("globalFunctions"), this.task.get("localFunctions"))
+            this.debugMap = DebugMap.set(new EditorModel({map : this.task.getActiveMap(), task : this.task}, this.task.get("globalFunctions"), this.task.get("localFunctions")), this.task.get("globalFunctions"), this.task.get("localFunctions"))
             this.debugMap.failMessage(this.task.getFailMessage())
             this.debugBar = new DebugBar(this.task);
             this.stackTrace = new StackTrace(this.task);

@@ -4,9 +4,11 @@ require([
     'router',
     'views/Main',
     'foundation.app',
-    'intro'
-], function (_, Backbone, Router, MainView, FoundationApp, introJs) {
+    'intro',
+    'alertify'
+], function (_, Backbone, Router, MainView, FoundationApp, introJs, alertify) {
     $.fn.editable.defaults.mode = 'inline';
+    alertify.set({ delay: 10000 });
 
     _.extend(Backbone.View.prototype, {
         hide      : function () {
@@ -14,7 +16,7 @@ require([
         }, show   : function () {
             this.$el.show()
         }, remove : function () {
-            if(this.removeChildren)
+            if (this.removeChildren)
                 this.removeChildren()
             this.$el.empty();
             this.undelegateEvents();
@@ -23,10 +25,18 @@ require([
         }
     })
 
+
     var mainView = new MainView()
     mainView.render()
 
     Router.initialize();
-
-    introJs().start()
+    $("#lessonButton").click(function () {
+        $('#introModal').trigger('reveal:close');
+        introJs().start()
+    })
+    $("#sandboxButton").click(function () {
+        $('#introModal').trigger('reveal:close');
+        //Create a new sandbox
+    })
+    $("#introModal").reveal();
 });

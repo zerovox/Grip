@@ -13,6 +13,12 @@ define([
                 inputs[name] = "";
             })
             return this.add(new TestModel({inputs : inputs, output : "", finished : false, passed : false})).last()
+        }, allTestsPassed : function(){
+            var all = true
+            this.forEach(function(test){
+                all = all && test.passed()
+            })
+            return all
         }
     });
 });

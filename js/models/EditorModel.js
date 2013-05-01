@@ -26,6 +26,11 @@ define([
             this.inputs = editor.map.inputs;
 
             this._fixTypes();
+
+            this.listenTo(this.get("tests"), "change", _.bind(this.trigger, this, "change"))
+        },
+        passesTests : function (){
+          return this.get("tests").allTestsPassed()
         },
         addFunction      : function (model) {
             this.get("map").functions[model.name] = model;

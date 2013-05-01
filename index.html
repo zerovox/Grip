@@ -72,6 +72,7 @@
              data-intro="Finally, the instructions for each task will appear here. Feel free to read these now and have a go at the first task!"
              data-step='7'></div>
 
+        <ul class="button-group even three-up alert small" id="debugBar"></ul>
         <div id="stackTrace"></div>
 
     </div>
@@ -115,10 +116,19 @@
 <div id="testModal" class="reveal-modal expand">
 </div>
 
-<div id="extraModal" class="reveal-modal small">
+<div id="exportModal" class="reveal-modal">
 </div>
 
-<div id="exportModal" class="reveal-modal">
+<div id="introModal" class="reveal-modal medium">
+    <h2>Welcome to Grip</h2>
+    <p class="lead">The visual functional programming environment.</p>
+    <p>If you're new to programming or haven't played with Grip before, we reccomend you check out the lessons below, otherwise feel free to jump straight in by creaing a new sandbox!</p>
+    <ul class="button-group even two-up">
+        <!--<li><a href="#" class="secondary button">Watch an introductory video<br /><img src="img/video.png" /><br /></a></li>-->
+        <li><a href="#" id="lessonButton" class="secondary button">Jump into the lessons<br /><img src="img/lesson.png" /></a></li>
+        <li><a href="#" id="sandboxButton" class="secondary button">Make a new sandbox<br /><img src="img/sandbox.png" /><br /></a></li>
+    </ul>
+    <a class="close-reveal-modal">&#215;</a>
 </div>
 
 <!-- IE Fix for HTML5 Tags -->

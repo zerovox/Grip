@@ -22,3 +22,8 @@ pre
     -ms-user-select: all;
     user-select: all;
 }
+
+.tick
+{
+    color: #5DA423;
+}

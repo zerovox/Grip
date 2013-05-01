@@ -106,14 +106,16 @@ define([
                     this.beforeRender()
                 //Alias the canvas for simplicity
                 var canvas = this.canvas
+                //Clear the canvas
+                canvas.clear()
+                //We start with 0 legends
+                this.legends = 0;
                 //Check we have an editor to render
                 if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")) {
                     //Infer types for the model, bit of a hack to place it here. Really we want to reinfer when any function changes its type
                     this.editorModel._infTypes()
                     //Get the editor we wish to draw
                     var map = this.editorModel.get("map")
-                    //Clear the canvas
-                    canvas.clear()
                     //Add each function to the canvas and to our local functions mapping, used add the wires later on.
                     var functions = _.reduce(map.functions, function (functions, func, name) {
                         //Find the primitive function model that corresponds to this function instance
@@ -168,11 +170,10 @@ define([
                         this.wireUp(undefined, functions[map.output], out, functions[map.output].output)
                     }
                     this._out = out;
+                    //If present, call the post-render callback
+                    if (this.onRender)
+                        this.onRender(canvas)
                 }
-                console.log("finish render")
-                //If present, call the post-render callback
-                if (this.onRender)
-                    this.onRender(canvas)
             },
             wireUp              : function (func, func2, inp, out) {
                 var canvas = this.canvas;
@@ -191,8 +192,7 @@ define([
                     stroke      : fill
                 })
 
-                wire.lockMovementX = wire.lockMovementY = true;
-                wire.hasBorders = wire.hasControls = false;
+                this.lock(wire)
                 wire.type = "wire"
                 inp.wire = wire
 
@@ -231,19 +231,18 @@ define([
             newInput            : function (name, x, y, input) {
                 var canvas = this.canvas;
                 var nudge = 30;
-                var height = (1/y) * (canvas.height - 40) - nudge
-                var top = (x/y) * (canvas.height - 40) + height/2
+                var height = (1 / y) * (canvas.height - 40) - nudge
+                var top = (x / y) * (canvas.height - 40) + height / 2
 
                 var width = 20;
                 //TODO: Change x and y to be the number of input out of how many
                 var fill = getColor(input);
-                var box = new fabric.Rect({width : width, height : height, fill : fill, top : top, left : width/2, stroke : 0})
+                var box = new fabric.Rect({width : width, height : height, fill : fill, top : top, left : width / 2, stroke : 0})
                 box.type = "functionInput";
                 box.func = box;
                 box.output = box;
                 box.inputName = name;
-                box.hasControls = box.hasBorders = false;
-                box.lockMovementX = box.lockMovementY = true;
+                this.lock(box)
                 box.input = input
                 canvas.add(box)
                 if (this.onNewInput)
@@ -272,8 +271,7 @@ define([
                             fill = getColor(attrs)
 
                         var input = new fabric.Rect({width : 20, height : 39, fill : fill, stroke : 0})
-                        input.hasControls = input.hasBorders = false;
-                        input.lockMovementX = input.lockMovementY = true;
+                        this.lock(input)
                         input.type = "input";
                         canvas.add(input)
 
@@ -309,8 +307,7 @@ define([
                     fill = getColor(funcReal.output)
 
                 var output = new fabric.Rect({width : 10, height : height, fill : fill, stroke : 0})
-                output.hasControls = output.hasBorders = false;
-                output.lockMovementX = output.lockMovementY = true;
+                this.lock(output)
                 output.type = "functionOutput";
                 output.func = box;
                 canvas.add(output)
@@ -336,20 +333,70 @@ define([
                 return box;
             },
             newOutput           : function (model) {
+                var canvas = this.canvas;
                 var fill;
                 if ("output" in model)
                     fill = getColor(model.output)
                 else
                     fill = pds2398;
-                var canvas = this.canvas;
                 var box = new fabric.Rect({height : canvas.height, width : 30, fill : fill, top : (canvas.height / 2), left : canvas.width - 10, stroke : 0})
 
-                box.hasControls = box.hasBorders = false;
-                box.lockMovementX = box.lockMovementY = true;
+                this.lock(box)
                 box.input = this;
                 box.type = "output";
                 canvas.add(box)
                 return box;
+            },
+            newLegend           : function (items) {
+                var count = _.size(items)
+                if (count === 0)
+                    return;
+
+                var rowheight = 30
+                var canvas = this.canvas
+                var height = count * rowheight
+                var width = 160
+
+                var x = canvas.width - width / 2 - 30 - ((10+width)*this.legends)
+                var y = 0 + height / 2 + 5//canvas.height - height / 2
+                var options = {width : width, height : height, top : y, left : x, fill : "#f4faf5"}
+                var box = new fabric.Rect(options);
+                var top = new fabric.Rect({width : width, height : 3, top : 1.5, left : x, fill : "rgb(43, 166, 203)"})
+                this.lock(box)
+                canvas.add(box)
+                canvas.add(top)
+                var index = 0;
+                _.each(items, function (item) {
+                    var i = index;
+                    var color = item.color;
+                    var name = item.name;
+                    var iheight = 20
+                    var iwidth = 20
+                    var c = y - height / 2 + i * rowheight + rowheight / 2
+                    var d = x - width / 2 + 10 + iwidth / 2
+                    var lb = new fabric.Rect({
+                        width  : iwidth,
+                        height : iheight,
+                        fill   : color,
+                        stroke : 0,
+                        top    : c,
+                        left   : d })
+                    this.lock(lb)
+                    canvas.add(lb)
+
+                    var text = new fabric.Text(name, {
+                        top        : c,
+                        left       : d + 15,
+                        fontSize   : 16,
+                        lineHeight : 1,
+                        fontFamily : 'Helvetica'})
+                    canvas.add(text)
+                    this.lock(text)
+                    text.left = text.left + (text.width / 2)
+                    canvas.renderAll()
+                    index++;
+                }, this)
+            this.legends += 1;
             },
             fullScreen          : function () {
                 this.full = true
@@ -392,6 +439,11 @@ define([
             },
             remove              : function () {
                 this.hide();
+            }, getColor         : function (t) {
+                return getColor({type : {type : t}})
+            }, lock             : function (box) {
+                box.hasControls = box.hasBorders = false;
+                box.lockMovementX = box.lockMovementY = true;
             }
         }
     }

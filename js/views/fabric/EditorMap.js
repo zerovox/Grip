@@ -274,6 +274,13 @@ define([
             ex.lockMovementX = ex.lockMovementY = true;
 
             this.canvas.add(ex)
+
+            this.newLegend([
+                {color : this.getColor("num"), name : "Number"},
+                {color : this.getColor("bool"), name : "Boolean"},
+                {color : this.getColor("string"), name : "String"},
+                {color : this.getColor("unknown"), name : "Any"}
+            ])
         },
         onNewFunction       : function (funcModel, funcImpl, box) {
             box.modelId = funcImpl.name
@@ -282,10 +289,12 @@ define([
             }, this))
         },
         addFunction         : function (func) {
-            var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
-            this.newFunction(func, funcModel)
-            this.editorModel.addFunction(funcModel)
-            this.render()
+            if (typeof this.editorModel !== "undefined" && typeof this.editorModel.has("map")){
+                var funcModel = {function : func.name, y : 50, x : 100, name : this.createGUID(), inputs : {}, arg : func.arg};
+                this.newFunction(func, funcModel)
+                this.editorModel.addFunction(funcModel)
+                this.render()
+            }
         },
         addInput            : function (name) {
             if (this.editorModel.addInput(name))
@@ -313,6 +322,21 @@ define([
 
             ex.input = input
             this.canvas.add(ex)
+        },
+        displayAddEditorMsg : function(){
+            var text = new fabric.Text("No function selected, click the Add Local Function button above", {
+                fontSize     : 16,
+                left         : 27,
+                top          : 8,
+                lineHeight   : 1,
+                fontFamily   : 'Helvetica',
+                fontWeight   : 'bold',
+                'text-align' : 'left'
+            });
+            text.left = text.left + (text.width / 2)
+            text.lockMovementX = text.lockMovementY = true;
+            text.hasControls = text.hasBorders = false;
+            this.canvas.add(text);
         },
         moving              : true
     })));

@@ -4,6 +4,9 @@ define([
     'fabric'
 ], function (Backbone, MapCore, fabric) {
 
+    var valueReturned = "rgb(93,164,35)"
+    var valueRequested ="rgb(192,15,19)"
+
     return new (Backbone.View.extend(_.extend(new MapCore(), {
         el                  : "#debugMap",
         maxHeightPercentage : 1,
@@ -48,13 +51,24 @@ define([
         },
         onRender            : function (canvas) {
             //canvas.add()
+            console.log("debug render")
+            this.newLegend([
+                {color : this.getColor("num"), name : "Number"},
+                {color : this.getColor("bool"), name : "Boolean"},
+                {color : this.getColor("string"), name : "String"},
+                {color : this.getColor("unknown"), name : "Any"}
+            ])
+            this.newLegend([
+                {color : valueRequested, name : "Value Requested"},
+                {color : valueReturned, name : "Value Returned"}
+            ])
         },
         onWired             : function (inp, out, wire) {
             if (typeof inp.func !== "undefined") {
                 var status = inp.func.functionModel.inputs[inp.name]
                 if (status.requested) {
                     if (status.responded) {
-                        wire.stroke = "rgb(93,164,35)"
+                        wire.stroke = valueReturned
                         wire.setShadow({ color : 'rgba(93,164,35,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                         var text = new fabric.Text("" + status.result, {
                             fontSize     : 16,
@@ -70,7 +84,7 @@ define([
                         text.hasControls = text.hasBorders = false;
                         this.canvas.add(text);
                     } else {
-                        wire.stroke = "rgb(192,15,19)"
+                        wire.stroke = valueRequested
                         wire.setShadow({ color : 'rgba(192,15,19,0.9)', offsetX : 0, offsetY : 0, blur : 10});
                     }
                 } else {
@@ -107,7 +121,7 @@ define([
             if (typeof msg !== "undefined") {
                 var text = new fabric.Text("Error: " + msg, {
                     fontSize     : 16,
-                    left         : 2,
+                    left         : 27,
                     top          : 8,
                     lineHeight   : 1,
                     fontFamily   : 'Helvetica',

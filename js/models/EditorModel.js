@@ -4,7 +4,7 @@ define([
 ], function (Backbone, TestCollection) {
 
     return Backbone.Model.extend({
-        initialize       : function (editor, prims, editors) {
+        initialize     : function (editor, prims, editors) {
             this.set({tests : new TestCollection(editor.tests, this)})
             if (editor.map === undefined)
                 editor.map = {}
@@ -24,14 +24,14 @@ define([
 
             this.listenTo(this.get("tests"), "change", _.bind(this.trigger, this, "change"))
         },
-        passesTests : function (){
-          return this.get("tests").allTestsPassed()
+        passesTests    : function () {
+            return this.get("tests").allTestsPassed()
         },
-        addFunction      : function (model) {
+        addFunction    : function (model) {
             this.get("map").functions[model.name] = model;
             this._infTypes()
         },
-        removeFunction   : function (name) {
+        removeFunction : function (name) {
             if (this.get("map").output === name)
                 delete this.get("map").output
             _.each(this.get("map").functions, function (func) {
@@ -43,37 +43,37 @@ define([
             delete this.get("map").functions[name]
             this._infTypes()
         },
-        addInput         : function (name) {
+        addInput       : function (name) {
             if (name in this.get("map").inputs || name in this.get("map").functions) {
                 return false
             } else {
                 this.get("map").inputs[name] = {}
+                this._infTypes()
                 return true
             }
-            this._infTypes()
         },
-        linkOutput       : function (name) {
+        linkOutput     : function (name) {
             this.get("map").output = name
             this._infTypes()
         },
-        linkInput        : function (functionName, functionInput, linkTo) {
+        linkInput      : function (functionName, functionInput, linkTo) {
             this.get("map").functions[functionName].inputs[functionInput] = {wired : linkTo}
             this._infTypes()
         },
-        move             : function (name, x, y) {
+        move           : function (name, x, y) {
             this.get("map").functions[name].x = x
             this.get("map").functions[name].y = y
-        }, removeInput   : function (name) {
+        }, removeInput : function (name) {
             if (this.get("map").output === name)
                 delete this.get("map").output
             delete this.get("map").inputs[name]
             this._infTypes()
-        }, toHaskell     : function (prims) {
+        }, toHaskell   : function (prims) {
             var equ = _.reduce(this.get("map").inputs, function (memo, input, name) {
                 return memo + " " + name
             }, this.get("name").replace(" ", ""))
             return equ + " = " + this._toHaskell(this.get("map").output, prims)
-        }, _toHaskell    : function (name) {
+        }, _toHaskell  : function (name) {
             if (name in this.get("map").functions) {
                 var func = this.get("map").functions[name]
                 var ins = _.reduce(func.inputs, function (result, value, key) {
@@ -88,148 +88,184 @@ define([
             }
 
             return name ? name.replace(" ", "") : name;
-        }, _getPrim      : function (name) {
+        }, _getPrim    : function (name) {
             return this.prims.find(function (model) { return model.get("func").name === name})
-        }, _getLocal     : function (name) {
+        }, _getLocal   : function (name) {
             return this.editors.find(function (func) {
                 return (func.get("name") === name)
             });
-        }, _clearInf     : function () {
-            _.forEach(this.get("map").functions, function (func) {
-                _.forEach(func.inputs, function (input) {
-                    delete input.infType
-                })
-                delete func.output
-            })
-            _.map(this.get("map").inputs, function(inp, name){
+        }, _getPrimOrLocal : function(name){
+            var prim = this._getPrim(name);
+            if(typeof prim === "undefined")
+                prim = this._getLocal(name)
+            else
+                prim = prim.get("func")
+            return prim
+        }, _clearInf   : function () {
+            _.map(this.get("map").inputs, function (inp, name) {
                 inp["infType"] = {type : "local", name : name}
                 return inp;
             })
             this.output.infType = {type : "local", name : this.get("name")};
-        }, _clearInfTemp : function () {
-            _.forEach(this.get("map").functions, function (func) {
-                delete func.inf;
-            })
-        }, _infTypes     : function () {
+        }, _infTypes   : function () {
             this._clearInf()
-            this.output.infType = this._getType(this.get("map").output) || this.output.infType
-            this._clearInfTemp()
+            //Create new type variable for each function+input combo
+            var typeVars = _.reduce(this.get("map").functions, function (memo, attrs, name) {
+                var funcTVs = []
+                var locals = {}
 
-            _.forEach(this.get("map").functions, function (func, name) {
-                if (typeof (func.output) === "undefined" || typeof func.output.infType === "undefined") {
-                    this._getType(name)
-                    this._clearInfTemp()
+                function procType(type, id) {
+                    if (type.type == "local") {
+                        //If two function inputs, or the function output, has the same type, unify these.
+                        if (type.name in locals)
+                            locals[type.name].push(id)
+                        else
+                            locals[type.name] = [id]
+                    } else {
+                        //If any input/output has a concrete type, attach this type to the type variable too
+                        funcTVs.push(typeVar([id], [type.type]))
+                    }
                 }
+
+                var prim = this._getPrimOrLocal(attrs.function)
+
+                _.each(prim.inputs, function (attrs, inName) {
+                    procType(attrs.type, "func:" + name + " in:" + inName)
+                })
+
+                procType(prim.output.type, name)
+
+                _.each(locals, function (ids, localName) {
+                    funcTVs.push(typeVar(ids, []))
+                })
+
+                return memo.concat(funcTVs);
+            }, [], this)
+
+            //Create type var for each input
+            typeVars = _.reduce(this.get("map").inputs, function (memo, attrs, name) {
+                memo.push(typeVar([name], []))
+                return memo
+            }, typeVars, this)
+
+            //Create type var for the output
+            typeVars.push(typeVar(["out"], []))
+            //For each wire, unify the type variables, check their concrete types match, if not report untypable, but continue
+            _.each(this.get("map").functions, function (attrs, name) {
+                _.each(attrs.inputs, function (inAttrs, inName) {
+                    if ("wired" in inAttrs) {
+                        var id1 = "func:" + name + " in:" + inName;
+                        var id2 = inAttrs.wired;
+                        typeVars = unify(id1, id2, typeVars)
+                    }
+                })
             }, this)
-            //Now we have inferred some types, we fix these in place so we can use this function to infer more types
+
+            if ("output" in this.get("map"))
+                typeVars = unify("out", this.get("map").output, typeVars)
+
+            //For each type variable remaining
+            _.each(typeVars, function (typeVar) {
+                if (_.size(typeVar.types) === 0) {
+                    //If no types, we have a variable type, so pick a unique name to cover everything with the id
+                    typeVar.type = {type : "local", name : _.first(typeVar.ids)}
+                } else if (_.size(typeVar.types) === 1) {
+                    //If there is one concrete type, take this as the type.
+                    typeVar.type = {type : _.first(typeVar.types)}
+                } else {
+                    //If multiple possible types, we can't satisfy this type variable
+                    //This means two incompatible types were connected with a wire
+                    console.log("Type Error, multiple candidate types for a type variable")
+                    //We remember that there was an error, allowing us to fall back on primitive types where possible
+                    typeVar.error = true;
+                }
+            })
+
+            //We can now reiterate over all functions and inputs, and give them their corresponding inferred types
+            _.each(this.get("map").functions, function (attrs, name) {
+                var prim = this._getPrimOrLocal(attrs.function)
+
+                _.each(prim.inputs, function (primAttrs, inName) {
+                    var id = "func:" + name + " in:" + inName
+                    var type = findType(typeVars, id)
+                    if (!(inName in attrs.inputs))
+                        attrs.inputs[inName] = {}
+
+                    if (typeof type === "undefined")
+                        attrs.inputs[inName].infType = primAttrs.type
+                    else
+                        attrs.inputs[inName].infType = type
+                })
+
+                var outType = findType(typeVars, name)
+                if(!("output" in attrs))
+                    attrs.output = {}
+                if(typeof outType === "undefined")
+                    attrs.output.infType = prim.output.type
+                else
+                    attrs.output.infType = outType
+
+            }, this)
+
+            //And iterate over inputs to give these types
+            _.each(this.get("map").inputs, function (attrs, name) {
+                var type = findType(typeVars, name)
+
+                if (typeof type === "undefined")
+                    attrs.infType = {type : "local", name : name}
+                else
+                    attrs.infType = type
+            }, this)
+
+            //And type the output
+            var outType = findType(typeVars, "out")
+            if (typeof outType === "undefined")
+                this.output.infType = {type : "local", name : this.get("name")};
+            else
+                this.output.infType = outType
+
+            //Now we have inferred (some) types, we fix these in place so we can use this function to infer types recursively.
             this._fixTypes();
-        }, _fixTypes : function(){
+        }, _fixTypes   : function () {
             this.output.type = this.output.infType
-            _.forEach(this.inputs, function (input, name) {
+            _.forEach(this.inputs, function (input) {
                 input.type = input.infType;
             })
-        }, _getType      : function (name, expected) {
-            if (typeof name === "undefined")
-                return undefined
-            //TODO: Handle inputs
-            var func = this.get("map").functions[name]
-            if (typeof func === "undefined") {
-                var input = this.get("map").inputs[name]
-                if ("infType" in input && input.infType.type !== "local") {
-                    if (typeof expected !== "undefined" && expected.type !== "local" && input.infType !== expected)
-                        console.log("Type mismatch for input " + name + " between " + input.infType.type + " and " + expected.type)
-                    return input.infType
-                }
-                if (typeof expected !== "undefined")
-                    input.infType = expected
-                else
-                    input.infType = {type : "local", name : name}
-                return input.infType
-            }
-/*
-            if ("inf" in func) {
-                console.log("Type loop detected in " + JSON.stringify(func))
-                return undefined
-            } else {
-                func.inf = true;
-            }
-*/
-            var localtypes = {}
-            var stack = []
-            var undecided = []
-            var prim = this._getPrim(func.function);
-
-            var p;
-
-            //TODO: Case for non-prim
-            if (typeof prim === "undefined") {
-                var p = this._getLocal(func.function)
-                // p._infTypes() // Will get us into loops
-            } else {
-                p = prim.get("func");
-            }
-            if (typeof expected !== "undefined" && p.output.type.type === "local")
-                localtypes[p.output.type.name] = expected
-
-            _.forEach(p.inputs, function (t, name) {
-                if (!(name in func.inputs))
-                    func.inputs[name] = {}
-                stack.push({attrs : func.inputs[name], name : name})
-            })
-
-            while (stack.length !== 0) {
-                var input = stack.pop()
-                var name = input.name
-                var attrs = input.attrs
-                var t;
-                if (p.inputs[name].type.type === "local") {
-                    if (p.inputs[name].type.name in localtypes) {
-                        var tp = this._getType(attrs.wired, localtypes[p.inputs[name].type.name])
-                        if (localtypes[p.inputs[name].type.name].type === "local" && typeof tp !== "undefined" && tp.type !== "local") {
-                            //If we find a 'stronger' type, i.e. a non-local type, we should update all matching type variables to this
-                            t = tp
-                            _.forEach(p.inputs, function (t, n2) {
-                                if (name !== n2 && "type" in t && t.type.type === "local" && t.type.name === p.inputs[n2].type.name) {
-                                    stack.push({attrs : func.inputs[n2], name : n2})
-                                }
-                            })
-                            localtypes[p.inputs[name].type.name] = t;
-                        } else {
-                            t = localtypes[p.inputs[name].type.name]
-                        }
-                    } else {
-                        t = this._getType(attrs.wired)
-                        if (typeof t !== "undefined") {
-                            localtypes[p.inputs[name].type.name] = t
-                            _.forEach(undecided, function (input) {
-                                stack.unshift(input)
-                            })
-                            undecided = []
-                        }
-                        else
-                            undecided.push(input)
-                    }
-                } else {
-                    this._getType(attrs.wired, p.inputs[name].type)
-                    t = p.inputs[name].type;
-                }
-                attrs.infType = t
-            }
-
-            if (!("output" in func))
-                func.output = {}
-
-            if (p.output.type.type === "local")
-                func.output.infType = localtypes[p.output.type.name]
-            else
-                func.output.infType = p.output.type
-
-            if (typeof expected !== "undefined" && expected !== func.output.infType)
-                console.log("Type mismatch! " + JSON.stringify(expected) + " " + JSON.stringify(func.output.infType))
-
-            return func.output.infType
         }
 
     });
+
+    function typeVar(ids, types) {
+        return {ids : ids, types : types}
+    }
+
+    function unify(id1, id2, typeVars) {
+        var id1G, id2G;
+        _.each(typeVars, function (vars, index) {
+            if (typeof id1G === "undefined" && _.contains(vars.ids, id1))
+                id1G = vars;
+            if (typeof id2G === "undefined" && _.contains(vars.ids, id2))
+                id2G = vars;
+        })
+
+        if (typeof id1G === "undefined" || typeof id2G === "undefined") {
+            console.log("Error in typing, id not found")
+            return false;
+        }
+
+        var newTV = typeVar(_.union(id1G.ids, id2G.ids), _.union(id1G.types, id2G.types))
+        typeVars = _.without(typeVars, id1G, id2G)
+        typeVars.push(newTV)
+        return typeVars
+    }
+
+    function findType(typeVars, id) {
+        var type;
+        _.each(typeVars, function (vars) {
+            if (typeof type === "undefined" && _.contains(vars.ids, id))
+                type = vars.type;
+        })
+        return type;
+    }
 
 });

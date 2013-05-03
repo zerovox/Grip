@@ -13,8 +13,9 @@ define([
             this.render()
         },
         test            : function () {
-            if ($("#testModal").reveal)
-                $("#testModal").reveal()
+            var modal = $("#testModal")
+            if (modal.reveal)
+                modal.reveal()
         }, render       : function () {
             var html = Mustache.render(Run, {});
             this.$el.html(html);

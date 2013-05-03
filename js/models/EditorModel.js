@@ -12,20 +12,15 @@ define([
                 editor.map.functions = {}
             if (editor.map.inputs === undefined)
                 editor.map.inputs = {}
-            _.map(editor.map.inputs, function(inp, name){
-                var p = {type : "local", name : name}
-                inp["infType"] = p
-                return inp;
-            })
 
             this.set("map", editor.map)
             this.prims = prims;
             this.output = {}
-            this.output.infType = {type : "local", name : editor.name};
             this.editors = editors;
             this.inputs = editor.map.inputs;
 
-            this._fixTypes();
+            this._clearInf()
+            this._fixTypes()
 
             this.listenTo(this.get("tests"), "change", _.bind(this.trigger, this, "change"))
         },
@@ -106,6 +101,11 @@ define([
                 })
                 delete func.output
             })
+            _.map(this.get("map").inputs, function(inp, name){
+                inp["infType"] = {type : "local", name : name}
+                return inp;
+            })
+            this.output.infType = {type : "local", name : this.get("name")};
         }, _clearInfTemp : function () {
             _.forEach(this.get("map").functions, function (func) {
                 delete func.inf;
@@ -136,7 +136,7 @@ define([
             if (typeof func === "undefined") {
                 var input = this.get("map").inputs[name]
                 if ("infType" in input && input.infType.type !== "local") {
-                    if (typeof expected !== "undefined" && expected.type !== "local")
+                    if (typeof expected !== "undefined" && expected.type !== "local" && input.infType !== expected)
                         console.log("Type mismatch for input " + name + " between " + input.infType.type + " and " + expected.type)
                     return input.infType
                 }
@@ -146,14 +146,14 @@ define([
                     input.infType = {type : "local", name : name}
                 return input.infType
             }
-
+/*
             if ("inf" in func) {
-                console.log("Type loop detected")
+                console.log("Type loop detected in " + JSON.stringify(func))
                 return undefined
             } else {
                 func.inf = true;
             }
-
+*/
             var localtypes = {}
             var stack = []
             var undecided = []
@@ -225,7 +225,7 @@ define([
                 func.output.infType = p.output.type
 
             if (typeof expected !== "undefined" && expected !== func.output.infType)
-                console.log("Type mismatch!")
+                console.log("Type mismatch! " + JSON.stringify(expected) + " " + JSON.stringify(func.output.infType))
 
             return func.output.infType
         }

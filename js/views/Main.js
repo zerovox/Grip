@@ -50,7 +50,6 @@ define([
                     modal.reveal()
                 else
                     console.log(modal.reveal)
-
             }
         }, switchScenario : function(name){
             if (this.debug)

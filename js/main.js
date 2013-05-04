@@ -37,7 +37,10 @@ require([
     })
     $("#sandboxButton").click(function () {
         $('#introModal').trigger('reveal:close');
-        //Create a new sandbox
+        $('#newSandbox').trigger('click'); //TODO: Is this the best way to do this?
     })
-    $("#introModal").reveal();
+    $("#introModal").reveal(); //TODO: Should we create a view for this
+    $("#load").animate({opacity:0}, 1000, function(){
+        $("#load").remove()
+    })
 });

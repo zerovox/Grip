@@ -233,7 +233,7 @@ define([
             })
         }
 
-    });
+});
 
     function typeVar(ids, types) {
         return {ids : ids, types : types}

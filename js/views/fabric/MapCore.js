@@ -270,7 +270,7 @@ define([
                         else
                             fill = getColor(attrs)
 
-                        var input = new fabric.Rect({width : 20, height : 39, fill : fill, stroke : 0})
+                        var input = new fabric.Rect({width : 20, height : 38, fill : fill, stroke : 0})
                         this.lock(input)
                         input.type = "input";
                         canvas.add(input)

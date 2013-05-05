@@ -243,6 +243,29 @@ var primitives = (function () {
 
         },
         {
+            name      : "string",
+            group     : "String",
+            arg       : true,
+            inputs    : {},
+            output    : {type : string},
+            toHaskell : function (inputs, arg) {
+                return "\""+arg+"\""
+            },
+            'new'     : function (arg) {
+                return {
+                    name      : "string",
+                    inputs    : {},
+                    output    : {type : string},
+                    toHaskell : function (inputs) {
+                        return "\""+arg+"d\""
+                    },
+                    arg       : arg,
+                    apply     : function () {
+                        return {result : ""+arg, debug : "Constant"};
+                    }}
+            }
+        },
+        {
             name      : "join",
             group     : "String",
             inputs    : {a : {type : string}, b : {type : string}},

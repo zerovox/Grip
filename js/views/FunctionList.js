@@ -28,11 +28,18 @@ define([
 
         },
         makeActive     : function (name) {
+            var next = _.find(this.groups,function (obj) {return name === obj.name});
+            if(typeof next === "undefined"){
+                console.log("Function Group not found.")
+                return false;
+            }
+
             _.find(this.groups,function (obj) {return obj.active}).active = false;
-            _.find(this.groups,function (obj) {return name === obj.name}).active = true;
+            next.active = true;
             this.groupView = new GroupView(this.groups)
             this.name = name
             this.render()
+            return true;
         },
         render         : function () {
             if (this.name === "Local Functions")

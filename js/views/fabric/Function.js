@@ -42,12 +42,17 @@ define([
             ctx.roundRect(-this.width / 2, -this.height / 2, this.width, this.height, 1).fill();
             ctx.fillStyle = "#fff"
             ctx.textAlign = 'center'
-            ctx.font = "16pt 'Franklin Gothic Medium' 'Helvetica Neue' Calibri"
+            ctx.font = "15pt 'Franklin Gothic Medium' 'Helvetica Neue' Calibri"
             ctx.textBaseline = "middle"
-            if (this.arg !== undefined)
-                ctx.fillText(this.arg, 0, 0, this.width - 20);
-            else
+            if (this.arg !== undefined){
+                var text = this.arg;
+
+                if(typeof text === "string" && text.length > 15)
+                    text = text.substr(0, 12) + "..."
+                ctx.fillText(text, 0, 0, this.width - 20);
+            } else {
                 ctx.fillText(this.name, 0, 0, this.width - 20);
+            }
         }
     })
 

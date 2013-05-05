@@ -66,8 +66,8 @@ define([
                     }
 
                     var padding = 10;
-                    var width = 140
-                    var height = Math.max(40, 40 * inputs);
+                    var width = 120
+                    var height = Math.max(30, 30 * inputs);
                     var options = {};
                     options.left = index * width + (width / 2) + padding * (index + 1);
                     options.top = (height / 2) + padding;

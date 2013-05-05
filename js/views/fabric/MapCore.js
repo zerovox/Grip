@@ -251,8 +251,8 @@ define([
             },
             newFunction         : function (funcReal, func) {
                 var canvas = this.canvas;
-                var height = Math.max(40, 40 * _.size(funcReal.inputs));
-                var width = 140
+                var height = Math.max(30, 30 * _.size(funcReal.inputs));
+                var width = 120
                 var x = Math.min(func.x, canvas.width)
                 var y = Math.min(func.y, canvas.height)
                 var options = {top : y, left : x};
@@ -270,7 +270,7 @@ define([
                         else
                             fill = getColor(attrs)
 
-                        var input = new fabric.Rect({width : 20, height : 38, fill : fill, stroke : 0})
+                        var input = new fabric.Rect({width : 15, height : 28, fill : fill, stroke : 0})
                         this.lock(input)
                         input.type = "input";
                         canvas.add(input)
@@ -285,8 +285,8 @@ define([
                         box.inputs[name] = input
 
                         function positionInput(box) {
-                            input.setTop(box.getTop() + ((i) * 40) - height / 2 + 20).setCoords();
-                            input.setLeft(box.getLeft() - width / 2 - 10).setCoords();
+                            input.setTop(box.getTop() + ((i) * 30) - height / 2 + 15).setCoords();
+                            input.setLeft(box.getLeft() - width / 2 - 7.5).setCoords();
                             input.render(canvas.getContext())
                         }
 

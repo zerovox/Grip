@@ -44,12 +44,13 @@
         <ul class="left" id="topMenu">
             <li class="divider"></li>
             <li class="has-dropdown"
-                data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select the Sandbox."
+                data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select add a new sandbox where you can play arround."
                 data-step='1' id="scenarioMenu">
 
             </li>
+            <li class="divider"></li>
             <li id="runEntry"
-                data-intro="This opens the test dialogue where you can run the functions you've written. You can define tests, where you provide inputs and tell it the expected output, and then if you've defined it correctly the function will pass the test. For the lessons, we've provided some useful tests for you. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
+                data-intro="This opens the run dialogue where you can run the functions you've written. We run functions by providing input values and defining what we expect the output to be. We call these test. If you've defined the function correctly, it should all the tests. For the lessons, we've provided some useful tests for you. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
                 data-step='6'>
             </li>
             <li class="divider show-for-medium-and-up"></li>
@@ -69,7 +70,8 @@
     <div class="three columns">
         <div id="editorInfo"
              data-position="top"
-             data-intro="Finally, the instructions for each task will appear here. Feel free to read these now and have a go at the first task!"
+             data-intro="Finally, the instructions for each task will appear here. You should now be ready to have a go at the first task!"
+             data-position="top"
              data-step='7'></div>
 
         <ul class="button-group even three-up alert small" id="debugBar"></ul>
@@ -84,7 +86,7 @@
 
 
         <div class="canvasContainer"
-             data-intro="This is the editor, this represents a function. As you can see, on the left side there is a grey box with the label 'argument'. This is the input to the function.  On the right hand side, there is a light grey dome. This is the function output. A function simply describes a way of transforming one or more input values into an output value. Right now, all we can do with the input is link it directly to the output. We do this by clicking on the light grey output and then clicking on the light grey circle next to the input. This describes the simplest function, the function that doesn't alter the input values at all. In order to trasnform the data, we need to pass it to some intermediate functions."
+             data-intro="This is the editor, this represents a function. As you can see, on the left side there is a a light blue bar. This is the input to a function. If you hover over it, you can see the name of the input. On the right hand side there is another blue bar, this is the output to the function. A function simply describes a way of transforming one or more input values into a single output value. Right now, all we can do with the input is link it directly to the output. We do this by clicking on the output bar and then clicking on the input. This describes the simplest function, the function that doesn't alter the input values at all. The wire simply carrys the value given to the input to the output of the function. In order to trasnform the data, we need to pass it to some intermediate functions."
              data-step='2'>
             <canvas id="editorMap" resize="false"></canvas>
         </div>
@@ -98,7 +100,7 @@
 <div class="row">
     <div class="three columns">
         <ul class="nav-bar vertical" id="functionMenu"
-            data-intro="Functions are organised in to various packages, currently we have the Mathematical functions visible. Clicking on these allows us to see other functions. Local Functions are the functions we are currently editing, the lessons will explain more about how we can use our own functions to define new functions."
+            data-intro="Functions are organised in to various packages, currently we have the Mathematical functions visible. We can select different groups of functions here. Local Functions are the functions we are currently editing. As soon as we have written a function, we can use it later in the lesson to define further functions. The lessons will explain more about how we can use our own functions to define new functions."
             data-position="top"
             data-step='4'></ul>
     </div>

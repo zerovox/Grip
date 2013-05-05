@@ -10,7 +10,7 @@
                     { "inputs" : { "argument" : 1 }, "readonly" : true, "output" : 2 },
                     { "inputs" : { "argument" : -1 }, "readonly" : true, "output" : 0 }
                 ],
-                "info"  : "First, you are going to write a really simple function that takes a number and adds one to it. To do this, make sure you have the 'Mathematical' functions selected below, and then click on the grey box with the label 'plus' in the function list. This will create a plus function on the function editor above which you can drag around. You'll then need to create a number in a similar way. A number is just a function that always retuns the same value, and you'll be asked to se a value for it. Type in 1 and click 'Ok'. You can now wire up the argument and the number to the plus, and wire up the plus to the output to finish out function. Once you've written the function, be sure to run all the tests in the 'Test Case' window to check your definition. Once the test cases pass, fell free to move on to the next task."
+                "info"  : "First, you are going to write a really simple function that takes a number and adds one to it. In programming, we refer to this as the successor function, as on integers, it simply returns the next integer in sequence. To do this, make sure you have the 'Mathematical' functions selected below, and then click on the grey box with the label 'plus' in the function list. This will create a plus function on the function editor above which you can drag around. You'll then need to create a number in a similar way. A number is just a function that always retuns the same value, and you'll be asked to se a value for it. Type in 1 and click 'Ok'. You can now link the input to the function to the plus by clicking on the input and then clicking on one of the two inputs to the plus. You can now do the same for the number 1, and finally link the output of the plus to the output of the function. Once you've written the function, be sure to run all the tests by clicking on Run above. Once the tests all pass, fell free to move on to the next task, or try out the debug mode which you can access through the Run button above."
             }, {
                 "name"  : "predecessor",
                 "map"   : { "inputs" : { "argument" : {} }, "functions" : { } },
@@ -28,7 +28,7 @@
                     { "inputs" : { "argument" : 1 }, "readonly" : true, "output" : false },
                     { "inputs" : { "argument" : -1 }, "readonly" : true, "output" : false }
                 ],
-                "info"  : "Now write another very simple function to test if an number is equal to zero. You should only need one function and one number for this, don't over think it! Run all the test cases to continue."
+                "info"  : "Now write another very simple function to test if an number is equal to zero. You should only need one function and one number for this, don't over think it! Up till now, we have only used numbers. This function produces a logical value, either a true or a false. In programming, these are known as Boolean values. You'll notice the colour of this function output is a light orange, corresponding to the Boolean type."
             }, {
                 "name"  : "tax",
                 "map"   : { "inputs" : { "cost" : {}, "tx" : {} }, "functions" : { } },
@@ -129,117 +129,132 @@
             { "inputs" : { "str" : " "}, "readonly" : true, "output" : false }
         ],
         "info"  : "You'll see for this set of exercises we've made a bunch of functions from the previous exercises available to you. You'll also notice some new functions in the String category. These are all operations over strings of characters. We have the join function, which takes two strings and joins them together to form a longer string, the length function, which returns the length of a string, and the take and drop functions, which either take the first n characters of a string, or remove them. To get started, let's create a convenience function for deciding if a string is the empty string. The empty string always has length 0."
+    }, {
+        "name"  : "zeroes",
+        "map"   : { "inputs" : { "n" : {} }, "functions" : { } },
+        "tests" : [
+            { "inputs" : { "n" : 6}, "readonly" : true, "output" : "000000" },
+            { "inputs" : { "n" : 0}, "readonly" : true, "output" : "" },
+            { "inputs" : { "n" : -1}, "readonly" : true, "output" : "" },
+            { "inputs" : { "n" : 20}, "readonly" : true, "output" : "00000000000000000000" }
+        ],
+        "info"  : "For this task, write a recursive function which returns a string consisting of n zeroes. If n is negative, return the empty string."
+    }, {
+        "name"  : "padTo",
+        "map"   : { "inputs" : { "str" : {}, "n" : {} }, "functions" : { } },
+        "tests" : [
+            { "inputs" : { "str" : "Hello World", "n" : 8}, "readonly" : true, "output" : "Hello Wo" },
+            { "inputs" : { "str" : "Wow!", "n" : 8}, "readonly" : true, "output" : "Wow!0000" },
+            { "inputs" : { "str" : "You owe me £1", "n" : 16}, "readonly" : true, "output" : "You owe me £1000" },
+            { "inputs" : { "str" : "Awesome", "n" : 4}, "readonly" : true, "output" : "Awes" }
+        ],
+        "info"  : "This is a function which takes a string str and a length n. If the string is longer than n in length, we wish to trucate it down to only n characters. On the otherhand, if it is too short, we wish to pad the string out with zeroes to make the string exactly n characters long. Have a look at the tests in the run dialog for a few examples. "
     }],
-    "functions" : ["number", "multiply", "if", "equals", "minus", "plus", "true", "false", "and", "or", "not", "successor", "predecessor", "is zero", "join", "length", "drop", "take" ]
-},{
-                "name"      : "Recursion",
+    "functions" : ["number", "multiply", "if", "equals", "minus", "plus", "less than", "greater than", "true", "false", "and", "or", "not", "successor", "predecessor", "is zero", "string", "join", "length", "drop", "take" ]
+},{             "name"      : "Recursion",
                 "category"  : "Basics",
                 "editors"   : [
                     {
-                        "name"  : "square",
-                        "map"   : {
-                            "inputs"    : {
-                                "argument" : {}
-                            },
-                            "output"    : "a",
-                            "functions" : {
-                                "a" : {
-                                    "function" : "multiply",
-                                    "x"        : 200,
-                                    "y"        : 200,
-                                    "inputs"   : {
-                                        "a" : {
-                                            "wired" : "b"
-                                        },
-                                        "b" : {
-                                            "wired" : "b"
-                                        }
+                        "name"  : "factorial",
+                        "map"   : { "inputs" : { "n" : {}}, "functions":{
+                            "e8c7e675-8826-41c5-ab9a-6b9cdf6f613d":{
+                                "function":"factorial",
+                                "y":400,
+                                "x":400,
+                                "name":"e8c7e675-8826-41c5-ab9a-6b9cdf6f613d",
+                                "inputs":{
+                                    "n":{
+                                        "wired":"67d14b6d-a466-4b82-a2f3-ba70b4aec5c7"
                                     }
                                 },
-                                "b" : {
-                                    "function" : "multiply",
-                                    "x"        : 300,
-                                    "y"        : 300,
-                                    "inputs"   : {
-                                        "a" : {
-                                            "wired" : "argument"
-                                        },
-                                        "b" : {
-                                            "wired" : "argument"
-                                        }
+                                "output":{}
+                            },
+                            "67d14b6d-a466-4b82-a2f3-ba70b4aec5c7":{
+                                "function":"predecessor",
+                                "y":400,
+                                "x":212,
+                                "name":"67d14b6d-a466-4b82-a2f3-ba70b4aec5c7",
+                                "inputs":{
+                                    "a":{
+                                        "wired":"n"
                                     }
-                                }
+                                },
+                                "output":{}
+                            },
+                            "39857bbd-3b56-4caa-8be7-ef14d98d7772":{
+                                "function":"if",
+                                "y":200,
+                                "x":700,
+                                "name":"39857bbd-3b56-4caa-8be7-ef14d98d7772",
+                                "inputs":{
+                                    "test":{
+                                        "wired":"3d9c8586-1e6a-4348-a1ca-797693726603"
+                                    },
+                                    "then":{
+                                        "wired":"c6c46ac2-d9cc-4477-82b4-973e4fac1b12"
+                                    },
+                                    "else":{}
+                                },
+                                "output":{}
+                            },
+                            "3d9c8586-1e6a-4348-a1ca-797693726603":{
+                                "function":"is zero",
+                                "y":150,
+                                "x":255,
+                                "name":"3d9c8586-1e6a-4348-a1ca-797693726603",
+                                "inputs":{
+                                    "a":{
+                                        "wired":"n"
+                                    }
+                                },
+                                "output":{}
+                            },
+                            "c6c46ac2-d9cc-4477-82b4-973e4fac1b12":{
+                                "function":"number",
+                                "y":200,
+                                "x":256,
+                                "name":"c6c46ac2-d9cc-4477-82b4-973e4fac1b12",
+                                "inputs":{},
+                                "arg":"1",
+                                "output":{}
                             }
-
                         },
+                            "output":"39857bbd-3b56-4caa-8be7-ef14d98d7772" },
                         "tests" : [
-                            {
-                                "inputs" : {
-                                    "argument" : 2
-                                },
-                                "output" : 4
-                            },
-                            {
-                                "inputs" : {
-                                    "argument" : 3
-                                },
-                                "output" : 9
-                            }
+                            { "inputs" : { "n" : 5}, "readonly" : true, "output" : 120 },
+                            { "inputs" : { "n" : 7}, "readonly" : true, "output" : 5040 },
+                            { "inputs" : { "n" : 12}, "readonly" : true, "output" : 479001600 },
+                            { "inputs" : { "n" : 0}, "readonly" : true, "output" : 1 }
                         ],
-                        "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                        "info"  : "We are going to define a recursive function. This simply means that the function is defined in terms of itself, meaning at some point during the function we will use the factorial function itself. The factorial function applied to a number n, usually written as n!, is defined as 1 when n is equal to 0, otherwise it is defined as n multiplied by (n-1)!. So for example, 5! is equal to 5&times;(4!), which in turn is equal to 5&times;4&times;(3!), and so on until we reach 5&times;4&times;3&times;2&times;1&times;(0!). Since we defined 0! as 1, this is just 5&times;4&times;3&times;2&times;1&times;1 which is 120. For more examples, take a look at the tests in the run dialog. As you can see, we have already started defining this function for you. So far, we have defined the base case, where n is equal to 0. All you need to do is finish defining the recursive case n&times;(n-1)! You should only need one more function!"
                     },
                     {
-                        "name"  : "squares",
-                        "map"   : {
-                            "inputs"    : {
-                                "argument" : {},
-                                "times"    : {}
-                            },
-                            "functions" : {
-                                "b" : {
-                                    "function" : "number",
-                                    "inputs"   : {},
-                                    "arg"      : 1,
-                                    "x"        : 200,
-                                    "y"        : 200
-                                }
-                            }
-
-                        },
+                        "name"  : "modulo",
+                        "map"   : { "inputs" : { "x" : {}, "y" : {} }, "functions" : { }},
                         "tests" : [
-                            {
-                                "inputs" : {
-                                    "argument" : 2,
-                                    "times"    : 2
-                                },
-                                "readonly" : true,
-                                "output" : 16
-                            }
+                            { "inputs" : { "x" : 7, "y" : 2}, "readonly" : true, "output" : 1 },
+                            { "inputs" : { "x" : 7, "y" : 7}, "readonly" : true, "output" : 0 },
+                            { "inputs" : { "x" : 7, "y" : 8}, "readonly" : true, "output" : 7 },
+                            { "inputs" : { "x" : 42, "y" : 3}, "readonly" : true, "output" : 0 },
+                            { "inputs" : { "x" : 143, "y" : 8}, "readonly" : true, "output" : 7 }
                         ],
-                        "info"  : "This first function squares it's argument. Click on the multiplication function definition below to add a new multiplication function, then link the inputs of the multiplication up to the input to the outer square function. Then link up the outputs."
+                        "info"  : "We are going to define another recursive function. This is called the modulo operation which given two numbers finds the remainder when the first is divided by the second. For example modulo applied to 7 and 2 is the remainer when 7 is divided by 2, which is 1. For more examples, take a look at the tests in the run dialog. We can describe this informally by saying that if x is less than y, the result is simply x. Otherwise, x is divisible by y at least once, so we can say that modulo of x and y is equal to the modulo of x-y and y. We haven't given you any more help this time, but we will say that the structure will look similar to the previous task."
+                    },
+                    {
+                        "name"  : "gcd",
+                        "map"   : { "inputs" : { "a" : {}, "b" : {} }, "functions" : { }},
+                        "tests" : [
+                            { "inputs" : { "a" : 100, "b" : 200}, "readonly" : true, "output" : 100 },
+                            { "inputs" : { "a" : 93, "b" : 28}, "readonly" : true, "output" : 1 },
+                            { "inputs" : { "a" : 684, "b" : 868}, "readonly" : true, "output" : 4 },
+                            { "inputs" : { "a" : 9863, "b" : 1001}, "readonly" : true, "output" : 7 },
+                            { "inputs" : { "a" : 2202, "b" : 2569}, "readonly" : true, "output" : 367 },
+                            { "inputs" : { "a" : 2202, "b" : 0}, "readonly" : true, "output" : 2202 },
+                            { "inputs" : { "a" : 0, "b" : 2569}, "readonly" : true, "output" : 2569 }
+                        ],
+                        "info"  : "Finally, lets define euclids algorithm. This algorithm computes the greatest common divisor of two numbers, that is, we wish to return the largest number which divides both inputs to this function. There are many ways to define this function, however the simplest is to use the modulo function defined in the previous task. We can say that the greates common divisor of any number a and 0 is a, since everything divides 0. Furthermore, the greatest common divisor of a and b is the greatest common divisor of b and the modulo of a and b. Can you see why? And can you translate this into a visual functional program?"
                     }
         ],
-        "functions" : [
-            "number",
-            "multiply",
-            "if",
-            "equals",
-            "minus",
-            "plus",
-            "true",
-            "false",
-            "and",
-            "or",
-            "not",
-            "successor",
-            "predecessor",
-            "is zero",
-            "join",
-            "length",
-            "drop",
-            "take",
-            "less than",
-            "greater than"
-        ]
+    "functions" : ["number", "multiply", "if", "equals", "minus", "plus", "less than", "greater than", "true", "false", "and", "or", "not", "successor", "predecessor", "is zero", "string", "join", "length", "drop", "take" ]
     }
 ]

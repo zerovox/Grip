@@ -25,47 +25,48 @@
 </head>
 <body>
 <div class="sticky fixed">
-<nav class="top-bar">
-    <ul>
-        <!-- Title Area -->
-        <li class="name">
-            <h1 data-intro='Welcome to Grip! Grip is a visual functional programming environment, designed as an easy introduction to functional programming. This tour will give a quick overview of the interface, you can use the arrow keys to navigate forward and backwards, or use the buttons below.'
-                data-step='0'>
-                <a href="#">
-                    Grip
-                </a>
-            </h1>
-        </li>
-        <li class="toggle-topbar"><a href="#"></a></li>
-    </ul>
-
-    <section>
-        <!-- Left Nav Section -->
-        <ul class="left" id="topMenu">
-            <li class="divider"></li>
-            <li class="has-dropdown"
-                data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select add a new sandbox where you can play arround."
-                data-step='1' id="scenarioMenu">
-
+    <nav class="top-bar">
+        <ul>
+            <!-- Title Area -->
+            <li class="name">
+                <h1 data-intro='Welcome to Grip! Grip is a visual functional programming environment, designed as an easy introduction to functional programming. This tour will give a quick overview of the interface, you can use the arrow keys to navigate forward and backwards, or use the buttons below.'
+                    data-step='0'>
+                    <a href="#">
+                        Grip
+                    </a>
+                </h1>
             </li>
-            <li class="divider"></li>
-            <li id="runEntry"
-                data-intro="This opens the run dialogue where you can run the functions you've written. We run functions by providing input values and defining what we expect the output to be. We call these test. If you've defined the function correctly, it should all the tests. For the lessons, we've provided some useful tests for you. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
-                data-step='6'>
-            </li>
-            <li class="divider show-for-medium-and-up"></li>
+            <li class="toggle-topbar"><a href="#"></a></li>
         </ul>
 
-        <!-- Right Nav Section -->
-        <ul class="right">
-            <li class="divider show-for-medium-and-up"></li>
-            <li class="has-dropdown" id="tools">
-            </li>
-        </ul>
-    </section>
-</nav>
+        <section>
+            <!-- Left Nav Section -->
+            <ul class="left" id="topMenu">
+                <li class="divider"></li>
+                <li class="has-dropdown"
+                    data-intro="This is the lesson selector, here you can choose which lesson you would like to start. Each lesson aims to teach you a small concept of functional programming, starting with what a function is! We reccomend you start with the Basics so we've selected that for you, but if you just want to have a play, select add a new sandbox where you can play arround."
+                    data-step='1' id="scenarioMenu">
+
+                </li>
+                <li class="divider"></li>
+                <li id="runEntry"
+                    data-intro="This opens the run dialogue where you can run the functions you've written. We run functions by providing input values and defining what we expect the output to be. We call these test. If you've defined the function correctly, it should all the tests. For the lessons, we've provided some useful tests for you. You can quickly run all the avalible tests by pressing the red Run All button at the bottom. If the tests don't pass, you can enter debug mode to help figure out why they're not returning the result you expect. There's a separate tour avalible in debug mode to show you some of its features. Try to get all tests to pass before you move on to the next task!"
+                    data-step='6'>
+                </li>
+                <li class="divider show-for-medium-and-up"></li>
+            </ul>
+
+            <!-- Right Nav Section -->
+            <ul class="right">
+                <li class="divider show-for-medium-and-up"></li>
+                <li class="has-dropdown" id="tools">
+                </li>
+            </ul>
+        </section>
+    </nav>
 </div>
-<br />
+<br/>
+
 <div class="row">
     <div class="three columns">
         <div id="editorInfo"
@@ -123,17 +124,44 @@
 
 <div id="introModal" class="reveal-modal medium">
     <h2>Welcome to Grip</h2>
+
     <p class="lead">The visual functional programming environment.</p>
-    <p>If you're new to programming or haven't played with Grip before, we reccomend you check out the lessons below, otherwise feel free to jump straight in by creaing a new sandbox!</p>
+
+    <p>If you're new to programming or haven't played with Grip before, we reccomend you check out the lessons below,
+        otherwise feel free to jump straight in by creaing a new sandbox!</p>
     <ul class="button-group even two-up">
         <!--<li><a href="#" class="secondary button">Watch an introductory video<br /><img src="img/video.png" /><br /></a></li>-->
-        <li><a href="#" id="lessonButton" class="secondary button">Jump into the lessons<br /><img src="img/lesson.png" /></a></li>
-        <li><a href="#" id="sandboxButton" class="secondary button">Make a new sandbox<br /><img src="img/sandbox.png" /><br /></a></li>
+        <li><a href="#" id="lessonButton" class="secondary button">Jump into the lessons<br/><img src="img/lesson.png"/></a>
+        </li>
+        <li><a href="#" id="sandboxButton" class="secondary button">Make a new sandbox<br/><img
+                src="img/sandbox.png"/><br/></a></li>
     </ul>
     <a class="close-reveal-modal">&#215;</a>
 </div>
 
-<div class="dim" id="load"><div class="mid"><img src="img/ajax-loader.gif" /></div></div>
+<div id="ffModal" class="reveal-modal medium">
+    <h2>We've noticed you're in Firefox.</h2>
+
+    <p class="lead">We reccomend you access this application in Google Chrome, it is much faster at rendering pretty
+        pictures on the HTML5 Canvas</p>
+
+    <p>Alternatively, you can try going to about:config and enabling these preferences. They should speed up the canvas
+        performance a bit:</p>
+    <ul>
+        <li>gfx.direct2d.force-enabled</li>
+        <li>layers.acceleration.force-enabled</li>
+        <li>layers.prefer-d3d9</li>
+        <li>layers.prefer-opengl</li>
+    </ul>
+    <ul class="button-group">
+        <li><a href="#" id="ffClose" class="secondary button">Let me in!</a></li>
+    </ul>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div class="dim" id="load">
+    <div class="mid"><img src="img/ajax-loader.gif"/></div>
+</div>
 
 <!-- IE Fix for HTML5 Tags -->
 <!--[if lt IE 9]>

@@ -15,16 +15,16 @@ define([
 
         var app_router = new AppRouter
         app_router.on('route:switchScenario', function (name) {
-            main.switchScenario(name)
+            main.switchScenario(decodeURIComponent(name))
         })
         app_router.on('route:switchEditor', function (name) {
-            main.switchEditor(name)
+            main.switchEditor(decodeURIComponent(name))
         })
         app_router.on('route:switchGroup', function (name) {
-           main.switchFunctionGroup(name)
+           main.switchFunctionGroup(decodeURIComponent(name))
         })
         app_router.on('route:sharedLink', function (json) {
-            main.sharedLink(json)
+            main.sharedLink(decodeURIComponent(json))
         })
         app_router.on('route:defaultAction', function (actions) {
         })

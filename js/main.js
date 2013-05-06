@@ -34,9 +34,7 @@ require([
     $("#lessonButton").click(function () {
         $('#introModal').trigger('reveal:close');
         if (FF) {
-            $("#ffModal").reveal();
             $("#ffClose").click(function () {
-                $('#ffModal').trigger('reveal:close');
                 introJs().start()
             })
         } else {
@@ -46,9 +44,7 @@ require([
     $("#sandboxButton").click(function () {
         $('#introModal').trigger('reveal:close');
         if (FF) {
-            $("#ffModal").reveal();
             $("#ffClose").click(function () {
-                $('#ffModal').trigger('reveal:close');
                 $('#newSandbox').trigger('click');
             })
         } else {
@@ -59,4 +55,12 @@ require([
     $("#load").animate({opacity : 0}, 1000, function () {
         $("#load").remove()
     })
+    $('#introModal').on('reveal:close', function () {
+        if (FF)
+            $("#ffModal").reveal();
+        $("#ffClose").click(function () {
+            $("#ffModal").trigger('reveal:close');
+        })
+    });
+
 });

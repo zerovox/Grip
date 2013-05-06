@@ -226,7 +226,7 @@ define([
                     canvas.renderAll()
                 }
                 if (dragging) {
-                    if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20 || $(e.e.toElement).closest(".canvasContainer").length === 0) {
+                    if (e.e.layerX < 20 || e.e.layerX > canvas.getWidth() - 20 || e.e.layerY < 20 || e.e.layerY > canvas.getHeight() - 20) {
                         this.edges.setFill(this.edges.selectedFill)
                         removeFunction = true;
                     } else {
